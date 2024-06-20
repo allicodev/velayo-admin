@@ -22,13 +22,16 @@ class API {
         };
       });
     }
-    const request = await axios.get(`http://localhost:3000/api${endpoint}`, {
-      params: query,
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const request = await axios.get(
+      `https://velayo-eservice.vercel.app/api${endpoint}`,
+      {
+        params: query,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
     if (request.data.success)
       return {
         success: true,
@@ -62,7 +65,7 @@ class API {
     }
 
     const request = await axios.post(
-      `http://localhost:3000/api${endpoint}`,
+      `https://velayo-eservice.vercel.app/api${endpoint}`,
       payload,
       {
         headers: {
