@@ -1,0 +1,232 @@
+import React, { useEffect, useState } from "react";
+import {
+  Drawer,
+  Typography,
+  TableProps,
+  Space,
+  Button,
+  Table,
+  Popconfirm,
+  message,
+  Tooltip,
+} from "antd";
+import {
+  DownOutlined,
+  DeleteOutlined,
+  UserAddOutlined,
+  EditOutlined,
+} from "@ant-design/icons";
+
+import dayjs from "dayjs";
+
+import {
+  BasicContentProps,
+  User as UserProp,
+  NewUser as NewUserProp,
+} from "@/types";
+import NewUser from "./new_user";
+import UserService from "@/provider/user.service";
+
+const User = ({ title, style, extra, onCellClick }: BasicContentProps) => {
+  const [openedNewUser, setOpenedNewUser] = useState(false);
+  const [openedUser, setOpenedUser] = useState<NewUserProp | null>(null);
+  const [users, setUsers] = useState<UserProp[]>([]);
+  const [trigger, setTrigger] = useState(0);
+  const [total, setTotal] = useState(0);
+  const [selectedRole, setSelectedRole] = useState<string | null>(null);
+
+  const user = new UserService();
+
+  const columns: TableProps<UserProp>["columns"] = [
+    {
+      title: "ID",
+      key: "id",
+      dataIndex: "employeeId",
+    },
+    {
+      title: "Name",
+      key: "name",
+      dataIndex: "name",
+    },
+    {
+      title: "Username",
+      key: "username",
+      dataIndex: "username",
+    },
+    {
+      title: "Email",
+      key: "email",
+      dataIndex: "email",
+    },
+    {
+      title: "Role",
+      key: "role",
+      dataIndex: "role",
+      render: (_) => _.toLocaleUpperCase(),
+    },
+    {
+      title: "Date Created",
+      key: "date_created",
+      dataIndex: "createdAt",
+      render: (date) => dayjs(date).format("MMMM DD, YYYY"),
+    },
+    {
+      title: "Actions",
+      align: "center",
+      render: (_, row) => (
+        <Space>
+          <Tooltip title="Edit User">
+            <Button
+              size="large"
+              icon={<EditOutlined />}
+              onClick={() => {
+                let $ = row as any;
+                delete $.__v;
+                delete $.updatedAt;
+                delete $.createdAt;
+                delete $.password;
+
+                setOpenedUser($);
+                setOpenedNewUser(true);
+              }}
+            />
+          </Tooltip>
+          <Popconfirm
+            title="Delete Confirmation"
+            description="Are you sure to archive this user?"
+            okText="Confirm"
+            onConfirm={() => handeRemoveUser(row?._id ?? "")}
+          >
+            <Button icon={<DeleteOutlined />} danger />
+          </Popconfirm>
+        </Space>
+      ),
+    },
+  ];
+
+  const handleNewUser = (obj: any) => {
+    (async (_) => {
+      let res = await _.newUser(obj);
+      if (res.success) {
+        message.success("Successfully Created");
+        setTrigger(trigger + 1);
+        setOpenedNewUser(false);
+      } else message.warning(res.message);
+    })(user);
+  };
+
+  const handleSaveUser = (obj: any) => {
+    (async (_) => {
+      let res = await _.updateUser(obj);
+      if (res?.success ?? false) {
+        message.success(res?.message ?? "Success");
+        setTrigger(trigger + 1);
+        setOpenedNewUser(false);
+        setOpenedUser(null);
+      } else message.warning(res.message);
+    })(user);
+  };
+
+  const handeRemoveUser = (id: string) => {
+    (async (_) => {
+      let res = await _.deleteUser({ id });
+
+      if (res.success) {
+        message.success(res.message ?? "Deleted Successfully");
+        setTrigger(trigger + 1);
+      } else message.warning(res.message);
+    })(user);
+  };
+
+  const getUsers = ({
+    role,
+    page,
+    pageSize,
+    updateUsers = true,
+  }: {
+    role?: string | null;
+    page: number;
+    pageSize?: number;
+    updateUsers?: boolean;
+  }): Promise<UserProp[] | any | void> =>
+    new Promise(async (resolve, reject) => {
+      // setFetching(true);
+      if (!pageSize) pageSize = 10;
+
+      let res = await user.getUsers({
+        role: role ? [role.toLocaleLowerCase()] : undefined,
+        page,
+        pageSize,
+      });
+
+      if (res?.success ?? false) {
+        if (!updateUsers) {
+          return resolve(res.data);
+        }
+
+        // setFetching(false);
+        setUsers(res?.data ?? []);
+        setTotal(res.meta?.total ?? 10);
+        resolve(res.data);
+      } else {
+        // setFetching(false);
+        reject();
+      }
+    });
+
+  useEffect(() => {
+    getUsers({ page: 1, pageSize: 10, role: selectedRole });
+  }, [trigger, open, selectedRole]);
+
+  return (
+    <>
+      <Button
+        icon={<UserAddOutlined />}
+        type="primary"
+        size="large"
+        onClick={(e) => setOpenedNewUser(true)}
+        style={{ marginBottom: 10 }} //float: "right",
+      >
+        New User
+      </Button>
+      <Table
+        dataSource={users}
+        columns={columns}
+        style={style}
+        rowKey={(e) => e.username}
+        scroll={{
+          y: "58vh",
+        }}
+        onRow={(data) => {
+          return {
+            onClick: () => (onCellClick ? onCellClick(data) : null),
+          };
+        }}
+        pagination={{
+          defaultPageSize: 10,
+          total,
+          onChange: (page, pageSize) =>
+            getUsers({
+              page,
+              pageSize,
+              role: selectedRole,
+            }),
+        }}
+      />
+
+      {/* context */}
+      <NewUser
+        open={openedNewUser}
+        close={() => {
+          setOpenedNewUser(false);
+          setOpenedUser(null);
+        }}
+        onAdd={handleNewUser}
+        onSave={handleSaveUser}
+        user={openedUser}
+      />
+    </>
+  );
+};
+
+export default User;

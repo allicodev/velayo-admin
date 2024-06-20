@@ -1,0 +1,594 @@
+@import url("https://fonts.googleapis.com/css2?family=Abel&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@600&display=swap");
+
+.main-content {
+  height: 100vh;
+  padding: 10px;
+  box-sizing: border-box;
+  background-color: #98c04b;
+  position: relative;
+}
+
+.body-content {
+  width: 100%;
+  height: 100%;
+  background-color: #eee;
+  border-radius: 10px;
+  overflow: auto;
+}
+
+.login-container {
+  background-image: url("/login-bg.jpg");
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dashboard-btn:hover {
+  background-color: #294b0f !important;
+  color: #fff;
+}
+
+.dashboard-btn:hover .ant-typography {
+  color: #fff;
+}
+
+.dashboard-btn:hover .db-btn {
+  color: #fff !important;
+}
+
+.ant-drawer-mask {
+  background: transparent !important;
+}
+
+.ant-collapse-item {
+  border-bottom: transparent !important;
+}
+
+.ant-collapse-header {
+  padding-top: 5px !important;
+  padding-bottom: 5px !important;
+}
+
+.ant-form-item-label > label {
+  display: block !important;
+}
+
+.customInput input:-webkit-autofill,
+.customInput input:-webkit-autofill:hover,
+.customInput input:-webkit-autofill:focus,
+.customInput textarea:-webkit-autofill,
+.customInput textarea:-webkit-autofill:hover,
+.customInput textarea:-webkit-autofill:focus,
+.customInput select:-webkit-autofill,
+.customInput select:-webkit-autofill:hover,
+.customInput select:-webkit-autofill:focus,
+input[type="text"].customInput {
+  -webkit-box-shadow: 0 0 0 40px #fff inset !important;
+  -webkit-text-fill-color: #000;
+}
+
+.customInput .ant-input-suffix .anticon {
+  color: #fff !important;
+}
+
+.signup:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.float-label {
+  position: relative;
+  margin-bottom: 12px;
+}
+
+.float-label input[type="text"] ~ label.label {
+  top: 5px;
+}
+
+.float-label input[type="text"].customInput.size-70 ~ label.label {
+  top: 15px;
+  font-size: 1.8em !important;
+}
+.float-label input[type="text"].customInput.size-50 ~ label.label {
+  top: 5px;
+  font-size: 1.8em !important;
+}
+.float-label input[type="password"].customInput.size-50 ~ label.label {
+  top: 10px;
+  font-size: 1.8em !important;
+}
+
+.float-label input[type="text"] ~ label.label-float {
+  top: -10px;
+}
+
+.float-label input[type="text"].customInput.size-70 ~ label.label-float {
+  font-size: 1.5em !important;
+  top: -18px;
+}
+
+.float-label input[type="text"].customInput.size-50 ~ label.label-float {
+  font-size: 1.2em !important;
+  top: -12px;
+}
+
+.label {
+  position: absolute;
+  top: 20px;
+  left: 12px;
+  font-weight: normal;
+  font-size: 18px !important;
+  transition: 0.2s ease all;
+  pointer-events: none;
+}
+
+.label-float {
+  top: 10px;
+  font-size: 15px !important;
+  background-color: #fff;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.ant-input-affix-wrapper ~ label.label {
+  top: 10px;
+  z-index: 99;
+}
+
+.ant-input-affix-wrapper ~ label.custom-password-input {
+  top: 5px;
+  z-index: 99;
+}
+
+.ant-input-affix-wrapper ~ label.label-float {
+  top: -10px;
+}
+
+.ant-input .customInput {
+  padding: 16px 12px 4px 11px;
+}
+
+textarea.customInput {
+  padding-top: 10px;
+}
+
+.ant-select-single.customInput
+  .ant-select-selector
+  .ant-select-selection-search {
+  top: 16px;
+}
+
+.ant-select.customInput ~ label.label {
+  top: 5px;
+}
+
+.ant-select ~ label.label {
+  top: 10px;
+}
+
+/* size-70 */
+.ant-select.customInput.size-70 ~ label.label {
+  top: 15px;
+  font-size: 1.8em !important;
+}
+
+.ant-select.customInput.size-70 ~ label.label-float {
+  top: -20px;
+}
+
+.ant-select.customInput.size-50 ~ label.label {
+  top: 8px;
+  font-size: 1.4em !important;
+}
+
+.ant-select.customInput.size-50 ~ label.label-float {
+  top: -12px;
+  font-size: 1.2em !important;
+}
+
+.ant-select.customInput.size-70
+  div.ant-select-selector
+  span.ant-select-selection-item {
+  font-size: 1.8em !important;
+}
+
+.ant-select ~ label.label-float,
+.ant-select.customInput ~ label.label-float {
+  top: -10px;
+}
+
+.ant-input-number-outlined.customInput + label {
+  top: 5px;
+  left: 30px;
+  z-index: 999;
+}
+
+.ant-input-number-outlined.customInput.size-70 + label {
+  top: 15px;
+  left: 40px;
+  z-index: 999;
+  font-size: 1.8em !important;
+}
+
+.ant-input-number-outlined.customInput.size-70 div div input {
+  font-size: 1.8em !important;
+}
+
+.ant-input-number-outlined.customInput.size-70 + label.label-float {
+  font-size: 1.5em !important;
+  left: 30px;
+  top: -15px;
+}
+
+.ant-input-number-outlined.customInput.size-70.no-prefix div input,
+.customInput.size-70.ant-input-number div input {
+  height: 70px;
+}
+
+.custom.customInput.size-70.ant-input-number div input {
+  font-size: 2em;
+  text-align: center;
+}
+.custom.customInput.size-70.with-prefix span.ant-input-number-prefix {
+  font-size: 2em;
+}
+
+.ant-input-number-outlined.customInput.size-70.no-prefix + label {
+  top: 15px;
+  left: 15px;
+  z-index: 999;
+}
+
+.ant-input-number-outlined.customInput.size-70.no-prefix + label.label-float {
+  font-size: 1.5em !important;
+  top: -15px;
+}
+
+.ant-input-number-outlined.customInput + label.label-float {
+  top: -10px;
+  left: 20px;
+}
+
+.ant-input-number-outlined.customInput.no-prefix + label.label-float {
+  top: -10px;
+  left: 15px;
+}
+
+textarea.customInput + label {
+  top: 5px;
+}
+
+textarea.customInput.size-70 + label {
+  top: 15px;
+  font-size: 1.8em !important;
+}
+
+textarea.customInput.size-70 + label.label-float {
+  top: -15px;
+  font-size: 1.5em !important;
+}
+
+textarea.customInput + label.label-float {
+  top: -10px;
+}
+
+/* special */
+textarea.customInput.special + label {
+  top: 25px;
+}
+
+textarea.customInput.special + label.label-float {
+  top: 10px;
+}
+
+.billing-button:hover {
+  border: 0.5px solid #2f54eb !important;
+}
+
+.custom-inputnumber div input.ant-input-number-input {
+  text-align: center;
+  min-width: 50px;
+}
+
+label.customCheckbox span span.ant-checkbox-inner {
+  width: 32px;
+  height: 32px;
+}
+
+label.customCheckbox span span.ant-checkbox-inner::after {
+  inset-inline-start: 35% !important;
+}
+
+.customInput.with-prefix ~ label {
+  top: 6px !important;
+  left: 40px !important;
+}
+
+.customInput.with-prefix ~ label.label-float {
+  top: -10px !important;
+  left: 20px !important;
+}
+
+.customInput.size-70.phone + label {
+  top: 15px;
+  left: 65px;
+  font-size: 1.8em !important;
+}
+
+.customInput.size-70.phone + label.label-float {
+  top: -15px;
+  left: 50px;
+  font-size: 1.5em !important;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* .no-leaf span span.ant-tree-iconEle {
+  display: none !important;
+} */
+
+.tree-title {
+  width: 100%;
+}
+
+.tree-title span.ant-tree-node-content-wrapper {
+  width: 100%;
+}
+
+.tree-title span.ant-tree-node-content-wrapper {
+  display: flex;
+}
+
+.tree-title
+  span.ant-tree-node-content-wrapper
+  span.ant-tree-title:not(.ant-tree-icon__customize) {
+  width: 100%;
+}
+
+.no-leaf-icon
+  div.ant-tree-list
+  div.ant-tree-list-holder
+  div
+  div.ant-tree-list-holder-inner
+  span.ant-tree-node-content-wrapper
+  span.ant-tree-iconEle {
+  display: none !important;
+}
+
+.site-tree-search-value {
+  color: #f50;
+}
+
+.ant-tree-switcher-line-icon svg {
+  font-size: 1.5em;
+}
+
+.ant-tree-switcher {
+  display: flex;
+}
+
+/* .ant-tree-switcher-leaf-line:after,
+.ant-tree-switcher-leaf-line:before {
+  height: 25px !important;
+} */
+
+.custom-item-select {
+  height: 50px !important;
+}
+
+.custom-item-select div.ant-select-selector {
+  height: 50px !important;
+  border-radius: 0 !important;
+  border: none !important;
+  border-bottom: 1px solid #aaa !important;
+  font-size: 1.75em !important;
+  padding-left: 5px !important;
+}
+
+.stock-item-select div.ant-select-selector input {
+  font-size: 2em !important;
+}
+
+.inputnum-align-end div input {
+  text-align: end !important;
+}
+
+.printer-container {
+  margin-left: 15px;
+}
+
+.custom-radio .ant-radio-wrapper {
+  margin-right: 8px;
+  position: relative;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.custom-radio .ant-radio {
+  position: relative;
+  display: inline-block;
+  line-height: 1;
+  white-space: nowrap;
+  vertical-align: middle;
+  outline: none;
+  cursor: pointer;
+  width: 20px; /* Adjust width as needed */
+  height: 20px; /* Adjust height as needed */
+}
+
+.custom-radio .ant-radio-input {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1;
+  cursor: pointer;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.custom-radio .ant-radio-inner {
+  position: relative;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 22px;
+  height: 22px;
+  background-color: #fff;
+  border-color: #d9d9d9;
+  border-style: solid;
+  border-width: 1px;
+  border-radius: 50%;
+  transition: all 0.3s;
+}
+
+.custom-radio .ant-radio-inner::after {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  left: 13px;
+  top: 13px;
+  border-radius: 8px;
+  display: table;
+  border-top: 0;
+  border-left: 0;
+  content: " ";
+  background-color: #1890ff;
+  opacity: 0;
+  transform: scale(0);
+  transition: all 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
+}
+
+.custom-radio .ant-radio-wrapper:hover .ant-radio,
+.custom-radio .ant-radio:hover .ant-radio-inner,
+.custom-radio .ant-radio-input:focus + .ant-radio-inner {
+  border-color: #1890ff;
+}
+
+.custom-radio .ant-radio-checked .ant-radio-inner {
+  border-color: #1890ff;
+}
+
+.custom-radio .ant-radio-checked .ant-radio-inner::after {
+  transform: scale(1);
+  opacity: 1;
+  transition: all 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
+}
+
+.custom-radio label span {
+  font-size: 1.5em;
+}
+
+.ant-drawer-content-wrapper {
+  border-radius: 10px;
+}
+
+.customSelect .ant-select-selector {
+  font-size: 1em !important;
+}
+
+.align-end-input-num div.ant-input-number-input-wrap input:first-child {
+  text-align: end;
+  padding-right: 10px;
+}
+
+.no-border-radius-autocomplete div {
+  border-radius: 0 !important;
+}
+
+.no-border-radius-autocomplete div span input {
+  font-size: 1.5em !important;
+}
+
+.pos-autocomplete-popup * div.ant-select-item.ant-select-item-option-active {
+  background-color: rgba(41, 75, 15, 0.35) !important;
+}
+
+.tender-bottom-group div:hover {
+  background-color: #eee;
+}
+
+.ant-tree-switcher.ant-tree-switcher-noop {
+  display: none !important;
+}
+
+.custom-select {
+  padding: 0 !important;
+  padding-right: 10px !important;
+}
+
+.custom-select-new-user .ant-select-selection-item {
+  font-size: 1.5em !important;
+}
+
+.disable-content::after {
+  content: "";
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(200, 200, 200, 0.2);
+  backdrop-filter: blur(10px);
+  z-index: 999999;
+}
+
+.disable-content::before {
+  content: "DISABLED BY ENCODER";
+  position: absolute;
+  font-size: 2.5em;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999999;
+}
+
+.header {
+  align-items: center !important;
+}
+
+.card-link .content div.image {
+  display: none !important;
+}
+
+.card-link .content div.text {
+  font-size: 1.5em !important;
+}
+
+.notif-list {
+  display: flex !important;
+  justify-content: space-between;
+}
+
+.notif-list:hover .notif-delete-btn {
+  display: block;
+}
+
+.notif-list:hover {
+  background-color: #00ff0011;
+  cursor: pointer;
+}
+
+.ant-collapse-header div.ant-collapse-expand-icon {
+  margin-top: 3px;
+}
+
+.selected-row,
+.selected-row .ant-table-cell-row-hover {
+  background-color: #98c04b !important;
+  color: #fff !important;
+}
+
+.ant-float-btn-icon {
+  width: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
