@@ -9,6 +9,8 @@ import {
 } from "./schema.interface";
 import { NewUser } from ".";
 
+export type StockType = "stock-in" | "stock-out" | "misc";
+
 export interface POSButtonProps {
   label: string;
   value: string;
@@ -121,4 +123,20 @@ export interface NewPortalProps {
   name: string;
   assignTo: string[];
   _id?: string;
+}
+
+export interface NewItemProps {
+  title: string;
+  open: boolean;
+  close: () => void;
+  parentId?: string;
+  onSave: (str: any) => Promise<boolean>;
+}
+
+export interface StockHistory {
+  _id?: string;
+  date?: Date;
+  type?: StockType;
+  quantity?: number;
+  name?: string;
 }
