@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Affix, Layout } from "antd";
 import { Content, Header, Sider } from "@/components/layout";
 
@@ -105,7 +105,7 @@ const Admin = () => {
           />
         </Affix>
         <Layout>
-          <Header />
+          <Header selectedKey={selectedKey} />
           <Content selectedKey={selectedKey}>
             {selectedKey == "dashboard" && <Dashboard />}
             {selectedKey == "users" && <User />}

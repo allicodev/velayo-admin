@@ -3,6 +3,7 @@ import {
   Button,
   DatePicker,
   Input,
+  Modal,
   Select,
   Space,
   Table,
@@ -10,6 +11,7 @@ import {
   Typography,
   message,
 } from "antd";
+import { SettingOutlined } from "@ant-design/icons";
 import Excel from "exceljs";
 
 import {
@@ -46,6 +48,10 @@ const TransactionHistory = () => {
   const [branches, setBranches] = useState<BranchData[]>([]);
   const [fetching, setFetching] = useState(false);
   const [tellerName, setTellerName] = useState("");
+  const [width, setWidth] = useState(0);
+  const [openFilter, setOpenFilter] = useState(false);
+
+  const isMobile = width < 600;
 
   const [filter, setFilter] = useState<FilterProps>({
     status: "completed",
@@ -68,25 +74,29 @@ const TransactionHistory = () => {
   const column: TableProps<Transaction>["columns"] = [
     {
       title: "Ref Code",
+      width: isMobile ? 15 : 70,
       dataIndex: "reference",
     },
     {
       title: "Branch Name",
       dataIndex: "branchId",
+      width: isMobile ? 15 : 70,
       render: (_) => (_ as BranchData)?.name ?? _,
     },
     {
       title: "Date/Time",
+      width: isMobile ? 25 : 70,
       dataIndex: "createdAt",
       render: (_) => dayjs(_).format("MM/DD/YYYY HH:mm"),
     },
     {
       title: "Transaction Type",
+      width: isMobile ? 25 : 70,
       dataIndex: "type",
     },
     {
       title: "Biller Name / Product Code",
-      width: 200,
+      width: isMobile ? 40 : 200,
       dataIndex: "sub_type",
       render: (_) =>
         _ ?? (
@@ -97,6 +107,7 @@ const TransactionHistory = () => {
     },
     {
       title: "Amount",
+      width: isMobile ? 15 : 80,
       align: "end",
       render: (_, row) =>
         row.type == "miscellaneous" ||
@@ -108,6 +119,7 @@ const TransactionHistory = () => {
     {
       title: "Service Fee",
       align: "end",
+      width: isMobile ? 15 : 80,
       dataIndex: "fee",
       render: (_) => _?.toFixed(2) ?? "0.00",
     },
@@ -126,6 +138,7 @@ const TransactionHistory = () => {
         </div>
       ),
       align: "end",
+      width: isMobile ? 20 : 100,
       render: (_, e) =>
         ((e.amount ?? 0) +
           (e.type == "wallet" &&
@@ -141,12 +154,15 @@ const TransactionHistory = () => {
     {
       title: "Teller",
       align: "center",
+      width: isMobile ? 30 : 100,
       dataIndex: "tellerId",
       render: (_) => (_ as User)?.name ?? _,
     },
     {
       title: "Status",
+      width: isMobile ? 15 : 100,
       align: "center",
+      fixed: "right",
       render: (_, row) => {
         let status = row?.history.at(-1)?.status;
         return (
@@ -177,7 +193,7 @@ const TransactionHistory = () => {
       <Space size={[32, 0]}>
         <Select
           size="large"
-          style={{ width: 200 }}
+          style={{ width: 150 }}
           placeholder="Select a Teller"
           value={tellerName}
           options={tellers.map((e) => ({
@@ -229,7 +245,7 @@ const TransactionHistory = () => {
         />
         <Select
           size="large"
-          style={{ width: 200 }}
+          style={{ width: 120 }}
           placeholder="Select a Status"
           value={filter.status}
           options={["completed", "failed", "pending"].map((e) => ({
@@ -243,7 +259,7 @@ const TransactionHistory = () => {
         />
         <Input
           size="large"
-          style={{ width: 300 }}
+          style={{ width: 200 }}
           placeholder="Search a Biller"
           onChange={(e) => setFilter({ ...filter, sub_type: e.target.value })}
           allowClear
@@ -273,6 +289,49 @@ const TransactionHistory = () => {
       </Button>
     </div>
   );
+
+  const getHeaderMobile = () => {
+    return (
+      <div
+        style={{
+          display: "flex",
+          gap: 10,
+          justifyContent: "end",
+        }}
+      >
+        <Button
+          type="primary"
+          size="large"
+          icon={<SettingOutlined />}
+          onClick={() => setOpenFilter(true)}
+        >
+          Filter Options
+        </Button>
+        <Button
+          type="primary"
+          size="large"
+          onClick={() => {
+            (async () => {
+              await getTransaction({
+                page: 1,
+                pageSize: 99999999,
+                tellerId: filter.tellerId ?? "",
+                type: filter.type ?? undefined,
+                status: filter.status,
+                sub_type: filter.sub_type ?? null,
+                fromDate: filter.fromDate ?? null,
+                toDate: filter.toDate ?? null,
+              }).then((e) => {
+                if (typeof e == "object" && e.length > 0) exportExcel(e);
+              });
+            })();
+          }}
+        >
+          EXPORT
+        </Button>
+      </div>
+    );
+  };
 
   const getTransaction = async ({
     page,
@@ -580,17 +639,28 @@ const TransactionHistory = () => {
     updateTotalCalculate();
   }, [filter]);
 
+  useEffect(() => {
+    function handleResize() {
+      setWidth(window.innerWidth);
+    }
+
+    window.addEventListener("resize", handleResize);
+    handleResize(); // Set initial width
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
     <>
       <Table
-        title={getHeader}
+        title={isMobile ? getHeaderMobile : getHeader}
         columns={column}
         loading={fetching}
         dataSource={transactions}
         rowKey={(e) => e._id ?? ""}
         scroll={{
           y: "calc(100vh - 30em)",
-          x: "100%",
+          x: isMobile ? "300vw" : undefined,
         }}
         pagination={{
           defaultPageSize: 10,
@@ -669,6 +739,143 @@ const TransactionHistory = () => {
         sticky
         bordered
       />
+      {/* context */}
+      <Modal
+        open={openFilter}
+        onCancel={() => setOpenFilter(false)}
+        closable={false}
+        footer={
+          <Space>
+            <Button
+              size="large"
+              onClick={() => {
+                setFilter({
+                  status: "completed",
+                  type: null,
+                  tellerId: null,
+                  encoderId: null,
+                  sub_type: null,
+                  fromDate: null,
+                  toDate: null,
+                });
+                setOpenFilter(false);
+                message.success("Filter cleared");
+              }}
+            >
+              RESET
+            </Button>
+            <Button
+              type="primary"
+              size="large"
+              onClick={() => {
+                setOpenFilter(false);
+                message.success("Filter applied");
+              }}
+            >
+              APPLY FILTER
+            </Button>
+          </Space>
+        }
+        destroyOnClose
+      >
+        <Space size={[16, 16]} direction="vertical">
+          <div>
+            <label>Select a User</label> <br />
+            <Select
+              size="large"
+              style={{ width: 150 }}
+              placeholder="Select a Teller"
+              value={tellerName}
+              options={tellers.map((e) => ({
+                label: `[${e.role.toLocaleUpperCase()}] ${e.name}`,
+                value: e.name,
+                key: `${e._id}_${e.role}`,
+              }))}
+              onChange={(_, e: any) => {
+                // setFilter({ ...filter, tellerId: e?.key ?? null });
+                if (e) {
+                  let [id, role] = e?.key.split("_");
+                  setFilter({
+                    ...filter,
+                    [role == "teller" ? "tellerId" : "encoderId"]: id ?? null,
+                  });
+                } else {
+                  setFilter({ ...filter, tellerId: null, encoderId: null });
+                }
+
+                setTellerName(e?.label.split("]")[1]);
+              }}
+              allowClear
+            />
+          </div>
+          <div>
+            <label>Date</label> <br />
+            <DatePicker.RangePicker
+              size="large"
+              format="MMMM DD, YYYY"
+              onChange={(e) => {
+                setFilter({
+                  ...filter,
+                  fromDate: e ? e[0] : null,
+                  toDate: e ? e[1] : null,
+                });
+              }}
+            />
+          </div>
+          <div>
+            <label>Transaction Type</label> <br />
+            <Select
+              size="large"
+              style={{ width: 200 }}
+              placeholder="Select a Transaction Type"
+              value={filter.type}
+              options={[
+                "bills",
+                "wallet",
+                "eload",
+                "miscellaneous",
+                "shopee",
+              ].map((e) => ({
+                label: e.toLocaleUpperCase(),
+                value: e,
+              }))}
+              onChange={(_, e: any) =>
+                setFilter({ ...filter, type: e?.value ?? null })
+              }
+              allowClear
+            />
+          </div>
+          <div>
+            <label>Status</label> <br />
+            <Select
+              size="large"
+              style={{ width: 120 }}
+              placeholder="Select a Status"
+              value={filter.status}
+              options={["completed", "failed", "pending"].map((e) => ({
+                label: e.toLocaleUpperCase(),
+                value: e,
+              }))}
+              onChange={(_, e: any) =>
+                setFilter({ ...filter, status: e?.value ?? null })
+              }
+              allowClear
+            />
+          </div>
+          <div>
+            <label>Search biller</label> <br />
+            <Input
+              size="large"
+              style={{ width: 200 }}
+              placeholder="Search a Biller"
+              onChange={(e) =>
+                setFilter({ ...filter, sub_type: e.target.value })
+              }
+              allowClear
+            />
+          </div>
+        </Space>
+      </Modal>
     </>
   );
 };

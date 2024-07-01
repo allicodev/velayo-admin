@@ -6,9 +6,16 @@ type DashCardProps = {
   subText: string;
   value: string;
   color: string;
+  mobile?: boolean;
 };
 
-const DashboardCard = ({ icon, subText, value, color }: DashCardProps) => {
+const DashboardCard = ({
+  icon,
+  subText,
+  value,
+  color,
+  mobile,
+}: DashCardProps) => {
   return (
     <div
       style={{
@@ -22,6 +29,7 @@ const DashboardCard = ({ icon, subText, value, color }: DashCardProps) => {
         padding: "32px 25px 32px 25px",
         borderRadius: 10,
         border: "1px solid #f0f0f0",
+        ...(mobile ? { flexBasis: "auto", flexGrow: 0, flexShrink: 0 } : {}),
       }}
     >
       <div

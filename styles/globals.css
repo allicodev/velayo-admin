@@ -110,3 +110,6 @@ canvas {
     color-scheme: dark;
   }
 }
+.ant-table-content table colgroup col {
+  min-width: 100px;
+}

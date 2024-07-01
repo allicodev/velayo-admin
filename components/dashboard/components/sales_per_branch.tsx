@@ -6,12 +6,13 @@ import ChartDataLabels from "chartjs-plugin-datalabels";
 
 ChartJS.register(ArcElement, Tooltip, Title, Legend, ChartDataLabels);
 
-const SalesPerBranch = () => {
+const SalesPerBranch = ({ isMobile }: { isMobile?: boolean }) => {
   return (
     <Card
       styles={{
         body: {
           height: 350,
+          marginTop: 0,
         },
       }}
     >
@@ -26,16 +27,19 @@ const SalesPerBranch = () => {
       >
         SALES PER BRANCH
       </Typography.Title>
-      <Typography.Text
-        type="secondary"
-        style={{
-          display: "block",
-          textAlign: "center",
-          letterSpacing: 2.5,
-        }}
-      >
-        FROM SALES INVENTORY PER BRANCH
-      </Typography.Text>
+      {!isMobile && (
+        <Typography.Text
+          type="secondary"
+          style={{
+            display: "block",
+            textAlign: "center",
+            letterSpacing: 2.5,
+          }}
+        >
+          FROM SALES INVENTORY PER BRANCH
+        </Typography.Text>
+      )}
+
       <div
         style={{
           height: 270,

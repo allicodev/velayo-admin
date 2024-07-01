@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { GetServerSideProps } from "next";
 import { Menu, Typography, Dropdown, Layout, Affix, Avatar, Image } from "antd";
 import { LogoutOutlined, UserOutlined } from "@ant-design/icons";
@@ -10,14 +10,30 @@ import { AuthStore, useUserStore } from "@/provider/context";
 import { verify } from "@/assets/ts/jwt_jose";
 
 const Sider = ({ selectedIndex, selectedKey, items }: SiderProps) => {
+  const [width, setWidth] = useState(0);
+
+  useEffect(() => {
+    function handleResize() {
+      setWidth(window.innerWidth);
+    }
+
+    window.addEventListener("resize", handleResize);
+    handleResize(); // Set initial width
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
     <Affix>
       <Layout.Sider
         theme="light"
-        collapsible
+        defaultCollapsed={true}
         style={{
           boxShadow: "2px 0 1px -2px #888",
+          height: width < 600 ? "100vh" : undefined,
         }}
+        trigger={width < 600 ? null : undefined}
+        collapsible
       >
         <div
           style={{
@@ -35,7 +51,6 @@ const Sider = ({ selectedIndex, selectedKey, items }: SiderProps) => {
           items={items}
           mode="inline"
           defaultSelectedKeys={["dashboard"]}
-          inlineCollapsed={false}
           style={{
             height: "81vh",
             fontSize: 20,
@@ -46,7 +61,20 @@ const Sider = ({ selectedIndex, selectedKey, items }: SiderProps) => {
   );
 };
 
-const Header = () => {
+const Header = ({ selectedKey }: { selectedKey?: string }) => {
+  const [width, setWidth] = useState(0);
+
+  useEffect(() => {
+    function handleResize() {
+      setWidth(window.innerWidth);
+    }
+
+    window.addEventListener("resize", handleResize);
+    handleResize(); // Set initial width
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const { currentUser } = useUserStore();
   return (
     <>
@@ -56,12 +84,17 @@ const Header = () => {
             backgroundColor: "#fff",
             display: "flex",
             alignItems: "center",
-            justifyContent: "end",
+            justifyContent: width < 600 ? "space-between" : "end",
             height: 60,
             width: "100%",
             paddingInline: 10,
           }}
         >
+          {width < 600 && (
+            <Typography.Text style={{ fontSize: "1.5em" }}>
+              {selectedKey?.toLocaleUpperCase()}
+            </Typography.Text>
+          )}
           <div
             style={{
               display: "flex",
@@ -120,26 +153,29 @@ const Header = () => {
 };
 
 const Content = ({ selectedKey, children }: ContentProps) => {
+  const [width, setWidth] = useState(0);
+
+  useEffect(() => {
+    function handleResize() {
+      setWidth(window.innerWidth);
+    }
+
+    window.addEventListener("resize", handleResize);
+    handleResize(); // Set initial width
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
     <Layout
       style={{
         backgroundColor: "#f6f8fb",
         minHeight: "94vh",
         padding: "10px",
-        overflow: "hidden",
+        overflow: width < 600 ? "scroll" : "hidden",
       }}
     >
-      <PageHeader
-        title={
-          selectedKey != "dashboard" && (
-            <span style={{ fontFamily: "Abel", fontSize: "1.2em" }}>
-              {selectedKey.toString().toUpperCase()}
-            </span>
-          )
-        }
-      >
-        {children}
-      </PageHeader>
+      {children}
     </Layout>
   );
 };

@@ -1,13 +1,38 @@
 @import url("https://fonts.googleapis.com/css2?family=Abel&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@600&display=swap");
 
-.main-content {
-  height: 100vh;
-  padding: 10px;
-  box-sizing: border-box;
-  background-color: #98c04b;
+.main-container {
+  padding: 60px;
   position: relative;
+  z-index: 99;
+  background-color: #eee;
 }
+
+/* .main-container::before {
+  content: "";
+  z-index: 0;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100vw;
+  height: 350px;
+  background-image: url("../public/wave.svg");
+  background-size: cover;
+  background-repeat: no-repeat;
+} */
+
+/* .main-container::after {
+  content: "";
+  z-index: -1;
+  position: absolute;
+  top: -120px;
+  left: 0;
+  width: 100vw;
+  height: 350px;
+  background-image: url("../public/wave1.svg");
+  background-size: cover;
+  background-repeat: no-repeat;
+} */
 
 .body-content {
   width: 100%;
@@ -22,7 +47,7 @@
   background-size: 100% 100%;
   background-position: center;
   background-repeat: no-repeat;
-  height: 100vh;
+  height: calc(100vh - 40px);
   display: flex;
   align-items: center;
   justify-content: center;

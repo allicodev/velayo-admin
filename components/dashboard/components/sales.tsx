@@ -15,12 +15,13 @@ import jason from "@/assets/json/constant.json";
 
 ChartJS.register(Tooltip, Title, Legend, PointElement, LineElement, Filler);
 
-const SalesAndServices = () => {
+const SalesAndServices = ({ isMobile }: { isMobile?: boolean }) => {
   return (
     <Card
       styles={{
         body: {
-          height: 485,
+          height: 500,
+          paddingBottom: 70,
         },
       }}
     >
@@ -29,6 +30,7 @@ const SalesAndServices = () => {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
+          flexDirection: isMobile ? "column" : "row",
         }}
       >
         <Typography.Title

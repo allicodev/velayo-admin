@@ -26,6 +26,7 @@ import {
 } from "@/types";
 import NewUser from "./new_user";
 import UserService from "@/provider/user.service";
+import { PageHeader } from "@ant-design/pro-layout";
 
 const User = ({ title, style, extra, onCellClick }: BasicContentProps) => {
   const [openedNewUser, setOpenedNewUser] = useState(false);
@@ -35,44 +36,56 @@ const User = ({ title, style, extra, onCellClick }: BasicContentProps) => {
   const [total, setTotal] = useState(0);
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
 
+  const [width, setWidth] = useState(0);
+
+  const isMobile = width < 600;
+
   const user = new UserService();
 
   const columns: TableProps<UserProp>["columns"] = [
     {
       title: "ID",
       key: "id",
+      width: 120,
       dataIndex: "employeeId",
     },
     {
       title: "Name",
       key: "name",
       dataIndex: "name",
+      width: 170,
     },
     {
       title: "Username",
       key: "username",
+      width: 100,
       dataIndex: "username",
     },
     {
       title: "Email",
       key: "email",
+      width: 250,
       dataIndex: "email",
     },
     {
       title: "Role",
       key: "role",
       dataIndex: "role",
+      width: 120,
       render: (_) => _.toLocaleUpperCase(),
     },
     {
       title: "Date Created",
       key: "date_created",
       dataIndex: "createdAt",
+      width: 150,
       render: (date) => dayjs(date).format("MMMM DD, YYYY"),
     },
     {
       title: "Actions",
       align: "center",
+      fixed: "right",
+      width: 100,
       render: (_, row) => (
         <Space>
           <Tooltip title="Edit User">
@@ -178,24 +191,59 @@ const User = ({ title, style, extra, onCellClick }: BasicContentProps) => {
     getUsers({ page: 1, pageSize: 10, role: selectedRole });
   }, [trigger, open, selectedRole]);
 
+  useEffect(() => {
+    function handleResize() {
+      setWidth(window.innerWidth);
+    }
+
+    window.addEventListener("resize", handleResize);
+    handleResize(); // Set initial width
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
-    <>
-      <Button
-        icon={<UserAddOutlined />}
-        type="primary"
-        size="large"
-        onClick={(e) => setOpenedNewUser(true)}
-        style={{ marginBottom: 10 }} //float: "right",
-      >
-        New User
-      </Button>
+    <PageHeader
+      title={isMobile ? "" : "Users"}
+      extra={
+        !isMobile ? (
+          <Button
+            icon={<UserAddOutlined />}
+            type="primary"
+            size="large"
+            onClick={(e) => setOpenedNewUser(true)}
+            style={{ marginBottom: 10, width: 150 }}
+          >
+            {isMobile ? "NEW" : "New User"}
+          </Button>
+        ) : null
+      }
+    >
+      {isMobile && (
+        <Button
+          icon={<UserAddOutlined />}
+          type="primary"
+          size="large"
+          onClick={(e) => setOpenedNewUser(true)}
+          style={{ marginBottom: 10, width: 150 }}
+        >
+          NEW
+        </Button>
+      )}
       <Table
         dataSource={users}
-        columns={columns}
+        columns={columns.filter((e) =>
+          isMobile
+            ? !["username", "email", "date_created"].includes(
+                e.key?.toString() ?? ""
+              )
+            : true
+        )}
         style={style}
         rowKey={(e) => e.username}
         scroll={{
           y: "58vh",
+          x: true,
         }}
         onRow={(data) => {
           return {
@@ -225,7 +273,7 @@ const User = ({ title, style, extra, onCellClick }: BasicContentProps) => {
         onSave={handleSaveUser}
         user={openedUser}
       />
-    </>
+    </PageHeader>
   );
 };
 

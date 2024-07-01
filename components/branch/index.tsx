@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Space, Tabs, Typography, message } from "antd";
+import { Button, Space, Tabs, Tooltip, Typography, message } from "antd";
 import { EditOutlined, PlusOutlined } from "@ant-design/icons";
 
 import type { Branch, BranchData } from "@/types";
@@ -18,6 +18,7 @@ const Branch = () => {
     open: false,
     data: null,
   });
+  const [width, setWidth] = useState(0);
 
   const branch = new BranchService();
 
@@ -46,6 +47,17 @@ const Branch = () => {
     })(branch);
   }, [trigger]);
 
+  useEffect(() => {
+    function handleResize() {
+      setWidth(window.innerWidth);
+    }
+
+    window.addEventListener("resize", handleResize);
+    handleResize(); // Set initial width
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
     <div
       style={{
@@ -67,7 +79,7 @@ const Branch = () => {
             icon={<PlusOutlined />}
             style={{ margin: "0 10px 10px 10px" }}
           >
-            NEW BRANCH
+            {width < 600 ? "" : "NEW BRANCH"}
           </Button>
         }
         items={branches.map((_, i) => {
