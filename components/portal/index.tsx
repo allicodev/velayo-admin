@@ -21,6 +21,7 @@ import {
   SettingOutlined,
   DeleteOutlined,
   MessageOutlined,
+  LeftOutlined,
 } from "@ant-design/icons";
 
 import {
@@ -81,9 +82,13 @@ const Portal = () => {
   const portal = new PortalService();
   const log = new LogService();
 
+  const [width, setWidth] = useState(0);
+  const isMobile = width < 600;
+
   const column: TableProps<PortalProp>["columns"] = [
     {
       title: "Portal Name",
+      width: isMobile ? 100 : undefined,
       render: (_, row) => (
         <Badge
           count={
@@ -104,11 +109,12 @@ const Portal = () => {
     {
       title: "Assigned To",
       dataIndex: "assignTo",
+      width: isMobile ? 100 : undefined,
       render: (_) => _.map((e: any) => e.toLocaleUpperCase()).join(", "),
     },
     {
       title: "Current balance",
-      width: 200,
+      width: isMobile ? 100 : 200,
       align: "center",
       dataIndex: "currentBalance",
       render: (_) =>
@@ -227,7 +233,7 @@ const Portal = () => {
         type="primary"
         onClick={() => setOpenNewPortal({ open: true })}
       >
-        New Portal
+        {isMobile ? "New" : "New Portal"}
       </Button>
     </Flex>
   );
@@ -287,17 +293,18 @@ const Portal = () => {
     }
   };
 
-  const fetchPortal = async (prop?: FilterProps) => {
+  const fetchPortal = async (prop?: FilterProps, width?: number) => {
     let res = await portal.getPortal({ ...prop, project: { logs: 0 } });
     setOpenNewPortal({ open: false, portal: null });
     if (res?.success ?? false) {
       setPortals(res?.data ?? []);
       if (res?.data && res?.data?.length > 0) {
-        setSelectedPortal(
-          selectedPortal == null
-            ? res?.data[0]
-            : res?.data.filter((e) => e._id == selectedPortal?._id)[0]
-        );
+        if (width && width > 600)
+          setSelectedPortal(
+            selectedPortal == null
+              ? res?.data[0]
+              : res?.data.filter((e) => e._id == selectedPortal?._id)[0]
+          );
       }
     }
   };
@@ -322,62 +329,98 @@ const Portal = () => {
   };
 
   useEffect(() => {
-    fetchPortal(filter);
-  }, [filter]);
-
-  useEffect(() => {
     if (selectedPortal != null) fetchLogs(selectedPortal?._id ?? "");
   }, [selectedPortal]);
 
+  useEffect(() => {
+    function handleResize() {
+      setWidth(window.innerWidth);
+      fetchPortal(filter, window.innerWidth);
+    }
+
+    window.addEventListener("resize", handleResize);
+    handleResize();
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, [filter]);
+
   return (
     <>
-      <div
-        style={{
-          padding: 10,
-        }}
-      >
-        <Row gutter={16}>
-          <Col span={13}>
+      {isMobile && selectedPortal != null && logs.length > 0 ? (
+        <>
+          <Button
+            icon={<LeftOutlined />}
+            size="large"
+            type="text"
+            style={{ width: 70, marginBottom: 10 }}
+            onClick={() => setSelectedPortal(null)}
+          >
+            BACK
+          </Button>
+          <Col span={24}>
             <Table
-              title={getHeader}
-              dataSource={portals.filter((e) =>
-                e.name.toLocaleLowerCase().includes(search.toLocaleLowerCase())
-              )}
-              columns={column}
-              rowKey={(e) => e._id ?? ""}
-              style={{
-                cursor: "pointer",
+              title={getHeader2}
+              columns={column2}
+              dataSource={logs}
+              pagination={{
+                size: "small",
+                pageSize: 8,
               }}
-              scroll={{
-                y: "65vh",
-                x: "100%",
-              }}
-              onRow={(row) => {
-                return {
-                  onClick: () => setSelectedPortal(row),
-                };
-              }}
-              rowClassName={rowClassName}
-              pagination={false}
-              bordered
+              loading={fetching}
             />
           </Col>
-          {logs.length > 0 && selectedPortal != null && (
-            <Col span={11}>
+        </>
+      ) : (
+        <div
+          style={{
+            padding: 10,
+          }}
+        >
+          <Row gutter={16}>
+            <Col span={isMobile ? 24 : 13}>
               <Table
-                title={getHeader2}
-                columns={column2}
-                dataSource={logs}
-                pagination={{
-                  size: "small",
-                  pageSize: 8,
+                title={getHeader}
+                dataSource={portals.filter((e) =>
+                  e.name
+                    .toLocaleLowerCase()
+                    .includes(search.toLocaleLowerCase())
+                )}
+                columns={column}
+                rowKey={(e) => e._id ?? ""}
+                style={{
+                  cursor: "pointer",
                 }}
-                loading={fetching}
+                scroll={{
+                  y: "65vh",
+                  x: isMobile ? "100vw" : "100%",
+                }}
+                onRow={(row) => {
+                  return {
+                    onClick: () => setSelectedPortal(row),
+                  };
+                }}
+                rowClassName={rowClassName}
+                pagination={false}
+                bordered
               />
             </Col>
-          )}
-        </Row>
-      </div>
+            {logs.length > 0 && selectedPortal != null && (
+              <Col span={11}>
+                <Table
+                  title={getHeader2}
+                  columns={column2}
+                  dataSource={logs}
+                  pagination={{
+                    size: "small",
+                    pageSize: 8,
+                  }}
+                  loading={fetching}
+                />
+              </Col>
+            )}
+          </Row>
+        </div>
+      )}
 
       {/* context */}
       <NewPortal
@@ -404,6 +447,7 @@ const Portal = () => {
         open={openRequestBalance.open}
         portal={openRequestBalance.portal!}
         close={() => setOpenRequestBalance({ open: false, portal: null })}
+        isMobile={isMobile}
       />
     </>
   );

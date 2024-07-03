@@ -9,9 +9,10 @@ interface MyBasicProps {
   open: boolean;
   close: () => void;
   portal: Portal;
+  isMobile?: boolean;
 }
 
-const RequestBalance = ({ open, close, portal }: MyBasicProps) => {
+const RequestBalance = ({ open, close, portal, isMobile }: MyBasicProps) => {
   const [requests, setRequests] = useState<BalanceRequest[]>([]);
   const [trigger, setTrigger] = useState(0);
 
@@ -62,9 +63,11 @@ const RequestBalance = ({ open, close, portal }: MyBasicProps) => {
     {
       title: "Functions",
       align: "center",
+      fixed: isMobile ? "right" : undefined,
+      width: isMobile ? 150 : undefined,
       render: (_, row) =>
         row.status == "pending" ? (
-          <Space>
+          <Space direction={isMobile ? "vertical" : "horizontal"}>
             <Button
               type="primary"
               onClick={() => handleCormfirmRequest(row._id)}
@@ -159,6 +162,9 @@ const RequestBalance = ({ open, close, portal }: MyBasicProps) => {
       <Table
         columns={columns}
         dataSource={requests}
+        scroll={{
+          x: isMobile ? "100vw" : undefined,
+        }}
         pagination={{
           onChange(page, pageSize) {
             fetchRequest({ page, pageSize });

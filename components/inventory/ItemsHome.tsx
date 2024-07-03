@@ -3,14 +3,11 @@ import {
   Button,
   Col,
   Divider,
-  Drawer,
-  FloatButton,
   Input,
   InputNumber,
   Popconfirm,
   Row,
   Select,
-  Space,
   Tooltip,
   Tree,
   Typography,
@@ -23,8 +20,8 @@ import {
   EditOutlined,
   CloseOutlined,
   SaveOutlined,
+  LeftOutlined,
 } from "@ant-design/icons";
-import axios from "axios";
 
 // TODO: remove white space, connect them into 1 or add smart search (smart via word and not a whole sentence)
 
@@ -84,6 +81,10 @@ const ItemsHome = ({ extraData }: BasicContentProps) => {
     selectedBranch: null,
   });
 
+  // * mobile
+  const [width, setWidth] = useState(0);
+  const isMobile = width < 600;
+
   const getItemName = (id: string) => items.filter((e) => e._id == id)[0].name;
 
   const handleSaveItem = () => {
@@ -139,7 +140,8 @@ const ItemsHome = ({ extraData }: BasicContentProps) => {
               parseTree(res.data as ItemData[], null),
               null,
               handleItemOnAddClick,
-              handlePurgeItem
+              handlePurgeItem,
+              isMobile
             )
           );
         }
@@ -175,7 +177,7 @@ const ItemsHome = ({ extraData }: BasicContentProps) => {
     })(itemService);
   };
 
-  const highlightSearchItems = (search: string) => {
+  const highlightSearchItems = (search: string, isMobile: boolean) => {
     let keys: React.Key[] = [];
     const nodeUpdater = (nodes: TreeNode[]): TreeNode[] => {
       const nodeUpdate = (_node: TreeNode): TreeNode => {
@@ -195,7 +197,7 @@ const ItemsHome = ({ extraData }: BasicContentProps) => {
             }}
           >
             {startIndex > -1 ? (
-              <div style={{ fontSize: "1.8em" }}>
+              <div style={{ fontSize: isMobile ? "1.4em" : "1.8em" }}>
                 {startIndex != 0 ? (
                   <span>{_node.rawTitle.substring(0, startIndex)}</span>
                 ) : null}
@@ -211,7 +213,12 @@ const ItemsHome = ({ extraData }: BasicContentProps) => {
                 )}
               </div>
             ) : (
-              <span style={{ marginRight: 10, fontSize: "1.8em" }}>
+              <span
+                style={{
+                  marginRight: 10,
+                  fontSize: isMobile ? "1.4em" : "1.8em",
+                }}
+              >
                 {_node.rawTitle}
               </span>
             )}
@@ -368,7 +375,7 @@ const ItemsHome = ({ extraData }: BasicContentProps) => {
         <Row style={{ border: "1px solid #aaa" }}>
           <Col span={24}>
             <Typography.Title
-              level={2}
+              level={isMobile ? 3 : 2}
               style={{
                 textAlign: "center",
                 padding: 5,
@@ -424,11 +431,17 @@ const ItemsHome = ({ extraData }: BasicContentProps) => {
                 flexDirection: "column",
               }}
             >
-              {["Item Code", "Name", "Unit", "Cost", "Price"].map((e, i) => (
+              {[
+                isMobile ? "Code" : "Item Code",
+                "Name",
+                "Unit",
+                "Cost",
+                "Price",
+              ].map((e, i) => (
                 <strong
                   key={e}
                   style={{
-                    fontSize: "2em",
+                    fontSize: isMobile ? "1.7em" : "2em",
                     borderBottom: i == 4 ? "" : "1px solid #aaa",
                     padding: 5,
                     height: 50,
@@ -472,7 +485,7 @@ const ItemsHome = ({ extraData }: BasicContentProps) => {
                     <p
                       key={`value-${i}`}
                       style={{
-                        fontSize: "2em",
+                        fontSize: isMobile ? "1.7em" : "2em",
                         borderBottom: i == 4 ? "" : "1px solid #aaa",
                         padding: 5,
                         background: i == 0 ? "#eee" : "",
@@ -565,150 +578,183 @@ const ItemsHome = ({ extraData }: BasicContentProps) => {
   useEffect(() => {
     setWindow(window);
     fetchItems();
+
+    function handleResize() {
+      setWidth(window.innerWidth);
+    }
+
+    window.addEventListener("resize", handleResize);
+    handleResize(); // Set initial width
+
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   return (
     <>
-      <Row gutter={[16, 16]}>
-        <Col span={14}>
-          <div style={{ display: "flex", gap: 10 }}>
-            <div style={{ display: "flex", width: "100%" }}>
-              <Input
-                size="large"
-                placeholder="Search an item..."
-                value={searchValue}
-                style={{
-                  height: 55,
-                  fontSize: "1.5em",
-                  borderTopRightRadius: 0,
-                  borderBottomRightRadius: 0,
+      {isMobile && selectedItem != null ? (
+        <>
+          <Button
+            icon={<LeftOutlined />}
+            size="large"
+            type="text"
+            style={{ width: 70, marginBottom: 10 }}
+            onClick={() => setSelectedItem(null)}
+          >
+            BACK
+          </Button>
+          {renderSelectedItem(selectedItem)}
+        </>
+      ) : (
+        <Row gutter={[16, 16]}>
+          <Col span={isMobile ? 24 : 14}>
+            <div
+              style={{
+                display: "flex",
+                gap: 10,
+                flexDirection: isMobile ? "column" : "row",
+              }}
+            >
+              <div style={{ display: "flex", width: "100%", flex: 2 }}>
+                <Input
+                  size="large"
+                  placeholder="Search an item..."
+                  value={searchValue}
+                  style={{
+                    height: 55,
+                    fontSize: "1.5em",
+                    borderTopRightRadius: 0,
+                    borderBottomRightRadius: 0,
+                  }}
+                  onChange={(e) => {
+                    setSearchValue(e.target.value);
+                    highlightSearchItems(e.target.value, isMobile);
+                    setSelectedKey(null);
+                  }}
+                  allowClear
+                />
+                <Button
+                  icon={<ReloadOutlined />}
+                  style={{
+                    width: 55,
+                    height: 55,
+                    borderTopLeftRadius: 0,
+                    borderBottomLeftRadius: 0,
+                  }}
+                  onClick={() => {
+                    setSelectedKey(null);
+                    setExpandedKeys([]);
+                    setAutoExpandParent(false);
+                    setSearchValue("");
+                    setSelectedNode(null);
+                    setSelectedItem(null);
+                    highlightSearchItems("", isMobile);
+                  }}
+                />
+              </div>
+              <div style={{ flex: 1, display: "flex", gap: 5 }}>
+                <Button
+                  size="large"
+                  style={{
+                    width: isMobile ? "100%" : 140,
+                    fontSize: "1.4em",
+                    height: 55,
+                    padding: 0,
+                  }}
+                  onClick={() => {
+                    setSelectedKey(null);
+                    setExpandedKeys([]);
+                    setAutoExpandParent(false);
+                    setSearchValue("");
+                    setSelectedNode(null);
+                    setSelectedItem(null);
+                    highlightSearchItems("", isMobile);
+                    new Promise(async (resolve) => {
+                      let res = await branch.getBranch({});
+                      if (res?.success ?? false) resolve(res?.data ?? []);
+                    }).then((_: any) =>
+                      setOpenBranchChoicer({ open: true, branches: _ })
+                    );
+                  }}
+                >
+                  Select a Branch
+                </Button>
+                <Button
+                  type="primary"
+                  size="large"
+                  style={{
+                    fontWeight: "bolder",
+                    width: 100,
+                    fontSize: "1.4em",
+                    height: 55,
+                    padding: 0,
+                  }}
+                  onClick={() => setOpenNewItem({ open: true, parentId: "" })}
+                >
+                  New
+                </Button>
+              </div>
+            </div>
+            <div style={{ marginTop: 10 }}>
+              <Tree
+                multiple
+                showLine
+                className="no-leaf-icon"
+                expandedKeys={expandedKeys}
+                autoExpandParent={autoExpandParent}
+                rootStyle={{
+                  overflow: "scroll",
+                  height: "70vh",
                 }}
-                onChange={(e) => {
-                  setSearchValue(e.target.value);
-                  highlightSearchItems(e.target.value);
-                  setSelectedKey(null);
+                onSelect={(_, f) => {
+                  let e = f.node.key;
+
+                  if (
+                    expandedKeys
+                      .map((q) => q.toString())
+                      .filter((p) =>
+                        new RegExp(`^${e}(-.*)?$`).test(p.toString())
+                      ).length > 0 &&
+                    !f.node.isLeaf
+                  ) {
+                    setExpandedKeys(
+                      expandedKeys.filter(
+                        (p) => !new RegExp(`^${e}(-.*)?$`).test(p.toString())
+                      )
+                    );
+                    setSelectedKey(null);
+                  } else {
+                    setExpandedKeys([...expandedKeys, e]);
+                    setSelectedKey(e);
+
+                    if (!f.node.isParent) {
+                      setSelectedNode(f.node);
+                      updateSelectedItem(f.node.id);
+                    } else {
+                      setSelectedItem(null);
+                    }
+                  }
                 }}
-                allowClear
-              />
-              <Button
-                icon={<ReloadOutlined />}
-                style={{
-                  width: 55,
-                  height: 55,
-                  borderTopLeftRadius: 0,
-                  borderBottomLeftRadius: 0,
-                }}
-                onClick={() => {
-                  setSelectedKey(null);
-                  setExpandedKeys([]);
-                  setAutoExpandParent(false);
-                  setSearchValue("");
-                  setSelectedNode(null);
-                  setSelectedItem(null);
-                  highlightSearchItems("");
-                }}
+                selectedKeys={[selectedKey ? selectedKey : ""]}
+                treeData={treeNodes.filter((e) =>
+                  e.rawTitle
+                    .toLocaleLowerCase()
+                    .includes(searchValue.toLocaleLowerCase())
+                )}
               />
             </div>
-            <Button
-              size="large"
+          </Col>
+          <Col span={1}>
+            <Divider
+              type="vertical"
               style={{
-                width: 180,
-                fontSize: "1.4em",
-                height: 55,
-                padding: 0,
+                height: _window!.innerHeight - 200,
               }}
-              onClick={() => {
-                setSelectedKey(null);
-                setExpandedKeys([]);
-                setAutoExpandParent(false);
-                setSearchValue("");
-                setSelectedNode(null);
-                setSelectedItem(null);
-                highlightSearchItems("");
-                new Promise(async (resolve) => {
-                  let res = await branch.getBranch({});
-                  if (res?.success ?? false) resolve(res?.data ?? []);
-                }).then((_: any) =>
-                  setOpenBranchChoicer({ open: true, branches: _ })
-                );
-              }}
-            >
-              Select a Branch
-            </Button>
-            <Button
-              type="primary"
-              size="large"
-              style={{
-                fontWeight: "bolder",
-                width: 100,
-                fontSize: "1.4em",
-                height: 55,
-                padding: 0,
-              }}
-              onClick={() => setOpenNewItem({ open: true, parentId: "" })}
-            >
-              New
-            </Button>
-          </div>
-          <div style={{ marginTop: 10 }}>
-            <Tree
-              multiple
-              showLine
-              className="no-leaf-icon"
-              expandedKeys={expandedKeys}
-              autoExpandParent={autoExpandParent}
-              rootStyle={{
-                overflow: "scroll",
-                height: "70vh",
-              }}
-              onSelect={(_, f) => {
-                let e = f.node.key;
-
-                if (
-                  expandedKeys
-                    .map((q) => q.toString())
-                    .filter((p) =>
-                      new RegExp(`^${e}(-.*)?$`).test(p.toString())
-                    ).length > 0 &&
-                  !f.node.isLeaf
-                ) {
-                  setExpandedKeys(
-                    expandedKeys.filter(
-                      (p) => !new RegExp(`^${e}(-.*)?$`).test(p.toString())
-                    )
-                  );
-                  setSelectedKey(null);
-                } else {
-                  setExpandedKeys([...expandedKeys, e]);
-                  setSelectedKey(e);
-
-                  if (!f.node.isParent) {
-                    setSelectedNode(f.node);
-                    updateSelectedItem(f.node.id);
-                  } else {
-                    setSelectedItem(null);
-                  }
-                }
-              }}
-              selectedKeys={[selectedKey ? selectedKey : ""]}
-              treeData={treeNodes.filter((e) =>
-                e.rawTitle
-                  .toLocaleLowerCase()
-                  .includes(searchValue.toLocaleLowerCase())
-              )}
             />
-          </div>
-        </Col>
-        <Col span={1}>
-          <Divider
-            type="vertical"
-            style={{
-              height: _window!.innerHeight - 200,
-            }}
-          />
-        </Col>
-        <Col span={9}>{selectedItem && renderSelectedItem(selectedItem)}</Col>
-      </Row>
+          </Col>
+          <Col span={9}>{selectedItem && renderSelectedItem(selectedItem)}</Col>
+        </Row>
+      )}
+
       {/* context */}
       <NewItem
         open={openNewItem.open}
@@ -727,6 +773,7 @@ const ItemsHome = ({ extraData }: BasicContentProps) => {
           setOpenItemBranch({ open: true, selectedBranch: e });
         }}
         close={() => setOpenBranchChoicer({ open: false, branches: [] })}
+        isMobile={isMobile}
       />
       <BranchItemHome
         open={openItemBranch.open}
@@ -747,12 +794,21 @@ export function buildTree(
   items: ItemData[],
   parentId: string | null = null,
   onClick: (str: string) => void,
-  purge: (str: string) => void
+  purge: (str: string) => void,
+  isMobile: boolean
 ): TreeNode[] {
   return items
     .filter((item) => item.parentId === parentId)
     .map((item, index) =>
-      convertToTreeNode(item, parentId ?? "", index, [], onClick, purge)
+      convertToTreeNode(
+        item,
+        parentId ?? "",
+        index,
+        [],
+        onClick,
+        purge,
+        isMobile
+      )
     );
 }
 
@@ -762,7 +818,8 @@ export function convertToTreeNode(
   index: number,
   parentKeys: string[] = [],
   onClick: (str: string) => void,
-  purge: (str: string) => void
+  purge: (str: string) => void,
+  isMobile: boolean
 ): TreeNode {
   const onClickNewSubCategory = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -780,7 +837,9 @@ export function convertToTreeNode(
         margin: item.isParent ? 0 : 10,
       }}
     >
-      <span style={{ marginRight: 10, fontSize: "1.8em" }}>{item.name}</span>
+      <span style={{ marginRight: 10, fontSize: isMobile ? "1.4em" : "1.8em" }}>
+        {item.name}
+      </span>
       {item.isParent && (
         <div>
           <Popconfirm
@@ -835,7 +894,8 @@ export function convertToTreeNode(
           i,
           [...parentKeys, String(index)],
           onClick,
-          purge
+          purge,
+          isMobile
         )
       )
     : [];

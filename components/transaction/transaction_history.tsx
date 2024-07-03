@@ -107,7 +107,7 @@ const TransactionHistory = () => {
     },
     {
       title: "Amount",
-      width: isMobile ? 15 : 80,
+      width: isMobile ? 25 : 80,
       align: "end",
       render: (_, row) =>
         row.type == "miscellaneous" ||
@@ -119,7 +119,7 @@ const TransactionHistory = () => {
     {
       title: "Service Fee",
       align: "end",
-      width: isMobile ? 15 : 80,
+      width: isMobile ? 25 : 80,
       dataIndex: "fee",
       render: (_) => _?.toFixed(2) ?? "0.00",
     },
@@ -138,7 +138,7 @@ const TransactionHistory = () => {
         </div>
       ),
       align: "end",
-      width: isMobile ? 20 : 100,
+      width: isMobile ? 25 : 100,
       render: (_, e) =>
         ((e.amount ?? 0) +
           (e.type == "wallet" &&
@@ -160,7 +160,7 @@ const TransactionHistory = () => {
     },
     {
       title: "Status",
-      width: isMobile ? 15 : 100,
+      width: isMobile ? 20 : 100,
       align: "center",
       fixed: "right",
       render: (_, row) => {

@@ -11,6 +11,7 @@ import {
   Typography,
   message,
 } from "antd";
+import { SettingOutlined } from "@ant-design/icons";
 import dayjs, { Dayjs } from "dayjs";
 import Excel from "exceljs";
 
@@ -46,36 +47,44 @@ const Attendance = () => {
 
   const [total, setTotal] = useState(0);
   const [totalRenderedHourse, setTotalRenderedHours] = useState(0);
+  const [width, setWidth] = useState(0);
+  const [openFilter, setOpenFilter] = useState(false);
 
   // context and services
   const user = new UserService();
   const log = new LogService();
 
+  const isMobile = width < 600;
+
   const columns: TableProps<LogData>["columns"] = [
     {
       title: "ID",
       dataIndex: "userId",
+      width: isMobile ? 120 : undefined,
       render: (_) => _.employeeId,
     },
     {
       title: "User",
-
+      width: isMobile ? 120 : undefined,
       align: "center",
       render: (_, { userId }) => <div>{userId.name.toLocaleUpperCase()} </div>,
     },
     {
       title: "Type",
       dataIndex: "userId",
+      width: isMobile ? 90 : undefined,
       render: (_) => _.role.toLocaleUpperCase(),
     },
     {
       title: "Date",
       dataIndex: "createdAt",
+      width: isMobile ? 120 : undefined,
       render: (_) => dayjs(_).format("MMMM DD, YYYY"),
     },
     {
       title: "Time In",
       align: "center",
+      width: isMobile ? 120 : undefined,
       render: ({ userId, timeInPhoto, createdAt, branchId, timeIn }) => (
         <div>
           {dayjs(timeIn).format("hh:mma")}
@@ -106,6 +115,7 @@ const Attendance = () => {
     {
       title: "Time Out",
       align: "center",
+      width: isMobile ? 120 : undefined,
       render: ({ userId, timeOutPhoto, createdAt, branchId, timeOut }) =>
         timeOut ? (
           <div>
@@ -141,6 +151,8 @@ const Attendance = () => {
     {
       title: "Hour(s) Rendered",
       align: "center",
+      fixed: "right",
+      width: isMobile ? 120 : undefined,
       render: (_, row) =>
         row.timeOut == null ? (
           <Typography.Text type="secondary" italic>
@@ -151,6 +163,46 @@ const Attendance = () => {
         ),
     },
   ];
+
+  const getHeaderMobile = () => {
+    return (
+      <div
+        style={{
+          display: "flex",
+          gap: 10,
+          justifyContent: "end",
+        }}
+      >
+        <Button
+          type="primary"
+          size="large"
+          icon={<SettingOutlined />}
+          onClick={() => setOpenFilter(true)}
+        >
+          Filter Options
+        </Button>
+        <Button
+          type="primary"
+          size="large"
+          onClick={() => {
+            (async () => {
+              await getLogs({
+                page: 1,
+                pageSize: 99999999,
+                userId: filter.tellerId ?? "",
+                fromDate: filter.fromDate ?? null,
+                toDate: filter.toDate ?? null,
+              }).then((e) => {
+                if (typeof e == "object" && e.length > 0) exportExcel(e);
+              });
+            })();
+          }}
+        >
+          EXPORT
+        </Button>
+      </div>
+    );
+  };
 
   const getHeader = () => (
     <div
@@ -422,6 +474,17 @@ const Attendance = () => {
     });
   }, [filter]);
 
+  useEffect(() => {
+    function handleResize() {
+      setWidth(window.innerWidth);
+    }
+
+    window.addEventListener("resize", handleResize);
+    handleResize(); // Set initial width
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
     <>
       <div
@@ -430,14 +493,14 @@ const Attendance = () => {
         }}
       >
         <Table
-          title={getHeader}
+          title={isMobile ? getHeaderMobile : getHeader}
           columns={columns}
           loading={fetching}
           dataSource={logs}
           rowKey={(e) => e._id ?? ""}
           scroll={{
             y: "calc(100vh - 30em)",
-            x: "100%",
+            x: isMobile ? "200vw" : undefined,
           }}
           pagination={{
             defaultPageSize: 10,
@@ -507,6 +570,79 @@ const Attendance = () => {
         {/* <Typography.Text style={{ paddingTop: 25, fontSize: "1.25em" }}>
           {photoViewer.details ?? ""}
         </Typography.Text> */}
+      </Modal>
+
+      {/* context */}
+      <Modal
+        open={openFilter}
+        onCancel={() => setOpenFilter(false)}
+        closable={false}
+        footer={
+          <Space>
+            <Button
+              size="large"
+              onClick={() => {
+                setFilter({
+                  tellerId: null,
+                  fromDate: null,
+                  toDate: null,
+                });
+                setOpenFilter(false);
+                message.success("Filter cleared");
+              }}
+            >
+              RESET
+            </Button>
+            <Button
+              type="primary"
+              size="large"
+              onClick={() => {
+                setOpenFilter(false);
+                message.success("Filter applied");
+              }}
+            >
+              APPLY FILTER
+            </Button>
+          </Space>
+        }
+        destroyOnClose
+      >
+        <Space size={[32, 32]} direction="vertical">
+          <Select
+            size="large"
+            style={{ width: 250 }}
+            placeholder="Select a Teller"
+            value={tellerName}
+            options={tellers.map((e) => ({
+              label: `[${e.role.toLocaleUpperCase()}] ${e.name}`,
+              value: e.name,
+              key: e._id,
+            }))}
+            onChange={(_, e: any) => {
+              setFilter({ ...filter, tellerId: e?.key ?? null });
+              setTellerName(e.label.split("]")[1]);
+            }}
+            filterOption={(
+              input: string,
+              option?: { label: string; value: string }
+            ) =>
+              (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
+            }
+            allowClear
+            showSearch
+          />
+          <DatePicker.RangePicker
+            size="large"
+            format="MMMM DD, YYYY"
+            onChange={(e) => {
+              setFilter({
+                ...filter,
+                fromDate: e ? e[0] : null,
+                toDate: e ? e[1] : null,
+              });
+            }}
+          />
+        </Space>
       </Modal>
     </>
   );

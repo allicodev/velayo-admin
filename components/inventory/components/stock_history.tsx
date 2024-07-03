@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import {
+  Button,
   Drawer,
   Input,
+  Modal,
   Select,
   Space,
   Table,
@@ -9,6 +11,7 @@ import {
   Tag,
   Typography,
 } from "antd";
+import { SettingOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 
 import { LogData, StockType, StockHistory as _StockHistory } from "@/types";
@@ -20,9 +23,10 @@ interface BasicProps {
   open: boolean;
   close: () => void;
   branchId: string;
+  isMobile?: boolean;
 }
 
-const StockHistory = ({ open, close, branchId }: BasicProps) => {
+const StockHistory = ({ open, close, branchId, isMobile }: BasicProps) => {
   const [history, setHistory] = useState<_StockHistory[]>([]);
   const [type, setType] = useState<"stock-in" | "stock-out" | "misc" | null>(
     null
@@ -30,6 +34,8 @@ const StockHistory = ({ open, close, branchId }: BasicProps) => {
   const [fetching, setFetching] = useState(false);
   const [total, setTotal] = useState(0);
   const [search, setSearch] = useState("");
+
+  const [openFilter, setOpenFilter] = useState(false);
 
   // service and etc
   const log = new LogService();
@@ -129,18 +135,91 @@ const StockHistory = ({ open, close, branchId }: BasicProps) => {
   }, [open, type]);
 
   return (
-    <Drawer
-      open={open}
-      onClose={close}
-      closable={false}
-      width="40vw"
-      title={
-        <Typography.Title level={4} style={{ margin: 0 }}>
-          Stock History
-        </Typography.Title>
-      }
-      extra={
-        <Space>
+    <>
+      <Drawer
+        open={open}
+        onClose={close}
+        closable={isMobile}
+        width={isMobile ? "100vw" : "40vw"}
+        title={
+          <Typography.Title level={4} style={{ margin: 0 }}>
+            Stock History
+          </Typography.Title>
+        }
+        extra={
+          isMobile ? (
+            <Button
+              icon={<SettingOutlined />}
+              size="large"
+              type="primary"
+              onClick={() => setOpenFilter(true)}
+            >
+              Filter
+            </Button>
+          ) : (
+            <Space>
+              <Input
+                size="large"
+                placeholder="Search an Item"
+                onChange={(e) => setSearch(e.target.value)}
+              />
+              <Select
+                value={type}
+                size="large"
+                options={[
+                  { label: "All", value: null },
+                  { label: "STOCK-IN", value: "stock-in" },
+                  { label: "STOCK-OUT", value: "stock-out" },
+                  { label: "MISCELLANEOUS", value: "misc" },
+                ]}
+                onChange={(e) => {
+                  if (e == undefined) setType(null);
+                  else setType(e);
+                }}
+                style={{
+                  width: 150,
+                }}
+                allowClear
+              />
+            </Space>
+          )
+        }
+      >
+        <Table
+          dataSource={history.filter((e) =>
+            e.name?.toLocaleLowerCase().includes(search.toLocaleLowerCase())
+          )}
+          columns={columns}
+          loading={fetching}
+          rowKey={(e) => e._id ?? ""}
+          pagination={{
+            defaultPageSize: 10,
+            total,
+            onChange: (page, pageSize) =>
+              fetchHistory({
+                page,
+                pageSize,
+              }),
+          }}
+        />
+      </Drawer>
+
+      {/* context */}
+      <Modal
+        open={openFilter}
+        onCancel={() => setOpenFilter(false)}
+        closable={false}
+        footer={
+          <Button
+            size="large"
+            type="primary"
+            onClick={() => setOpenFilter(false)}
+          >
+            Apply Filter
+          </Button>
+        }
+      >
+        <Space size={[16, 16]} direction="vertical">
           <Input
             size="large"
             placeholder="Search an Item"
@@ -165,26 +244,8 @@ const StockHistory = ({ open, close, branchId }: BasicProps) => {
             allowClear
           />
         </Space>
-      }
-    >
-      <Table
-        dataSource={history.filter((e) =>
-          e.name?.toLocaleLowerCase().includes(search.toLocaleLowerCase())
-        )}
-        columns={columns}
-        loading={fetching}
-        rowKey={(e) => e._id ?? ""}
-        pagination={{
-          defaultPageSize: 10,
-          total,
-          onChange: (page, pageSize) =>
-            fetchHistory({
-              page,
-              pageSize,
-            }),
-        }}
-      />
-    </Drawer>
+      </Modal>
+    </>
   );
 };
 

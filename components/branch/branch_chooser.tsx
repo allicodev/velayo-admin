@@ -7,11 +7,13 @@ const BranchChoicer = ({
   branches,
   onSelectedBranch,
   close,
+  isMobile,
 }: {
   open: boolean;
   branches: BranchData[];
   onSelectedBranch: (obj: BranchData) => void;
   close?: () => void;
+  isMobile?: boolean;
 }) => {
   return (
     <Modal
@@ -23,13 +25,42 @@ const BranchChoicer = ({
       width={700}
       centered
     >
-      <Row gutter={[16, 16]}>
-        {branches.map((e, i) => (
-          <Col key={`branch-btn-${i}`} span={8}>
-            <BranchButton branch={e} onClick={onSelectedBranch} />
-          </Col>
-        ))}
-      </Row>
+      {isMobile ? (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          {branches.map((e, i) => (
+            <Typography.Paragraph
+              ellipsis={{
+                rows: 1,
+              }}
+              style={{
+                width: "100%",
+                padding: 10,
+                border: "1px solid #aaa",
+                fontSize: "1.5em",
+                borderRadius: 10,
+                margin: 3,
+                cursor: "pointer",
+              }}
+              onClick={() => onSelectedBranch(e)}
+            >
+              {e.name} <span style={{ color: "#aaa" }}>({e.address})</span>
+            </Typography.Paragraph>
+          ))}
+        </div>
+      ) : (
+        <Row gutter={[16, 16]}>
+          {branches.map((e, i) => (
+            <Col key={`branch-btn-${i}`} span={8}>
+              <BranchButton branch={e} onClick={onSelectedBranch} />
+            </Col>
+          ))}
+        </Row>
+      )}
     </Modal>
   );
 };

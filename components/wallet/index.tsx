@@ -3,7 +3,6 @@ import {
   Button,
   Col,
   Divider,
-  Drawer,
   InputNumber,
   Radio,
   Row,
@@ -17,13 +16,15 @@ import {
   Tooltip,
   Alert,
   Popconfirm,
+  FloatButton,
 } from "antd";
 import {
-  DownOutlined,
   SaveOutlined,
   PlusOutlined,
   ReloadOutlined,
   DeleteOutlined,
+  LeftOutlined,
+  SettingOutlined,
 } from "@ant-design/icons";
 
 import {
@@ -65,6 +66,10 @@ const EWalletSettings = () => {
   const [selectedTabs, setSelectedTabs] = useState("fee-settings-tabs");
 
   const wallet = new WalletService();
+
+  // * mobile
+  const [width, setWidth] = useState(0);
+  const isMobile = width < 600;
 
   const reorder = (
     list: BillingsFormField[],
@@ -510,28 +515,32 @@ const EWalletSettings = () => {
                   </div>
                 ),
               },
-              {
-                label: "Print Exception Settings (Cash-In)",
-                key: "printer-exception-settings-cash-in",
-                children: (
-                  <PrinterException
-                    wallet={selectedWallet ?? null}
-                    walletKey="cash-in"
-                    refresh={() => setTrigger(trigger + 1)}
-                  />
-                ),
-              },
-              {
-                label: "Print Exception Settings (Cash-Out)",
-                key: "printer-exception-settings-cash-out",
-                children: (
-                  <PrinterException
-                    wallet={selectedWallet ?? null}
-                    walletKey="cash-out"
-                    refresh={() => setTrigger(trigger + 1)}
-                  />
-                ),
-              },
+              ...(!isMobile
+                ? [
+                    {
+                      label: "Print Exception Settings (Cash-In)",
+                      key: "printer-exception-settings-cash-in",
+                      children: (
+                        <PrinterException
+                          wallet={selectedWallet ?? null}
+                          walletKey="cash-in"
+                          refresh={() => setTrigger(trigger + 1)}
+                        />
+                      ),
+                    },
+                    {
+                      label: "Print Exception Settings (Cash-Out)",
+                      key: "printer-exception-settings-cash-out",
+                      children: (
+                        <PrinterException
+                          wallet={selectedWallet ?? null}
+                          walletKey="cash-out"
+                          refresh={() => setTrigger(trigger + 1)}
+                        />
+                      ),
+                    },
+                  ]
+                : []),
             ]}
           />
         </Card>
@@ -698,154 +707,37 @@ const EWalletSettings = () => {
     getWallets();
   }, [open, trigger]);
 
+  useEffect(() => {
+    function handleResize() {
+      setWidth(window.innerWidth);
+    }
+
+    window.addEventListener("resize", handleResize);
+    handleResize(); // Set initial width
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
     <>
-      <Row>
-        <Col span={8}>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              gap: 10,
-              marginBottom: 25,
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                width: "100%",
-              }}
-            >
-              <Input
-                size="large"
-                placeholder="Search/Filter Biller"
-                onChange={(e) => {
-                  setSearchKey(e.target.value);
-                  setSelectedWallet(null);
-                }}
-                value={searchKey}
-                style={{
-                  width: "98%",
-                  height: 50,
-                  fontSize: 25,
-                  borderTopRightRadius: 0,
-                  borderBottomRightRadius: 0,
-                }}
-              />
-              <Tooltip title="Reset">
-                <Button
-                  icon={<ReloadOutlined />}
-                  size="large"
-                  onClick={() => {
-                    setSearchKey("");
-                    setSelectedWallet(null);
-                  }}
-                  style={{
-                    height: 50,
-                    width: 50,
-                    borderTopLeftRadius: 0,
-                    borderBottomLeftRadius: 0,
-                  }}
-                />
-              </Tooltip>
-            </div>
+      {isMobile && selectedWallet != null ? (
+        <>
+          <>
             <Button
+              icon={<LeftOutlined />}
               size="large"
-              type="primary"
-              icon={<PlusOutlined />}
-              onClick={() => setOpenNewWallet(true)}
-              key="add-btn"
-              style={{
-                height: 50,
-              }}
+              type="text"
+              style={{ width: 70, marginBottom: 10 }}
+              onClick={() => setSelectedWallet(null)}
             >
-              New Wallet
+              BACK
             </Button>
-          </div>
-          <Space
-            direction="vertical"
-            style={{
-              height: "77vh",
-              overflowY: "scroll",
-              overflowX: "hidden",
-              paddingBottom: 30,
-              width: "100%",
-            }}
-            className="no-scrollbar"
-          >
-            {wallets
-              .filter((e) => {
-                if (searchKey == "") return true;
-                else
-                  return e.name
-                    .toLocaleLowerCase()
-                    .includes(searchKey.toLocaleLowerCase());
-              })
-              .map((e, i) => (
-                <Tooltip
-                  title={
-                    e.isDisabled
-                      ? "This Wallet is under maintenance"
-                      : e.name.length > 20
-                      ? e.name
-                      : ""
-                  }
-                  key={`btn-btn-${i}`}
-                >
-                  <Button
-                    key={`wallet-btn-${i}`}
-                    disabled={e.isDisabled}
-                    style={{
-                      paddingTop: 8,
-                      paddingBottom: 8,
-                      height: 60,
-                      background: e.isDisabled
-                        ? "#eee"
-                        : selectedWallet?._id == e._id ?? false
-                        ? "#294B0F"
-                        : "#fff",
-                    }}
-                    onClick={() => {
-                      setSelectedTabs("cashin-settings-tabs");
-                      setSelectedWallet(e);
-                    }}
-                    block
-                  >
-                    <Typography.Text
-                      style={{
-                        fontSize: 30,
-                        color: e.isDisabled
-                          ? "#aaa"
-                          : selectedWallet?._id == e._id ?? false
-                          ? "#fff"
-                          : "#000",
-                        maxWidth: 270,
-                      }}
-                      ellipsis
-                    >
-                      {e.name.toLocaleUpperCase()}
-                    </Typography.Text>
-                  </Button>
-                </Tooltip>
-              ))}
-          </Space>
-        </Col>
-        <Col span={1}>
-          <Divider type="vertical" style={{ height: "100%" }} />
-        </Col>
-        <Col
-          span={15}
-          style={{ width: "100%", display: "flex", justifyContent: "center" }}
-        >
-          {selectedWallet != null &&
-            renderSettingsForm(selectedWallet, getTabsAsWalletType())}
-          {selectedWallet != null && (
-            <Space
-              style={{
-                position: "absolute",
-                right: 0,
-                bottom: 25,
-              }}
+            {renderSettingsForm(selectedWallet, getTabsAsWalletType())}
+            <FloatButton.Group
+              trigger="click"
+              type="primary"
+              shape="square"
+              icon={<SettingOutlined />}
             >
               <Popconfirm
                 title="Are you sure you want to delete this wallet ?"
@@ -854,43 +746,28 @@ const EWalletSettings = () => {
                 okButtonProps={{ danger: true }}
                 onConfirm={handleDeleteWallet}
               >
-                <Button icon={<DeleteOutlined />} size="large" danger>
-                  Delete Biller
-                </Button>
+                <FloatButton
+                  icon={<DeleteOutlined style={{ color: "#f00" }} />}
+                />
               </Popconfirm>
               {selectedTabs == "fee-settings-tabs" && (
                 <>
-                  <Button
-                    size="large"
-                    type="primary"
-                    ghost
-                    style={{
-                      width: 150,
-                    }}
+                  <FloatButton
+                    icon={<SettingOutlined />}
                     onClick={() => setOpenUpdateName(true)}
-                  >
-                    Update Name
-                  </Button>
-                  <Button
-                    size="large"
-                    type="primary"
+                  />
+                  <FloatButton
                     icon={<SaveOutlined />}
-                    disabled={!updated}
-                    style={{
-                      width: 150,
-                    }}
-                    onClick={handleSave}
-                  >
-                    Save
-                  </Button>
+                    type="primary"
+                    onClick={updated ? handleSave : undefined}
+                  />
                 </>
               )}
               {["cashin-settings-tabs", "cashout-settings-tabs"].includes(
                 selectedTabs
               ) && (
-                <Button
+                <FloatButton
                   icon={<PlusOutlined />}
-                  size="large"
                   onClick={() => {
                     setWalletOptions({
                       open: true,
@@ -899,14 +776,220 @@ const EWalletSettings = () => {
                       id: null,
                     });
                   }}
-                >
-                  Add New Option
-                </Button>
+                />
               )}
+            </FloatButton.Group>
+          </>
+        </>
+      ) : (
+        <Row>
+          <Col span={isMobile ? 24 : 8}>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                gap: 10,
+                marginBottom: 25,
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  width: "100%",
+                }}
+              >
+                <Input
+                  size="large"
+                  placeholder="Search/Filter Biller"
+                  onChange={(e) => {
+                    setSearchKey(e.target.value);
+                    setSelectedWallet(null);
+                  }}
+                  value={searchKey}
+                  style={{
+                    width: "98%",
+                    height: 50,
+                    fontSize: 25,
+                    borderTopRightRadius: 0,
+                    borderBottomRightRadius: 0,
+                  }}
+                />
+                <Tooltip title="Reset">
+                  <Button
+                    icon={<ReloadOutlined />}
+                    size="large"
+                    onClick={() => {
+                      setSearchKey("");
+                      setSelectedWallet(null);
+                    }}
+                    style={{
+                      height: 50,
+                      width: 50,
+                      borderTopLeftRadius: 0,
+                      borderBottomLeftRadius: 0,
+                    }}
+                  />
+                </Tooltip>
+              </div>
+              <Button
+                size="large"
+                type="primary"
+                icon={<PlusOutlined />}
+                onClick={() => setOpenNewWallet(true)}
+                key="add-btn"
+                style={{
+                  height: 50,
+                }}
+              >
+                New Wallet
+              </Button>
+            </div>
+            <Space
+              direction="vertical"
+              style={{
+                height: "77vh",
+                overflowY: "scroll",
+                overflowX: "hidden",
+                paddingBottom: 30,
+                width: "100%",
+              }}
+              className="no-scrollbar"
+            >
+              {wallets
+                .filter((e) => {
+                  if (searchKey == "") return true;
+                  else
+                    return e.name
+                      .toLocaleLowerCase()
+                      .includes(searchKey.toLocaleLowerCase());
+                })
+                .map((e, i) => (
+                  <Tooltip
+                    title={
+                      e.isDisabled
+                        ? "This Wallet is under maintenance"
+                        : e.name.length > 20
+                        ? e.name
+                        : ""
+                    }
+                    key={`btn-btn-${i}`}
+                  >
+                    <Button
+                      key={`wallet-btn-${i}`}
+                      disabled={e.isDisabled}
+                      style={{
+                        paddingTop: 8,
+                        paddingBottom: 8,
+                        height: 60,
+                        background: e.isDisabled
+                          ? "#eee"
+                          : selectedWallet?._id == e._id ?? false
+                          ? "#294B0F"
+                          : "#fff",
+                      }}
+                      onClick={() => {
+                        setSelectedTabs("cashin-settings-tabs");
+                        setSelectedWallet(e);
+                      }}
+                      block
+                    >
+                      <Typography.Text
+                        style={{
+                          fontSize: 30,
+                          color: e.isDisabled
+                            ? "#aaa"
+                            : selectedWallet?._id == e._id ?? false
+                            ? "#fff"
+                            : "#000",
+                          maxWidth: 270,
+                        }}
+                        ellipsis
+                      >
+                        {e.name.toLocaleUpperCase()}
+                      </Typography.Text>
+                    </Button>
+                  </Tooltip>
+                ))}
             </Space>
-          )}
-        </Col>
-      </Row>
+          </Col>
+          <Col span={1}>
+            <Divider type="vertical" style={{ height: "100%" }} />
+          </Col>
+          <Col
+            span={15}
+            style={{ width: "100%", display: "flex", justifyContent: "center" }}
+          >
+            {selectedWallet != null &&
+              renderSettingsForm(selectedWallet, getTabsAsWalletType())}
+            {selectedWallet != null && (
+              <Space
+                style={{
+                  position: "absolute",
+                  right: 0,
+                  bottom: 25,
+                }}
+              >
+                <Popconfirm
+                  title="Are you sure you want to delete this wallet ?"
+                  okType="primary"
+                  okText="DELETE"
+                  okButtonProps={{ danger: true }}
+                  onConfirm={handleDeleteWallet}
+                >
+                  <Button icon={<DeleteOutlined />} size="large" danger>
+                    Delete Biller
+                  </Button>
+                </Popconfirm>
+                {selectedTabs == "fee-settings-tabs" && (
+                  <>
+                    <Button
+                      size="large"
+                      type="primary"
+                      ghost
+                      style={{
+                        width: 150,
+                      }}
+                      onClick={() => setOpenUpdateName(true)}
+                    >
+                      Update Name
+                    </Button>
+                    <Button
+                      size="large"
+                      type="primary"
+                      icon={<SaveOutlined />}
+                      disabled={!updated}
+                      style={{
+                        width: 150,
+                      }}
+                      onClick={handleSave}
+                    >
+                      Save
+                    </Button>
+                  </>
+                )}
+                {["cashin-settings-tabs", "cashout-settings-tabs"].includes(
+                  selectedTabs
+                ) && (
+                  <Button
+                    icon={<PlusOutlined />}
+                    size="large"
+                    onClick={() => {
+                      setWalletOptions({
+                        open: true,
+                        options: null,
+                        index: -1,
+                        id: null,
+                      });
+                    }}
+                  >
+                    Add New Option
+                  </Button>
+                )}
+              </Space>
+            )}
+          </Col>
+        </Row>
+      )}
 
       {/* context */}
       <Modal

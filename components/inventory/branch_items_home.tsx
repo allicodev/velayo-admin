@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Drawer,
   Space,
@@ -10,6 +10,7 @@ import {
   Table,
   TableProps,
   Popconfirm,
+  Menu,
 } from "antd";
 import {
   VerticalAlignTopOutlined,
@@ -48,17 +49,24 @@ const BranchItemHome = ({ open, close, branch, updateBranch }: BasicProps) => {
   //   etc and services
   const branchService = new BranchService();
 
+  const [width, setWidth] = useState(0);
+  const isMobile = width < 600;
+
   const drawerTitle = () => (
     <Flex align="center">
       <Typography.Title level={4} style={{ margin: 0 }}>
-        Stock Inventory on {branch?.name}
+        {isMobile
+          ? `Inventory ${branch?.name}`
+          : `Stock Inventory on ${branch?.name}`}
       </Typography.Title>
-      <Typography.Text
-        type="secondary"
-        style={{ fontSize: "1.1em", marginLeft: 10 }}
-      >
-        ({branch?.address})
-      </Typography.Text>
+      {!isMobile && (
+        <Typography.Text
+          type="secondary"
+          style={{ fontSize: "1.1em", marginLeft: 10 }}
+        >
+          ({branch?.address})
+        </Typography.Text>
+      )}
     </Flex>
   );
 
@@ -80,16 +88,21 @@ const BranchItemHome = ({ open, close, branch, updateBranch }: BasicProps) => {
           onClick={() => setOpenStock({ open: true, type: "stock-out" })}
         />
       </Tooltip>
-      <div
-        style={{
-          height: 20,
-          width: 2,
-          background: "#000",
-          margin: 0,
-          marginRight: 5,
-          marginLeft: 5,
-        }}
-      />
+      {isMobile ? (
+        <></>
+      ) : (
+        <div
+          style={{
+            height: 20,
+            width: 2,
+            background: "#000",
+            margin: 0,
+            marginRight: 5,
+            marginLeft: 5,
+          }}
+        />
+      )}
+
       <Tooltip title="Stock History">
         <Button
           size="large"
@@ -182,6 +195,17 @@ const BranchItemHome = ({ open, close, branch, updateBranch }: BasicProps) => {
     }
   };
 
+  useEffect(() => {
+    function handleResize() {
+      setWidth(window.innerWidth);
+    }
+
+    window.addEventListener("resize", handleResize);
+    handleResize();
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
     <>
       <Drawer
@@ -217,6 +241,7 @@ const BranchItemHome = ({ open, close, branch, updateBranch }: BasicProps) => {
         open={openHistory.open}
         close={() => setOpenHistory({ open: false, branchId: null })}
         branchId={openHistory.branchId ?? ""}
+        isMobile={isMobile}
       />
     </>
   );

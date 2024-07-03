@@ -5,6 +5,7 @@ import {
   Card,
   Col,
   Divider,
+  FloatButton,
   Input,
   InputNumber,
   Popconfirm,
@@ -21,6 +22,7 @@ import {
   SaveOutlined,
   ReloadOutlined,
   DeleteOutlined,
+  LeftOutlined,
 } from "@ant-design/icons";
 import {
   DragDropContext,
@@ -72,6 +74,10 @@ const BillingSettings = () => {
   });
 
   const bill = new BillService();
+
+  // * mobile
+  const [width, setWidth] = useState(0);
+  const isMobile = width < 600;
 
   const getItemStyle = (
     draggableStyle: DraggingStyle | NotDraggingStyle | undefined,
@@ -187,8 +193,8 @@ const BillingSettings = () => {
     };
 
     return (
-      <div style={{ width: "70%" }}>
-        <Typography.Title style={{ textAlign: "center" }}>
+      <div style={{ width: isMobile ? "100%" : "70%" }}>
+        <Typography.Title style={{ textAlign: "center" }} ellipsis={isMobile}>
           {billingFormField.name.toLocaleUpperCase()} bills settings{" "}
         </Typography.Title>
         {hasNoMainAmount() && (
@@ -528,208 +534,284 @@ const BillingSettings = () => {
       });
   }, [selectedBiller]);
 
+  useEffect(() => {
+    function handleResize() {
+      setWidth(window.innerWidth);
+    }
+
+    window.addEventListener("resize", handleResize);
+    handleResize(); // Set initial width
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
     <>
-      <Row>
-        <Col span={8}>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              marginBottom: 25,
-              gap: 10,
-            }}
+      {isMobile && selectedBiller != null ? (
+        <>
+          <Button
+            icon={<LeftOutlined />}
+            size="large"
+            type="text"
+            style={{ width: 70, marginBottom: 10 }}
+            onClick={() => setSelectedBiller(null)}
           >
+            BACK
+          </Button>
+          {getSideB(selectedBiller)}
+          <FloatButton.Group
+            trigger="click"
+            type="primary"
+            shape="square"
+            icon={<SettingOutlined />}
+          >
+            <Popconfirm
+              title="Are you sure you want to delete this biller ?"
+              okType="primary"
+              okText="DELETE"
+              okButtonProps={{ danger: true }}
+              onConfirm={handleDeleteBiller}
+            >
+              <FloatButton
+                icon={<DeleteOutlined style={{ color: "#f00" }} />}
+              />
+            </Popconfirm>
+            {selectedTab == "form-settings-tab" && (
+              <>
+                <FloatButton
+                  icon={<PlusOutlined />}
+                  onClick={() =>
+                    setBillsOptions({
+                      open: true,
+                      options: null,
+                      index: -1,
+                      id: null,
+                    })
+                  }
+                />
+                <FloatButton
+                  icon={<SettingOutlined />}
+                  type="primary"
+                  onClick={() => setOpenUpdatedBiller(true)}
+                />
+              </>
+            )}
+            {selectedTab == "fee-settings-tab" && (
+              <>
+                <Button
+                  icon={<SaveOutlined />}
+                  type="primary"
+                  onClick={handleSaveFee}
+                  size="large"
+                >
+                  Update Fee
+                </Button>
+              </>
+            )}
+          </FloatButton.Group>
+        </>
+      ) : (
+        <Row>
+          <Col span={isMobile ? 24 : 8}>
             <div
               style={{
                 display: "flex",
-                width: "100%",
+                flexDirection: "row",
+                marginBottom: 25,
+                gap: 10,
               }}
             >
-              <Input
-                size="large"
-                placeholder="Search/Filter Biller"
-                onChange={(e) => {
-                  setSearchKey(e.target.value);
-                  setSelectedBiller(null);
-                }}
-                value={searchKey}
+              <div
                 style={{
-                  width: "98%",
-                  height: 50,
-                  fontSize: 25,
-                  borderTopRightRadius: 0,
-                  borderBottomRightRadius: 0,
+                  display: "flex",
+                  width: "100%",
                 }}
-              />
-              <Tooltip title="Reset">
-                <Button
-                  icon={<ReloadOutlined />}
+              >
+                <Input
                   size="large"
-                  onClick={() => {
-                    setSearchKey("");
+                  placeholder="Search/Filter Biller"
+                  onChange={(e) => {
+                    setSearchKey(e.target.value);
                     setSelectedBiller(null);
                   }}
+                  value={searchKey}
                   style={{
+                    width: "98%",
                     height: 50,
-                    width: 50,
-                    borderTopLeftRadius: 0,
-                    borderBottomLeftRadius: 0,
+                    fontSize: 25,
+                    borderTopRightRadius: 0,
+                    borderBottomRightRadius: 0,
                   }}
                 />
-              </Tooltip>
-            </div>
-            <Button
-              size="large"
-              type="primary"
-              icon={<PlusOutlined />}
-              onClick={() => setOpenNewBiller(true)}
-              key="add-btn"
-              style={{
-                height: 50,
-              }}
-            >
-              New Biller
-            </Button>
-          </div>
-          <Space
-            direction="vertical"
-            style={{
-              height: "77vh",
-              overflowY: "scroll",
-              overflowX: "hidden",
-              paddingBottom: 30,
-              width: "100%",
-            }}
-            className="no-scrollbar"
-          >
-            {billers
-              .filter((e) => {
-                if (searchKey == "") return true;
-                else
-                  return e.name
-                    .toLocaleLowerCase()
-                    .includes(searchKey.toLocaleLowerCase());
-              })
-              .map((e, i) => (
-                <Tooltip
-                  title={
-                    e.isDisabled
-                      ? "This Biller is under maintenance"
-                      : e.name.length > 20
-                      ? e.name
-                      : ""
-                  }
-                >
+                <Tooltip title="Reset">
                   <Button
-                    key={`billing-btn-${i}`}
-                    disabled={e.isDisabled}
-                    style={{
-                      paddingTop: 8,
-                      paddingBottom: 8,
-                      height: 60,
-                      background: e.isDisabled
-                        ? "#eee"
-                        : selectedBiller?._id == e._id ?? false
-                        ? "#294B0F"
-                        : "#fff",
-                    }}
+                    icon={<ReloadOutlined />}
+                    size="large"
                     onClick={() => {
-                      setSelectedBiller(e);
-                      setSelectedTab("form-settings-tab");
+                      setSearchKey("");
+                      setSelectedBiller(null);
                     }}
-                    block
-                  >
-                    <Typography.Text
-                      style={{
-                        fontSize: 30,
-                        color: e.isDisabled
-                          ? "#aaa"
-                          : selectedBiller?._id == e._id ?? false
-                          ? "#fff"
-                          : "#000",
-                        maxWidth: 270,
-                      }}
-                      ellipsis
-                    >
-                      {e.name.toLocaleUpperCase()}
-                    </Typography.Text>
-                  </Button>
+                    style={{
+                      height: 50,
+                      width: 50,
+                      borderTopLeftRadius: 0,
+                      borderBottomLeftRadius: 0,
+                    }}
+                  />
                 </Tooltip>
-              ))}
-          </Space>
-        </Col>
-        <Col span={1}>
-          <Divider type="vertical" style={{ height: "100%" }} />
-        </Col>
-        <Col
-          span={15}
-          style={{ width: "100%", display: "flex", justifyContent: "center" }}
-        >
-          {selectedBiller != null && getSideB(selectedBiller)}
-          {
-            selectedBiller != null ? (
-              // <FloatButton.Group
-              //   trigger="hover"
-              //   type="primary"
-              //   icon={<SettingOutlined />}
-              // >
-              <Space style={{ position: "absolute", right: 0, bottom: 25 }}>
-                <Popconfirm
-                  title="Are you sure you want to delete this biller ?"
-                  okType="primary"
-                  okText="DELETE"
-                  okButtonProps={{ danger: true }}
-                  onConfirm={handleDeleteBiller}
-                >
-                  <Button icon={<DeleteOutlined />} size="large" danger>
-                    Delete Biller
-                  </Button>
-                </Popconfirm>
-                {selectedTab == "form-settings-tab" && (
-                  <>
+              </div>
+              <Button
+                size="large"
+                type="primary"
+                icon={<PlusOutlined />}
+                onClick={() => setOpenNewBiller(true)}
+                key="add-btn"
+                style={{
+                  height: 50,
+                }}
+              >
+                New Biller
+              </Button>
+            </div>
+            <Space
+              direction="vertical"
+              style={{
+                height: "77vh",
+                overflowY: "scroll",
+                overflowX: "hidden",
+                paddingBottom: 30,
+                width: "100%",
+              }}
+              className="no-scrollbar"
+            >
+              {billers
+                .filter((e) => {
+                  if (searchKey == "") return true;
+                  else
+                    return e.name
+                      .toLocaleLowerCase()
+                      .includes(searchKey.toLocaleLowerCase());
+                })
+                .map((e, i) => (
+                  <Tooltip
+                    title={
+                      e.isDisabled
+                        ? "This Biller is under maintenance"
+                        : e.name.length > 20
+                        ? e.name
+                        : ""
+                    }
+                  >
                     <Button
-                      icon={<PlusOutlined />}
-                      size="large"
-                      onClick={() =>
-                        setBillsOptions({
-                          open: true,
-                          options: null,
-                          index: -1,
-                          id: null,
-                        })
-                      }
+                      key={`billing-btn-${i}`}
+                      disabled={e.isDisabled}
+                      style={{
+                        paddingTop: 8,
+                        paddingBottom: 8,
+                        height: 60,
+                        background: e.isDisabled
+                          ? "#eee"
+                          : selectedBiller?._id == e._id ?? false
+                          ? "#294B0F"
+                          : "#fff",
+                      }}
+                      onClick={() => {
+                        setSelectedBiller(e);
+                        setSelectedTab("form-settings-tab");
+                      }}
+                      block
                     >
-                      Add New Option
+                      <Typography.Text
+                        style={{
+                          fontSize: 30,
+                          color: e.isDisabled
+                            ? "#aaa"
+                            : selectedBiller?._id == e._id ?? false
+                            ? "#fff"
+                            : "#000",
+                          maxWidth: 270,
+                        }}
+                        ellipsis
+                      >
+                        {e.name.toLocaleUpperCase()}
+                      </Typography.Text>
                     </Button>
-                    <Button
-                      icon={<SettingOutlined />}
-                      type="primary"
-                      onClick={() => setOpenUpdatedBiller(true)}
-                      size="large"
-                    >
-                      Update Biller Name
+                  </Tooltip>
+                ))}
+            </Space>
+          </Col>
+          <Col span={1}>
+            <Divider type="vertical" style={{ height: "100%" }} />
+          </Col>
+          <Col
+            span={15}
+            style={{ width: "100%", display: "flex", justifyContent: "center" }}
+          >
+            {selectedBiller != null && getSideB(selectedBiller)}
+            {
+              selectedBiller != null ? (
+                // <FloatButton.Group
+                //   trigger="hover"
+                //   type="primary"
+                //   icon={<SettingOutlined />}
+                // >
+                <Space style={{ position: "absolute", right: 0, bottom: 25 }}>
+                  <Popconfirm
+                    title="Are you sure you want to delete this biller ?"
+                    okType="primary"
+                    okText="DELETE"
+                    okButtonProps={{ danger: true }}
+                    onConfirm={handleDeleteBiller}
+                  >
+                    <Button icon={<DeleteOutlined />} size="large" danger>
+                      Delete Biller
                     </Button>
-                  </>
-                )}
-                {selectedTab == "fee-settings-tab" && (
-                  <>
-                    <Button
-                      icon={<SaveOutlined />}
-                      type="primary"
-                      onClick={handleSaveFee}
-                      size="large"
-                    >
-                      Update Fee
-                    </Button>
-                  </>
-                )}
-              </Space>
-            ) : null
-            // </FloatButton.Group>
-          }
-        </Col>
-      </Row>
+                  </Popconfirm>
+                  {selectedTab == "form-settings-tab" && (
+                    <>
+                      <Button
+                        icon={<PlusOutlined />}
+                        size="large"
+                        onClick={() =>
+                          setBillsOptions({
+                            open: true,
+                            options: null,
+                            index: -1,
+                            id: null,
+                          })
+                        }
+                      >
+                        Add New Option
+                      </Button>
+                      <Button
+                        icon={<SettingOutlined />}
+                        type="primary"
+                        onClick={() => setOpenUpdatedBiller(true)}
+                        size="large"
+                      >
+                        Update Biller Name
+                      </Button>
+                    </>
+                  )}
+                  {selectedTab == "fee-settings-tab" && (
+                    <>
+                      <Button
+                        icon={<SaveOutlined />}
+                        type="primary"
+                        onClick={handleSaveFee}
+                        size="large"
+                      >
+                        Update Fee
+                      </Button>
+                    </>
+                  )}
+                </Space>
+              ) : null
+              // </FloatButton.Group>
+            }
+          </Col>
+        </Row>
+      )}
 
       {/* context */}
       <NewBiller
