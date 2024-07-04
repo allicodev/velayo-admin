@@ -74,7 +74,7 @@ const TransactionHistory = () => {
   const column: TableProps<Transaction>["columns"] = [
     {
       title: "Ref Code",
-      width: isMobile ? 15 : 70,
+      width: isMobile ? 15 : 80,
       dataIndex: "reference",
     },
     {
@@ -96,7 +96,7 @@ const TransactionHistory = () => {
     },
     {
       title: "Biller Name / Product Code",
-      width: isMobile ? 40 : 200,
+      width: isMobile ? 40 : 150,
       dataIndex: "sub_type",
       render: (_) =>
         _ ?? (
@@ -107,7 +107,7 @@ const TransactionHistory = () => {
     },
     {
       title: "Amount",
-      width: isMobile ? 25 : 80,
+      width: isMobile ? 25 : 100,
       align: "end",
       render: (_, row) =>
         row.type == "miscellaneous" ||
@@ -119,7 +119,7 @@ const TransactionHistory = () => {
     {
       title: "Service Fee",
       align: "end",
-      width: isMobile ? 25 : 80,
+      width: isMobile ? 25 : 100,
       dataIndex: "fee",
       render: (_) => _?.toFixed(2) ?? "0.00",
     },

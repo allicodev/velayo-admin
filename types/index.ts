@@ -52,3 +52,39 @@ export interface NewUser {
   password?: string;
   employeeId?: string;
 }
+
+export interface DashboardData {
+  totalTransaction: number;
+  totalSales: number;
+  totalNetSales: number;
+  totalBranch: number;
+  branchSales: BranchSales[];
+  topItemSales: TopItem[];
+  salesPerMonth: SalesPerMonth;
+}
+
+export interface BranchSales {
+  name: string;
+  total: number;
+  percentValue: string;
+}
+
+export interface TopItem {
+  name: string;
+  quantity: number;
+}
+
+export interface SalesPerMonth {
+  Jan: number;
+  Feb: number;
+  Mar: number;
+  Apr: number;
+  May: number;
+  Jun: number;
+  Jul: number;
+  Aug: number;
+  Sep: number;
+  Oct: number;
+  Nov: number;
+  Dec: number;
+}

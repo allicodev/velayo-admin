@@ -1,8 +1,7 @@
-import React, { useEffect, useLayoutEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { GetServerSideProps } from "next";
 import { Menu, Typography, Dropdown, Layout, Affix, Avatar, Image } from "antd";
 import { LogoutOutlined, UserOutlined } from "@ant-design/icons";
-import { PageHeader } from "@ant-design/pro-layout";
 import Cookies from "js-cookie";
 
 import { SiderProps, ContentProps } from "@/types";
@@ -27,7 +26,7 @@ const Sider = ({ selectedIndex, selectedKey, items }: SiderProps) => {
     <Affix>
       <Layout.Sider
         theme="light"
-        defaultCollapsed={true}
+        defaultCollapsed={width < 600}
         style={{
           boxShadow: "2px 0 1px -2px #888",
           height: width < 600 ? "100vh" : undefined,

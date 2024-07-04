@@ -1,5 +1,5 @@
 import Api from "./api.service";
-import { EloadSettings, Response, Transaction } from "@/types";
+import { DashboardData, EloadSettings, Response, Transaction } from "@/types";
 
 class EtcService {
   private readonly instance = new Api();
@@ -29,6 +29,12 @@ class EtcService {
     return await this.instance.post<Response>({
       endpoint: "/etc/eload-settings-update",
       payload,
+    });
+  }
+
+  public async getDashboardData() {
+    return await this.instance.get<DashboardData>({
+      endpoint: "/etc/dashboard",
     });
   }
 }

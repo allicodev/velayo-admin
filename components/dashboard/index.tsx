@@ -8,9 +8,30 @@ import SalesPerBranch from "./components/sales_per_branch";
 import TopSales from "./components/top_sales";
 import SalesAndServices from "./components/sales";
 import { PageHeader } from "@ant-design/pro-layout";
+import EtcService from "@/provider/etc.service";
+import { DashboardData } from "@/types";
 
 const Dashboard = () => {
   const [width, setWidth] = useState(0);
+  const [dashboard, setDashboard] = useState<DashboardData>();
+  const [loading, setLoading] = useState(false);
+  const etc = new EtcService();
+
+  const getData = async () => {
+    setLoading(true);
+    let res = await etc.getDashboardData();
+
+    if (res?.success ?? false) {
+      setDashboard(res?.data);
+      setLoading(false);
+    } else setLoading(false);
+  };
+
+  const parseToMoney = (n: number) =>
+    `₱${n.toLocaleString(undefined, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })}`;
 
   useEffect(() => {
     function handleResize() {
@@ -18,7 +39,9 @@ const Dashboard = () => {
     }
 
     window.addEventListener("resize", handleResize);
-    handleResize(); // Set initial width
+    handleResize();
+
+    getData();
 
     return () => window.removeEventListener("resize", handleResize);
   }, []);
@@ -42,9 +65,10 @@ const Dashboard = () => {
             />
           }
           subText="SALES"
-          value="₱123,456.00"
+          value={parseToMoney(dashboard?.totalSales ?? 0)}
           color="#0000ff"
           mobile={true}
+          loading={loading}
         />
         <DashboardCard
           icon={
@@ -56,9 +80,10 @@ const Dashboard = () => {
             />
           }
           subText="NET SALES"
-          value="₱12,345.00"
+          value={parseToMoney(dashboard?.totalNetSales ?? 0)}
           color="#0ab39e"
           mobile={true}
+          loading={loading}
         />
         <DashboardCard
           icon={
@@ -70,23 +95,13 @@ const Dashboard = () => {
             />
           }
           subText="TRANSACTIONS"
-          value="12,345"
+          value={(dashboard?.totalTransaction ?? 0).toLocaleString(undefined, {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0,
+          })}
           color="#f19b44"
           mobile={true}
-        />
-        <DashboardCard
-          icon={
-            <GrTransaction
-              color="#f19b44"
-              style={{
-                fontSize: "1.5em",
-              }}
-            />
-          }
-          subText="TRANSACTIONS"
-          value="12,345"
-          color="#f19b44"
-          mobile={true}
+          loading={loading}
         />
       </div>
       <Col span={24}>
@@ -99,18 +114,33 @@ const Dashboard = () => {
             {
               label: "Sales Branch",
               key: "tab-0",
-              children: <SalesPerBranch isMobile={true} />,
+              children: (
+                <SalesPerBranch
+                  isMobile={true}
+                  data={dashboard?.branchSales ?? []}
+                  loading={loading}
+                />
+              ),
             },
             {
               label: "Top Sales",
               key: "tab-1",
-              children: <TopSales />,
+              children: (
+                <TopSales
+                  data={dashboard?.topItemSales ?? []}
+                  loading={loading}
+                />
+              ),
             },
           ]}
         />
       </Col>
       <Col span={24}>
-        <SalesAndServices isMobile />
+        <SalesAndServices
+          data={dashboard?.salesPerMonth!}
+          loading={loading}
+          isMobile
+        />
       </Col>
     </Row>
   ) : (
@@ -129,8 +159,9 @@ const Dashboard = () => {
                   />
                 }
                 subText="SALES"
-                value="₱123,456.00"
+                value={parseToMoney(dashboard?.totalSales ?? 0)}
                 color="#0000ff"
+                loading={loading}
               />
               <DashboardCard
                 icon={
@@ -142,8 +173,9 @@ const Dashboard = () => {
                   />
                 }
                 subText="NET SALES"
-                value="₱12,345.00"
+                value={parseToMoney(dashboard?.totalNetSales ?? 0)}
                 color="#0ab39e"
+                loading={loading}
               />
               <DashboardCard
                 icon={
@@ -155,35 +187,38 @@ const Dashboard = () => {
                   />
                 }
                 subText="TRANSACTIONS"
-                value="12,345"
+                value={(dashboard?.totalTransaction ?? 0).toLocaleString(
+                  undefined,
+                  {
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 0,
+                  }
+                )}
                 color="#f19b44"
-              />
-              <DashboardCard
-                icon={
-                  <GrTransaction
-                    color="#f19b44"
-                    style={{
-                      fontSize: "1.5em",
-                    }}
-                  />
-                }
-                subText="TRANSACTIONS"
-                value="12,345"
-                color="#f19b44"
+                loading={loading}
               />
             </Col>
             <Col span={24}>
-              <SalesAndServices />
+              <SalesAndServices
+                data={dashboard?.salesPerMonth!}
+                loading={loading}
+              />
             </Col>
           </Row>
         </Col>
         <Col span={8}>
           <Row gutter={[16, 16]}>
             <Col span={24}>
-              <SalesPerBranch />
+              <SalesPerBranch
+                data={dashboard?.branchSales ?? []}
+                loading={loading}
+              />
             </Col>
             <Col span={24}>
-              <TopSales />
+              <TopSales
+                data={dashboard?.topItemSales ?? []}
+                loading={loading}
+              />
             </Col>
           </Row>
         </Col>

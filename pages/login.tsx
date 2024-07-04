@@ -28,14 +28,18 @@ const Login = () => {
   const handleFinish = async (val: UserLoginProps) => {
     const response = await user.login(val);
 
-    if (response.success) {
+    if (response.success && response?.data?.role == "admin") {
       message.success("Logged in successfully");
       setUser(response.data);
       setAccessToken(response.data!.token);
       Cookies.set("token", response.data!.token);
       window.location.reload();
     } else {
-      message.error(response.message);
+      message.error(
+        response?.data?.role != "admin"
+          ? "Invalid Credentials"
+          : response.message
+      );
     }
   };
 

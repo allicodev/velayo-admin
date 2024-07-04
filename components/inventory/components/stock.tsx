@@ -122,7 +122,7 @@ const Stock = ({
           setItems(
             lcItems
               .filter((e) =>
-                branchItems.map((_) => _.itemId._id).includes(e._id)
+                branchItems.map((_) => _.itemId?._id).includes(e._id)
               )
               .filter((e) =>
                 e.name.toLocaleLowerCase().includes(_.toLocaleLowerCase())
@@ -213,12 +213,6 @@ const Stock = ({
               dataIndex: "price",
               render: (_) =>
                 `₱${_?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`,
-            },
-            {
-              title: "C. Quantity",
-              width: 100,
-              dataIndex: "currentQuantity",
-              align: "center",
             },
             {
               title: `Stock(s) ${type == "stock-in" ? "In" : "Out"}`,
