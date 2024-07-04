@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import { Card, Skeleton, Typography } from "antd";
+import { Skeleton, Typography } from "antd";
 
 type DashCardProps = {
   icon: ReactNode;
@@ -19,63 +19,51 @@ const DashboardCard = ({
   loading,
 }: DashCardProps) => {
   return (
-    <Card
+    <div
       style={{
+        background: "#fff",
         width: "100%",
         height: "100%",
-      }}
-      styles={{
-        body: {
-          padding: 0,
-        },
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        flexDirection: "column",
+        padding: "32px 25px 32px 25px",
+        borderRadius: 8,
+        border: "1px solid #f0f0f0",
+        ...(mobile ? { flexBasis: "auto", flexGrow: 0, flexShrink: 0 } : {}),
       }}
     >
       <div
         style={{
-          background: "#fff",
-          width: "100%",
-          height: "100%",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          flexDirection: "column",
-          padding: "32px 25px 32px 25px",
-          borderRadius: 8,
-          border: "1px solid #f0f0f0",
-          ...(mobile ? { flexBasis: "auto", flexGrow: 0, flexShrink: 0 } : {}),
+          padding: 10,
+          background: `${color}11`,
         }}
       >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: 10,
-            background: `${color}11`,
-          }}
-        >
-          {icon}
-        </div>
-        <Typography.Text
-          type="secondary"
-          style={{
-            fontWeight: "bold",
-            letterSpacing: 1,
-            marginTop: 7,
-            marginBottom: 7,
-          }}
-        >
-          {subText}
-        </Typography.Text>
-        <Typography.Text
-          style={{
-            fontSize: "1.1em",
-          }}
-        >
-          {loading ? <Skeleton.Input /> : value}
-        </Typography.Text>
+        {icon}
       </div>
-    </Card>
+      <Typography.Text
+        type="secondary"
+        style={{
+          fontWeight: "bold",
+          letterSpacing: 1,
+          marginTop: 7,
+          marginBottom: 7,
+        }}
+      >
+        {subText}
+      </Typography.Text>
+      <Typography.Text
+        style={{
+          fontSize: "1.1em",
+        }}
+      >
+        {loading ? <Skeleton.Input /> : value}
+      </Typography.Text>
+    </div>
   );
 };
 
