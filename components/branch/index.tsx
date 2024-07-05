@@ -159,6 +159,26 @@ const Branch = () => {
                     {_.spm}
                   </Typography.Text>
                 </div>
+                <div>
+                  <label
+                    htmlFor="spm"
+                    style={{
+                      display: "inline-block",
+                      width: 100,
+                      fontSize: "1.5em",
+                    }}
+                  >
+                    App PIN :{" "}
+                  </label>
+                  <Typography.Text
+                    id="spm"
+                    style={{
+                      fontSize: "1.5em",
+                    }}
+                  >
+                    {_.pin}
+                  </Typography.Text>
+                </div>
                 <Button
                   size="large"
                   icon={<EditOutlined />}

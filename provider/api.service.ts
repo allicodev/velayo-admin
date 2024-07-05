@@ -12,6 +12,7 @@ class API {
 
     const request = await axios.get(
       `https://velayo-eservice.vercel.app/api${endpoint}`,
+      // `http://localhost:3000/api${endpoint}`,
       {
         params: query,
         headers: {
@@ -44,6 +45,7 @@ class API {
 
     const request = await axios.post(
       `https://velayo-eservice.vercel.app/api${endpoint}`,
+      // `http://localhost:3000/api${endpoint}`,
       payload,
       {
         headers: {

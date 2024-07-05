@@ -92,6 +92,7 @@ export interface Branch {
   address: string;
   device: string;
   spm: string;
+  pin: string;
   items?: BranchItem[];
 }
 

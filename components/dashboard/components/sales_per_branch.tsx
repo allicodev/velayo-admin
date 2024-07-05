@@ -21,7 +21,6 @@ const SalesPerBranch = ({
 
   useEffect(() => {
     if (data && data.length > 0) {
-      console.log(data);
       setBranchData(data);
     }
   }, [data]);
