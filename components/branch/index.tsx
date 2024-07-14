@@ -5,6 +5,7 @@ import { EditOutlined, PlusOutlined } from "@ant-design/icons";
 import type { Branch, BranchData } from "@/types";
 import NewBranch from "./new_branch";
 import BranchService from "@/provider/branch.service";
+import { PageHeader } from "@ant-design/pro-layout";
 
 interface OpenBranch {
   open: boolean;
@@ -59,147 +60,149 @@ const Branch = () => {
   }, []);
 
   return (
-    <div
-      style={{
-        background: "#fff",
-        borderRadius: 10,
-        padding: 10,
-      }}
-    >
-      <Tabs
-        tabPosition="top"
+    <PageHeader title={width < 600 ? "" : "Branch"}>
+      <div
         style={{
-          height: "100%",
+          background: "#fff",
+          borderRadius: 10,
+          padding: 10,
         }}
-        tabBarExtraContent={
-          <Button
-            type="primary"
-            onClick={() => setOpenNewBranch({ open: true, data: null })}
-            size="large"
-            icon={<PlusOutlined />}
-            style={{ margin: "0 10px 10px 10px" }}
-          >
-            {width < 600 ? "" : "NEW BRANCH"}
-          </Button>
-        }
-        items={branches.map((_, i) => {
-          const id = String(i + 1);
-          return {
-            label: `Branch ${id}`,
-            key: id,
-            children: (
-              <Space direction="vertical" style={{ padding: 20 }}>
-                <div>
-                  <label
-                    htmlFor="address"
-                    style={{
-                      display: "inline-block",
-                      width: 100,
-                      fontSize: "1.5em",
-                    }}
+      >
+        <Tabs
+          tabPosition="top"
+          style={{
+            height: "100%",
+          }}
+          tabBarExtraContent={
+            <Button
+              type="primary"
+              onClick={() => setOpenNewBranch({ open: true, data: null })}
+              size="large"
+              icon={<PlusOutlined />}
+              style={{ margin: "0 10px 10px 10px" }}
+            >
+              {width < 600 ? "" : "NEW BRANCH"}
+            </Button>
+          }
+          items={branches.map((_, i) => {
+            const id = String(i + 1);
+            return {
+              label: `Branch ${id}`,
+              key: id,
+              children: (
+                <Space direction="vertical" style={{ padding: 20 }}>
+                  <div>
+                    <label
+                      htmlFor="address"
+                      style={{
+                        display: "inline-block",
+                        width: 100,
+                        fontSize: "1.5em",
+                      }}
+                    >
+                      Name:{" "}
+                    </label>
+                    <Typography.Text id="address" style={{ fontSize: "1.5em" }}>
+                      {_.name}
+                    </Typography.Text>
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="address"
+                      style={{
+                        display: "inline-block",
+                        width: 100,
+                        fontSize: "1.5em",
+                      }}
+                    >
+                      Address:{" "}
+                    </label>
+                    <Typography.Text id="address" style={{ fontSize: "1.5em" }}>
+                      {_.address}
+                    </Typography.Text>
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="address"
+                      style={{
+                        display: "inline-block",
+                        width: 100,
+                        fontSize: "1.5em",
+                      }}
+                    >
+                      Device:{" "}
+                    </label>
+                    <Typography.Text
+                      id="device"
+                      style={{
+                        fontSize: "1.5em",
+                      }}
+                    >
+                      {_.device}
+                    </Typography.Text>
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="spm"
+                      style={{
+                        display: "inline-block",
+                        width: 100,
+                        fontSize: "1.5em",
+                      }}
+                    >
+                      SPM No. :{" "}
+                    </label>
+                    <Typography.Text
+                      id="spm"
+                      style={{
+                        fontSize: "1.5em",
+                      }}
+                    >
+                      {_.spm}
+                    </Typography.Text>
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="spm"
+                      style={{
+                        display: "inline-block",
+                        width: 100,
+                        fontSize: "1.5em",
+                      }}
+                    >
+                      App PIN :{" "}
+                    </label>
+                    <Typography.Text
+                      id="spm"
+                      style={{
+                        fontSize: "1.5em",
+                      }}
+                    >
+                      {_.pin}
+                    </Typography.Text>
+                  </div>
+                  <Button
+                    size="large"
+                    icon={<EditOutlined />}
+                    onClick={() => handleOpenEdit(_)}
                   >
-                    Name:{" "}
-                  </label>
-                  <Typography.Text id="address" style={{ fontSize: "1.5em" }}>
-                    {_.name}
-                  </Typography.Text>
-                </div>
-                <div>
-                  <label
-                    htmlFor="address"
-                    style={{
-                      display: "inline-block",
-                      width: 100,
-                      fontSize: "1.5em",
-                    }}
-                  >
-                    Address:{" "}
-                  </label>
-                  <Typography.Text id="address" style={{ fontSize: "1.5em" }}>
-                    {_.address}
-                  </Typography.Text>
-                </div>
-                <div>
-                  <label
-                    htmlFor="address"
-                    style={{
-                      display: "inline-block",
-                      width: 100,
-                      fontSize: "1.5em",
-                    }}
-                  >
-                    Device:{" "}
-                  </label>
-                  <Typography.Text
-                    id="device"
-                    style={{
-                      fontSize: "1.5em",
-                    }}
-                  >
-                    {_.device}
-                  </Typography.Text>
-                </div>
-                <div>
-                  <label
-                    htmlFor="spm"
-                    style={{
-                      display: "inline-block",
-                      width: 100,
-                      fontSize: "1.5em",
-                    }}
-                  >
-                    SPM No. :{" "}
-                  </label>
-                  <Typography.Text
-                    id="spm"
-                    style={{
-                      fontSize: "1.5em",
-                    }}
-                  >
-                    {_.spm}
-                  </Typography.Text>
-                </div>
-                <div>
-                  <label
-                    htmlFor="spm"
-                    style={{
-                      display: "inline-block",
-                      width: 100,
-                      fontSize: "1.5em",
-                    }}
-                  >
-                    App PIN :{" "}
-                  </label>
-                  <Typography.Text
-                    id="spm"
-                    style={{
-                      fontSize: "1.5em",
-                    }}
-                  >
-                    {_.pin}
-                  </Typography.Text>
-                </div>
-                <Button
-                  size="large"
-                  icon={<EditOutlined />}
-                  onClick={() => handleOpenEdit(_)}
-                >
-                  EDIT
-                </Button>
-              </Space>
-            ),
-          };
-        })}
-      />
+                    EDIT
+                  </Button>
+                </Space>
+              ),
+            };
+          })}
+        />
 
-      {/* context */}
-      <NewBranch
-        open={openNewBranch.open}
-        close={() => setOpenNewBranch({ open: false, data: null })}
-        onSave={handleNewBranch}
-        data={openNewBranch.data}
-      />
-    </div>
+        {/* context */}
+        <NewBranch
+          open={openNewBranch.open}
+          close={() => setOpenNewBranch({ open: false, data: null })}
+          onSave={handleNewBranch}
+          data={openNewBranch.data}
+        />
+      </div>
+    </PageHeader>
   );
 };
 

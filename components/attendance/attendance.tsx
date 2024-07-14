@@ -18,6 +18,7 @@ import Excel from "exceljs";
 import { LogData, User } from "@/types";
 import UserService from "@/provider/user.service";
 import LogService from "@/provider/log.service";
+import { PageHeader } from "@ant-design/pro-layout";
 
 // TODO: validate duplicate employee ID
 // page, pageSize, type, userId, fromDate, toDate, project
@@ -486,64 +487,58 @@ const Attendance = () => {
   }, []);
 
   return (
-    <>
-      <div
-        style={{
-          padding: 10,
+    <PageHeader title={width < 600 ? "" : "Attendance"}>
+      <Table
+        title={isMobile ? getHeaderMobile : getHeader}
+        columns={columns}
+        loading={fetching}
+        dataSource={logs}
+        rowKey={(e) => e._id ?? ""}
+        scroll={{
+          y: "calc(100vh - 30em)",
+          x: isMobile ? "200vw" : undefined,
         }}
-      >
-        <Table
-          title={isMobile ? getHeaderMobile : getHeader}
-          columns={columns}
-          loading={fetching}
-          dataSource={logs}
-          rowKey={(e) => e._id ?? ""}
-          scroll={{
-            y: "calc(100vh - 30em)",
-            x: isMobile ? "200vw" : undefined,
-          }}
-          pagination={{
-            defaultPageSize: 10,
-            total,
-            onChange: (page, pageSize) =>
-              getLogs({
-                page,
-                pageSize,
-                userId: filter.tellerId ?? null,
-                fromDate: filter.fromDate ?? null,
-                toDate: filter.toDate ?? null,
-              }),
-          }}
-          summary={() => (
-            <Table.Summary fixed>
-              <Table.Summary.Row>
-                <Table.Summary.Cell index={0} />
-                <Table.Summary.Cell index={1} />
-                <Table.Summary.Cell index={2} />
-                <Table.Summary.Cell index={3} />
-                <Table.Summary.Cell index={4} />
-                <Table.Summary.Cell index={5} />
-                <Table.Summary.Cell index={6}>
-                  <div
-                    style={{
-                      display: "flex",
-                    }}
-                  >
-                    <Typography.Text style={{ flex: 5 }} strong>
-                      Total:
-                    </Typography.Text>
-                    <span style={{ flex: 7 }}>
-                      {totalRenderedHourse.toFixed(2)}
-                    </span>
-                  </div>
-                </Table.Summary.Cell>
-              </Table.Summary.Row>
-            </Table.Summary>
-          )}
-          sticky
-          bordered
-        />
-      </div>
+        pagination={{
+          defaultPageSize: 10,
+          total,
+          onChange: (page, pageSize) =>
+            getLogs({
+              page,
+              pageSize,
+              userId: filter.tellerId ?? null,
+              fromDate: filter.fromDate ?? null,
+              toDate: filter.toDate ?? null,
+            }),
+        }}
+        summary={() => (
+          <Table.Summary fixed>
+            <Table.Summary.Row>
+              <Table.Summary.Cell index={0} />
+              <Table.Summary.Cell index={1} />
+              <Table.Summary.Cell index={2} />
+              <Table.Summary.Cell index={3} />
+              <Table.Summary.Cell index={4} />
+              <Table.Summary.Cell index={5} />
+              <Table.Summary.Cell index={6}>
+                <div
+                  style={{
+                    display: "flex",
+                  }}
+                >
+                  <Typography.Text style={{ flex: 5 }} strong>
+                    Total:
+                  </Typography.Text>
+                  <span style={{ flex: 7 }}>
+                    {totalRenderedHourse.toFixed(2)}
+                  </span>
+                </div>
+              </Table.Summary.Cell>
+            </Table.Summary.Row>
+          </Table.Summary>
+        )}
+        sticky
+        bordered
+      />
 
       {/* context */}
       <Modal
@@ -644,7 +639,7 @@ const Attendance = () => {
           />
         </Space>
       </Modal>
-    </>
+    </PageHeader>
   );
 };
 

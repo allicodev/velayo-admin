@@ -26,6 +26,7 @@ import dayjs, { Dayjs } from "dayjs";
 import BillService from "@/provider/bill.service";
 import BranchService from "@/provider/branch.service";
 import UserService from "@/provider/user.service";
+import { PageHeader } from "@ant-design/pro-layout";
 
 interface FilterProps {
   status?: TransactionHistoryStatus | null;
@@ -651,7 +652,7 @@ const TransactionHistory = () => {
   }, []);
 
   return (
-    <>
+    <PageHeader title={width < 600 ? "" : "Transaction"}>
       <Table
         title={isMobile ? getHeaderMobile : getHeader}
         columns={column}
@@ -876,7 +877,7 @@ const TransactionHistory = () => {
           </div>
         </Space>
       </Modal>
-    </>
+    </PageHeader>
   );
 };
 

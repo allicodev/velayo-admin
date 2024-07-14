@@ -622,3 +622,12 @@ label.customCheckbox span span.ant-checkbox-inner::after {
   align-items: center !important;
   gap: 10px !important;
 }
+
+.ant-collapse-expand-icon {
+  height: 40px !important;
+  margin-left: 5px;
+}
+
+.ant-collapse-header-text {
+  font-size: 2em;
+}

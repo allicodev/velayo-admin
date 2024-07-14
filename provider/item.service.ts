@@ -4,11 +4,9 @@ import {
   Item,
   ItemCode,
   ItemData,
-  TransactionPOS,
-  OnlinePayment,
-  Transaction,
   Response,
   BranchData,
+  ItemWithCategory,
 } from "@/types";
 
 class ItemService {
@@ -75,13 +73,55 @@ class ItemService {
   }
 
   public async purgeItem(id: string) {
-    const response = await this.instance.get<ItemData[]>({
+    return await this.instance.get<ItemData[]>({
       endpoint: "/item/purge-item",
       query: {
         id,
       },
     });
-    return response;
+  }
+
+  public async getItemsWithCategory() {
+    return this.instance.get<ItemWithCategory[]>({
+      endpoint: "/item/get-items",
+    });
+  }
+
+  public async newCategory(name: string) {
+    return this.instance.post<Response>({
+      endpoint: "/item/new-category",
+      payload: {
+        name,
+      },
+    });
+  }
+
+  public async updateItemCategory(itemIds: string[], itemCategory: string) {
+    return this.instance.post<Response>({
+      endpoint: "/item/update-item-category",
+      payload: {
+        itemIds,
+        itemCategory,
+      },
+    });
+  }
+
+  public async removeItemCategory(itemId: string) {
+    return this.instance.get<Response>({
+      endpoint: "/item/delete-item-category",
+      query: {
+        id: itemId,
+      },
+    });
+  }
+
+  public async deleteCategory(id: string) {
+    return this.instance.get<Response>({
+      endpoint: "/item/delete-category",
+      query: {
+        id,
+      },
+    });
   }
 }
 

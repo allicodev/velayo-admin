@@ -45,7 +45,7 @@ const Stock = ({
   const handleSave = async () => {
     if (selectedItem.map((e) => e.quantity).some((e) => e == 0)) {
       message.warning(
-        "Some of the Item has no quantity. Please provide or remove the Item."
+        "Some of the Item has no quantity or invalid quantity. Please provide or remove the Item."
       );
       return;
     }
@@ -224,7 +224,12 @@ const Stock = ({
                   size="large"
                   className="inputnum-align-end"
                   onChange={(e) =>
-                    dispatch(updateQuantity({ id: row._id, quantity: e! }))
+                    dispatch(
+                      updateQuantity({
+                        id: row._id,
+                        quantity: parseInt(e?.toFixed()!),
+                      })
+                    )
                   }
                 />
               ),

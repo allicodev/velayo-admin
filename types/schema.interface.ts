@@ -1,3 +1,5 @@
+import { ItemWithCategory } from "./service.interface";
+
 export type ItemUnit = "pc(s)" | "bot(s)" | "kit(s)";
 export type RoleType = "teller" | "encoder" | "accounting" | "admin";
 export type TransactionHistoryStatus = "completed" | "failed" | "pending";
@@ -25,6 +27,7 @@ export interface Item {
   price: number;
   quantity: number;
   cost: number;
+  itemCategory: ItemWithCategory;
 }
 
 export interface ItemWithStock {

@@ -1,3 +1,5 @@
+import { ItemData } from "./schema.interface";
+
 export interface EloadSettings {
   _id: string;
   disabled_eload: string[];
@@ -16,4 +18,10 @@ export interface UpdateFeeProps {
   fee: number;
   threshold: number;
   additionalFee: number;
+}
+
+export interface ItemWithCategory {
+  _id?: string;
+  name: string;
+  items: ItemData[];
 }

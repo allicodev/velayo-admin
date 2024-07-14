@@ -211,7 +211,7 @@ const BillingSettings = () => {
         <Card
           styles={{
             body: {
-              padding: 5,
+              padding: 0,
               background: "#fefefe",
               borderRadius: 10,
             },

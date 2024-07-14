@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { Affix, Layout } from "antd";
 import { Content, Header, Sider } from "@/components/layout";
 
@@ -19,15 +19,56 @@ import EloadSettings from "@/components/eload_settings";
 import Portal from "@/components/portal";
 import Branch from "@/components/branch";
 import Dashboard from "@/components/dashboard";
+import ItemSettings from "@/components/inventory/item_settings";
+import { useItemStore } from "@/provider/context";
+import dayjs from "dayjs";
+import { ItemData } from "@/types";
+import ItemService from "@/provider/item.service";
 
 const Admin = () => {
+  const { setItems, lastDateUpdated, setLastDateUpdated, items } =
+    useItemStore();
   const [selectedKey, setSelectedKey] = useState("dashboard");
+  const [width, setWidth] = useState(0);
+
+  const item = new ItemService();
+
+  useEffect(() => {
+    function handleResize() {
+      setWidth(window.innerWidth);
+    }
+
+    window.addEventListener("resize", handleResize);
+    handleResize(); // Set initial width
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    const minutes = 5; // change this to update the items per (x) minutes
+
+    if (
+      Math.abs(dayjs(lastDateUpdated).diff(dayjs(), "minutes")) >= minutes ||
+      lastDateUpdated == null ||
+      items.length == 0
+    ) {
+      (async (_) => {
+        let res = await _.getItems();
+        if (res?.success ?? false) {
+          setItems((res?.data as ItemData[]) ?? []);
+          setLastDateUpdated(dayjs());
+          console.log("Items are refreshed");
+        }
+      })(item);
+    }
+  }, []);
 
   return (
     <>
       <Layout>
         <Affix>
           <Sider
+            isMobile={width < 600}
             selectedIndex={(e) =>
               setSelectedKey(e.keyPath.reverse().join(" / "))
             }
@@ -71,6 +112,10 @@ const Admin = () => {
                   {
                     label: "Items",
                     key: "item",
+                  },
+                  {
+                    label: "Items App Settings",
+                    key: "settings",
                   },
                 ],
               },
@@ -117,6 +162,8 @@ const Admin = () => {
             {selectedKey.includes("pos") && selectedKey.includes("item") && (
               <ItemsHome />
             )}
+            {selectedKey.includes("pos") &&
+              selectedKey.includes("settings") && <ItemSettings />}
             {selectedKey.includes("app") && selectedKey.includes("bill") && (
               <BillingSettings />
             )}

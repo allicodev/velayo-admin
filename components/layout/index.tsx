@@ -8,30 +8,17 @@ import { SiderProps, ContentProps } from "@/types";
 import { AuthStore, useUserStore } from "@/provider/context";
 import { verify } from "@/assets/ts/jwt_jose";
 
-const Sider = ({ selectedIndex, selectedKey, items }: SiderProps) => {
-  const [width, setWidth] = useState(0);
-
-  useEffect(() => {
-    function handleResize() {
-      setWidth(window.innerWidth);
-    }
-
-    window.addEventListener("resize", handleResize);
-    handleResize(); // Set initial width
-
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
+const Sider = ({ selectedIndex, selectedKey, items, isMobile }: SiderProps) => {
   return (
     <Affix>
       <Layout.Sider
         theme="light"
-        defaultCollapsed={width < 600}
+        defaultCollapsed={isMobile}
         style={{
           boxShadow: "2px 0 1px -2px #888",
-          height: width < 600 ? "100vh" : undefined,
+          height: isMobile ? "100vh" : undefined,
         }}
-        trigger={width < 600 ? null : undefined}
+        trigger={isMobile ? null : undefined}
         collapsible
       >
         <div
@@ -77,7 +64,11 @@ const Header = ({ selectedKey }: { selectedKey?: string }) => {
   const { currentUser } = useUserStore();
   return (
     <>
-      <Affix>
+      <Affix
+        style={{
+          boxShadow: "2px 2px 1px -2px #888",
+        }}
+      >
         <Layout.Header
           style={{
             backgroundColor: "#fff",
