@@ -109,7 +109,7 @@ const TransactionHistory = () => {
     },
     {
       title: "Amount",
-      width: isMobile ? 15 : 100,
+      width: isMobile ? 20 : 100,
       align: "end",
       render: (_, row) =>
         row.type == "miscellaneous" ||
@@ -121,7 +121,7 @@ const TransactionHistory = () => {
     {
       title: "Service Fee",
       align: "end",
-      width: isMobile ? 15 : 100,
+      width: isMobile ? 20 : 100,
       dataIndex: "fee",
       render: (_) => _?.toFixed(2) ?? "0.00",
     },
@@ -136,11 +136,12 @@ const TransactionHistory = () => {
           }}
         >
           <span>Amount</span>
-          <span>+</span> <span>Service Fee</span>
+          <span>+</span> <span>Service</span>
+          <span>Fee</span>
         </div>
       ),
       align: "end",
-      width: isMobile ? 20 : 100,
+      width: isMobile ? 25 : 100,
       render: (_, e) =>
         ((e.amount ?? 0) +
           (e.type == "wallet" &&
@@ -298,7 +299,7 @@ const TransactionHistory = () => {
         style={{
           display: "flex",
           gap: 10,
-          justifyContent: "end",
+          justifyContent: "start",
         }}
       >
         <Button

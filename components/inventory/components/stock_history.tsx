@@ -56,13 +56,13 @@ const StockHistory = ({ open, close, branchId, isMobile }: BasicProps) => {
     },
     {
       title: "Type",
-      width: 1,
+      width: isMobile ? 15 : 1,
       render: (_, row) => getStockStatusBadge(row.type!),
     },
     {
       title: "Quantity",
       align: "center",
-      width: 1,
+      width: isMobile ? 15 : 1,
       render: (_, row) =>
         ["stock-in", "misc"].includes(row.type ?? "")
           ? row.quantity

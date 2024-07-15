@@ -45,7 +45,7 @@ const Stock = ({
   const handleSave = async () => {
     if (selectedItem.map((e) => e.quantity).some((e) => e == 0)) {
       message.warning(
-        "Some of the Item has no quantity or invalid quantity. Please provide or remove the Item."
+        "Some of the Item has no quantity. Please provide or remove the Item."
       );
       return;
     }
@@ -212,11 +212,7 @@ const Stock = ({
               width: 80,
               dataIndex: "price",
               render: (_) =>
-                _ != undefined ? (
-                  `₱${_?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`
-                ) : (
-                  <Typography.Text type="secondary">Not Set</Typography.Text>
-                ),
+                `₱${_?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`,
             },
             {
               title: `Stock(s) ${type == "stock-in" ? "In" : "Out"}`,
@@ -228,12 +224,7 @@ const Stock = ({
                   size="large"
                   className="inputnum-align-end"
                   onChange={(e) =>
-                    dispatch(
-                      updateQuantity({
-                        id: row._id,
-                        quantity: parseInt(e?.toFixed()!),
-                      })
-                    )
+                    dispatch(updateQuantity({ id: row._id, quantity: e! }))
                   }
                 />
               ),

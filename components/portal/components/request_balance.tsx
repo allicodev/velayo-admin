@@ -27,6 +27,7 @@ const RequestBalance = ({ open, close, portal, isMobile }: MyBasicProps) => {
     },
     {
       title: "Amount",
+      width: isMobile ? 90 : undefined,
       align: "center",
       render: (_, row) => (
         <>
@@ -41,6 +42,7 @@ const RequestBalance = ({ open, close, portal, isMobile }: MyBasicProps) => {
     {
       title: "Status",
       align: "center",
+      width: isMobile ? 25 : undefined,
       render: (_, row) => (
         <Tag
           color={
@@ -58,13 +60,14 @@ const RequestBalance = ({ open, close, portal, isMobile }: MyBasicProps) => {
     {
       title: "Date Requested",
       dataIndex: "createdAt",
+      align: "center",
       render: (_) => dayjs(_).format("MM/DD/YY hh:mma"),
     },
     {
       title: "Functions",
       align: "center",
       fixed: isMobile ? "right" : undefined,
-      width: isMobile ? 150 : undefined,
+      width: isMobile ? 120 : undefined,
       render: (_, row) =>
         row.status == "pending" ? (
           <Space direction={isMobile ? "vertical" : "horizontal"}>

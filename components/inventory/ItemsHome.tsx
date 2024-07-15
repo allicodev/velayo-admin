@@ -752,14 +752,16 @@ const ItemsHome = ({ extraData }: BasicContentProps) => {
                 />
               </div>
             </Col>
-            <Col span={1}>
-              <Divider
-                type="vertical"
-                style={{
-                  height: _window!.innerHeight - 200,
-                }}
-              />
-            </Col>
+            {!isMobile && (
+              <Col span={1}>
+                <Divider
+                  type="vertical"
+                  style={{
+                    height: _window!.innerHeight - 200,
+                  }}
+                />
+              </Col>
+            )}
             <Col span={9}>
               {selectedItem && renderSelectedItem(selectedItem)}
             </Col>

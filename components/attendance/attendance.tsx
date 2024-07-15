@@ -73,7 +73,7 @@ const Attendance = () => {
     {
       title: "Type",
       dataIndex: "userId",
-      width: isMobile ? 90 : undefined,
+      width: isMobile ? 120 : undefined,
       render: (_) => _.role.toLocaleUpperCase(),
     },
     {
@@ -171,7 +171,7 @@ const Attendance = () => {
         style={{
           display: "flex",
           gap: 10,
-          justifyContent: "end",
+          justifyContent: "start",
         }}
       >
         <Button

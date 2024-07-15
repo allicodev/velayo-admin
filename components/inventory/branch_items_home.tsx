@@ -55,9 +55,7 @@ const BranchItemHome = ({ open, close, branch, updateBranch }: BasicProps) => {
   const drawerTitle = () => (
     <Flex align="center">
       <Typography.Title level={4} style={{ margin: 0 }}>
-        {isMobile
-          ? `Inventory ${branch?.name}`
-          : `Stock Inventory on ${branch?.name}`}
+        {isMobile ? `${branch?.name}` : `Stock Inventory on ${branch?.name}`}
       </Typography.Title>
       {!isMobile && (
         <Typography.Text
@@ -125,6 +123,7 @@ const BranchItemHome = ({ open, close, branch, updateBranch }: BasicProps) => {
   const columns: TableProps<BranchItem>["columns"] = [
     {
       title: "Item Code",
+      width: isMobile ? 30 : undefined,
       render: (_, row) =>
         `${"00000".slice(row?.itemId?.itemCode?.toString().length)}${
           row?.itemId?.itemCode
@@ -137,7 +136,7 @@ const BranchItemHome = ({ open, close, branch, updateBranch }: BasicProps) => {
     {
       title: "Quantity",
       align: "center",
-      width: 1,
+      width: isMobile ? 30 : 1,
       dataIndex: "stock_count",
     },
     {
