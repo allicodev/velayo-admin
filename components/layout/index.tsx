@@ -25,6 +25,8 @@ const Sider = ({ selectedIndex, selectedKey, items, hide }: SiderProps) => {
         theme="light"
         style={{
           boxShadow: "2px 0 1px -2px #888",
+          minHeight: "100vh",
+          zIndex: 2,
         }}
         collapsible
       >
@@ -82,6 +84,7 @@ const Header = ({
       <Affix
         style={{
           boxShadow: "2px 2px 1px -2px #888",
+          zIndex: 1,
         }}
       >
         <Layout.Header

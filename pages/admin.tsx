@@ -65,87 +65,85 @@ const Admin = () => {
 
   return (
     <Layout>
-      <Affix>
-        <Sider
-          selectedIndex={(e) => setSelectedKey(e.keyPath.reverse().join(" / "))}
-          selectedKey={selectedKey.split(" / ")}
-          hide={width < 600}
-          items={[
-            {
-              label: "Dashboard",
-              key: "dashboard",
-              icon: <MdAutoGraph style={{ fontSize: "1em" }} />,
-            },
-            {
-              label: "Users",
-              key: "users",
-              icon: <GoPeople style={{ fontSize: "1em" }} />,
-            },
-            {
-              label: "Branch",
-              key: "branch",
-              icon: <LuLayoutDashboard style={{ fontSize: "1em" }} />,
-            },
-            {
-              label: "Reports",
-              key: "report",
-              icon: <TbReportAnalytics style={{ fontSize: "1em" }} />,
-              children: [
-                {
-                  label: "Transactions",
-                  key: "transaction",
-                },
-                {
-                  label: "Attendance",
-                  key: "attendance",
-                },
-              ],
-            },
-            {
-              label: "POS",
-              key: "pos",
-              icon: <MdPointOfSale style={{ fontSize: "1em" }} />,
-              children: [
-                {
-                  label: "Items",
-                  key: "item",
-                },
-                {
-                  label: "Items App Settings",
-                  key: "settings",
-                },
-              ],
-            },
-            {
-              label: "App Settings",
-              key: "app",
-              icon: <SettingOutlined style={{ fontSize: "1em" }} />,
-              children: [
-                {
-                  label: "Bills",
-                  key: "bill settings",
-                  icon: <FaMoneyBills />,
-                },
-                {
-                  label: "E-Wallets",
-                  key: "ewallet settings",
-                  icon: <WalletOutlined />,
-                },
-                {
-                  label: "E-Load",
-                  key: "eload settings",
-                  icon: <SettingOutlined />,
-                },
-                {
-                  label: "Portals",
-                  key: "portal area",
-                  icon: <GoCreditCard />,
-                },
-              ],
-            },
-          ]}
-        />
-      </Affix>
+      <Sider
+        selectedIndex={(e) => setSelectedKey(e.keyPath.reverse().join(" / "))}
+        selectedKey={selectedKey.split(" / ")}
+        hide={width < 600}
+        items={[
+          {
+            label: "Dashboard",
+            key: "dashboard",
+            icon: <MdAutoGraph style={{ fontSize: "1em" }} />,
+          },
+          {
+            label: "Users",
+            key: "users",
+            icon: <GoPeople style={{ fontSize: "1em" }} />,
+          },
+          {
+            label: "Branch",
+            key: "branch",
+            icon: <LuLayoutDashboard style={{ fontSize: "1em" }} />,
+          },
+          {
+            label: "Reports",
+            key: "report",
+            icon: <TbReportAnalytics style={{ fontSize: "1em" }} />,
+            children: [
+              {
+                label: "Transactions",
+                key: "transaction",
+              },
+              {
+                label: "Attendance",
+                key: "attendance",
+              },
+            ],
+          },
+          {
+            label: "POS",
+            key: "pos",
+            icon: <MdPointOfSale style={{ fontSize: "1em" }} />,
+            children: [
+              {
+                label: "Items",
+                key: "item",
+              },
+              {
+                label: "Items App Settings",
+                key: "settings",
+              },
+            ],
+          },
+          {
+            label: "App Settings",
+            key: "app",
+            icon: <SettingOutlined style={{ fontSize: "1em" }} />,
+            children: [
+              {
+                label: "Bills",
+                key: "bill settings",
+                icon: <FaMoneyBills />,
+              },
+              {
+                label: "E-Wallets",
+                key: "ewallet settings",
+                icon: <WalletOutlined />,
+              },
+              {
+                label: "E-Load",
+                key: "eload settings",
+                icon: <SettingOutlined />,
+              },
+              {
+                label: "Portals",
+                key: "portal area",
+                icon: <GoCreditCard />,
+              },
+            ],
+          },
+        ]}
+      />
       <Layout>
         <Header selectedKey={selectedKey} setSelectedKey={setSelectedKey} />
         <Content selectedKey={selectedKey}>
