@@ -114,14 +114,17 @@ const Portal = () => {
     },
     {
       title: "Current balance",
-      width: isMobile ? 100 : 200,
+      width: isMobile ? 130 : 200,
       align: "center",
       dataIndex: "currentBalance",
-      render: (_) =>
-        `₱${_.toLocaleString(undefined, {
+      render: (_) => (
+        <span
+          style={{ color: _ < 0 ? "red" : undefined }}
+        >{`₱${_.toLocaleString(undefined, {
           minimumFractionDigits: 2,
           maximumFractionDigits: 2,
-        })}`,
+        })}`}</span>
+      ),
     },
     {
       title: "Functions",

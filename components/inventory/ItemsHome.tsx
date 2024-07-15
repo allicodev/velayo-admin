@@ -372,7 +372,14 @@ const ItemsHome = ({ extraData }: BasicContentProps) => {
       return _;
     };
     return (
-      <>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          minHeight: isMobile ? 0 : "70vh",
+        }}
+      >
         <Row style={{ border: "1px solid #aaa" }}>
           <Col span={24}>
             <Typography.Title
@@ -572,7 +579,7 @@ const ItemsHome = ({ extraData }: BasicContentProps) => {
             </div>
           </Col>
         </Row>
-      </>
+      </div>
     );
   };
 

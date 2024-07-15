@@ -1,24 +1,31 @@
 import React, { useEffect, useState } from "react";
 import { GetServerSideProps } from "next";
-import { Menu, Typography, Dropdown, Layout, Affix, Avatar, Image } from "antd";
-import { LogoutOutlined, UserOutlined } from "@ant-design/icons";
+import {
+  Menu,
+  Typography,
+  Dropdown,
+  Layout,
+  Affix,
+  Avatar,
+  Image,
+  Button,
+} from "antd";
+import { LogoutOutlined, UserOutlined, MenuOutlined } from "@ant-design/icons";
 import Cookies from "js-cookie";
 
 import { SiderProps, ContentProps } from "@/types";
 import { AuthStore, useUserStore } from "@/provider/context";
 import { verify } from "@/assets/ts/jwt_jose";
+import MobileMenu from "./mobile_menu";
 
-const Sider = ({ selectedIndex, selectedKey, items, isMobile }: SiderProps) => {
-  return (
+const Sider = ({ selectedIndex, selectedKey, items, hide }: SiderProps) => {
+  return hide ? null : (
     <Affix>
       <Layout.Sider
         theme="light"
-        defaultCollapsed={isMobile}
         style={{
           boxShadow: "2px 0 1px -2px #888",
-          height: isMobile ? "100vh" : undefined,
         }}
-        trigger={isMobile ? null : undefined}
         collapsible
       >
         <div
@@ -47,8 +54,16 @@ const Sider = ({ selectedIndex, selectedKey, items, isMobile }: SiderProps) => {
   );
 };
 
-const Header = ({ selectedKey }: { selectedKey?: string }) => {
+const Header = ({
+  selectedKey,
+  setSelectedKey,
+}: {
+  selectedKey?: string;
+  setSelectedKey: React.Dispatch<React.SetStateAction<string>>;
+}) => {
   const [width, setWidth] = useState(0);
+
+  const [openMobileMenu, setOpenMobileMenu] = useState(false);
 
   useEffect(() => {
     function handleResize() {
@@ -85,59 +100,73 @@ const Header = ({ selectedKey }: { selectedKey?: string }) => {
               {selectedKey?.toLocaleUpperCase()}
             </Typography.Text>
           )}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <div style={{ display: "flex", flexDirection: "column" }}>
-              <Typography.Text
-                style={{ marginRight: 10, textAlign: "end", fontSize: 22 }}
-              >
-                {currentUser?.name ?? ""}
-              </Typography.Text>
-            </div>
-            <Dropdown
-              menu={{
-                items: [
-                  {
-                    label: "Edit Profile",
-                    key: "edit",
-                    // onClick: () => setOpenEditModal(true),
-                  },
-                  {
-                    type: "divider",
-                  },
-                  {
-                    label: (
-                      <div style={{ color: "#ff0000" }}>
-                        logout <LogoutOutlined />
-                      </div>
-                    ),
-                    key: "3",
-                    onClick: () => {
-                      Cookies.remove("token");
-                      window.location.reload();
-                    },
-                  },
-                ],
+
+          {width < 600 ? (
+            <Button
+              icon={<MenuOutlined style={{ fontSize: "1.2em", padding: 10 }} />}
+              type="text"
+              onClick={() => setOpenMobileMenu(true)}
+            />
+          ) : (
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
               }}
-              trigger={["click"]}
             >
-              <Avatar
-                icon={<UserOutlined />}
-                size={40}
-                style={{ cursor: "pointer" }}
-              />
-            </Dropdown>
-          </div>
+              <div style={{ display: "flex", flexDirection: "column" }}>
+                <Typography.Text
+                  style={{ marginRight: 10, textAlign: "end", fontSize: 22 }}
+                >
+                  {currentUser?.name ?? ""}
+                </Typography.Text>
+              </div>
+              <Dropdown
+                menu={{
+                  items: [
+                    {
+                      label: "Edit Profile",
+                      key: "edit",
+                      // onClick: () => setOpenEditModal(true),
+                    },
+                    {
+                      type: "divider",
+                    },
+                    {
+                      label: (
+                        <div style={{ color: "#ff0000" }}>
+                          logout <LogoutOutlined />
+                        </div>
+                      ),
+                      key: "3",
+                      onClick: () => {
+                        Cookies.remove("token");
+                        window.location.reload();
+                      },
+                    },
+                  ],
+                }}
+                trigger={["click"]}
+              >
+                <Avatar
+                  icon={<UserOutlined />}
+                  size={40}
+                  style={{ cursor: "pointer" }}
+                />
+              </Dropdown>
+            </div>
+          )}
         </Layout.Header>
       </Affix>
 
       {/* context */}
       {/* <EditProfile open={openEditModal} close={() => setOpenEditModal(false)} /> */}
+      <MobileMenu
+        open={openMobileMenu}
+        close={() => setOpenMobileMenu(false)}
+        setSelectedKey={setSelectedKey}
+      />
     </>
   );
 };

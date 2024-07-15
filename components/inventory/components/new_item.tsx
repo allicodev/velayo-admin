@@ -153,12 +153,6 @@ const NewItem = ({ title, open, close, onSave }: NewItemProps) => {
           label={<span style={{ fontSize: "1.6em" }}>Price</span>}
           name="price"
           style={{ margin: 0, marginBottom: 5 }}
-          rules={[
-            {
-              required: true,
-              message: "Price is empty. Please Provide.",
-            },
-          ]}
         >
           <InputNumber
             size="large"

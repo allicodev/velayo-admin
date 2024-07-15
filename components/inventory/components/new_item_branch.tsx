@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { AutoComplete, Button, Modal, Table, Tooltip, message } from "antd";
+import {
+  AutoComplete,
+  Button,
+  Modal,
+  Table,
+  Tooltip,
+  Typography,
+  message,
+} from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 
 import { ItemData } from "@/types";
@@ -112,7 +120,11 @@ const NewItemBranch = ({ open, close, onAdd, restrictId }: BasicProps) => {
               width: 100,
               dataIndex: "price",
               render: (_) =>
-                `₱${_?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`,
+                _ != undefined ? (
+                  `₱${_?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`
+                ) : (
+                  <Typography.Text type="secondary">Not Set</Typography.Text>
+                ),
             },
             {
               width: 1,

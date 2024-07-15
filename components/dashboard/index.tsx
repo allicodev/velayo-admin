@@ -47,7 +47,7 @@ const Dashboard = () => {
   }, []);
 
   return width < 600 ? (
-    <Row gutter={[16, 16]}>
+    <>
       <div
         style={{
           display: "inline-flex",
@@ -142,7 +142,7 @@ const Dashboard = () => {
           isMobile
         />
       </Col>
-    </Row>
+    </>
   ) : (
     <PageHeader title="Dashboard">
       <Row gutter={[16, 16]}>

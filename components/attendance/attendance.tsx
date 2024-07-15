@@ -153,7 +153,7 @@ const Attendance = () => {
       title: "Hour(s) Rendered",
       align: "center",
       fixed: "right",
-      width: isMobile ? 120 : undefined,
+      width: isMobile ? 80 : undefined,
       render: (_, row) =>
         row.timeOut == null ? (
           <Typography.Text type="secondary" italic>
@@ -512,28 +512,38 @@ const Attendance = () => {
         }}
         summary={() => (
           <Table.Summary fixed>
-            <Table.Summary.Row>
-              <Table.Summary.Cell index={0} />
-              <Table.Summary.Cell index={1} />
-              <Table.Summary.Cell index={2} />
-              <Table.Summary.Cell index={3} />
-              <Table.Summary.Cell index={4} />
-              <Table.Summary.Cell index={5} />
-              <Table.Summary.Cell index={6}>
-                <div
-                  style={{
-                    display: "flex",
-                  }}
-                >
-                  <Typography.Text style={{ flex: 5 }} strong>
-                    Total:
-                  </Typography.Text>
-                  <span style={{ flex: 7 }}>
-                    {totalRenderedHourse.toFixed(2)}
-                  </span>
-                </div>
-              </Table.Summary.Cell>
-            </Table.Summary.Row>
+            {isMobile ? (
+              <div
+                style={{
+                  padding: 10,
+                }}
+              >
+                <strong>Total:</strong> {totalRenderedHourse.toFixed(2)}
+              </div>
+            ) : (
+              <Table.Summary.Row>
+                <Table.Summary.Cell index={0} />
+                <Table.Summary.Cell index={1} />
+                <Table.Summary.Cell index={2} />
+                <Table.Summary.Cell index={3} />
+                <Table.Summary.Cell index={4} />
+                <Table.Summary.Cell index={5} />
+                <Table.Summary.Cell index={6}>
+                  <div
+                    style={{
+                      display: "flex",
+                    }}
+                  >
+                    <Typography.Text style={{ flex: 5 }} strong>
+                      Total:
+                    </Typography.Text>
+                    <span style={{ flex: 7 }}>
+                      {totalRenderedHourse.toFixed(2)}
+                    </span>
+                  </div>
+                </Table.Summary.Cell>
+              </Table.Summary.Row>
+            )}
           </Table.Summary>
         )}
         sticky

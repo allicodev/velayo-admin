@@ -5,7 +5,7 @@ export interface SiderProps {
   selectedIndex: MenuProps["onClick"];
   selectedKey: string[];
   items: any[];
-  isMobile: boolean;
+  hide?: boolean;
 }
 
 export interface ContentProps {

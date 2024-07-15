@@ -631,3 +631,44 @@ label.customCheckbox span span.ant-checkbox-inner::after {
 .ant-collapse-header-text {
   font-size: 2em;
 }
+
+.mobile-menu-header .ant-drawer-header-title {
+  display: flex;
+  justify-content: space-between;
+}
+
+.mobile-menu-header .ant-drawer-header-title .ant-drawer-title {
+  flex: none;
+}
+
+.custom-menu {
+  padding: 10px;
+  margin: 5px !important;
+}
+
+.custom-menu.child {
+  padding: 10px;
+  margin-left: 25px !important;
+}
+
+.custom-menu.highlight-menu {
+  background-color: #98c04b;
+  border-radius: 10px;
+  color: #fff !important;
+}
+
+.custom-menu.highlight-parent-menu ~ .icon {
+  transform: rotateZ(90deg);
+}
+
+.child-menu {
+  max-height: 0;
+  height: auto;
+  overflow: hidden;
+  transition: all 0.5s;
+}
+.child-menu.open {
+  max-height: 100%;
+  height: auto;
+  overflow: hidden;
+}

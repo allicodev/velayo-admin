@@ -75,13 +75,13 @@ const TransactionHistory = () => {
   const column: TableProps<Transaction>["columns"] = [
     {
       title: "Ref Code",
-      width: isMobile ? 15 : 80,
+      width: isMobile ? 30 : 80,
       dataIndex: "reference",
     },
     {
       title: "Branch Name",
       dataIndex: "branchId",
-      width: isMobile ? 15 : 70,
+      width: isMobile ? 25 : 70,
       render: (_) => (_ as BranchData)?.name ?? _,
     },
     {
@@ -91,13 +91,14 @@ const TransactionHistory = () => {
       render: (_) => dayjs(_).format("MM/DD/YYYY HH:mm"),
     },
     {
-      title: "Transaction Type",
-      width: isMobile ? 25 : 70,
+      title: isMobile ? "Type" : "Transaction Type",
+      width: isMobile ? 15 : 70,
+      align: isMobile ? "center" : "start",
       dataIndex: "type",
     },
     {
       title: "Biller Name / Product Code",
-      width: isMobile ? 40 : 150,
+      width: isMobile ? 38 : 150,
       dataIndex: "sub_type",
       render: (_) =>
         _ ?? (
@@ -108,7 +109,7 @@ const TransactionHistory = () => {
     },
     {
       title: "Amount",
-      width: isMobile ? 25 : 100,
+      width: isMobile ? 15 : 100,
       align: "end",
       render: (_, row) =>
         row.type == "miscellaneous" ||
@@ -120,7 +121,7 @@ const TransactionHistory = () => {
     {
       title: "Service Fee",
       align: "end",
-      width: isMobile ? 25 : 100,
+      width: isMobile ? 15 : 100,
       dataIndex: "fee",
       render: (_) => _?.toFixed(2) ?? "0.00",
     },
@@ -139,7 +140,7 @@ const TransactionHistory = () => {
         </div>
       ),
       align: "end",
-      width: isMobile ? 25 : 100,
+      width: isMobile ? 20 : 100,
       render: (_, e) =>
         ((e.amount ?? 0) +
           (e.type == "wallet" &&
@@ -155,7 +156,7 @@ const TransactionHistory = () => {
     {
       title: "Teller",
       align: "center",
-      width: isMobile ? 30 : 100,
+      width: isMobile ? 25 : 100,
       dataIndex: "tellerId",
       render: (_) => (_ as User)?.name ?? _,
     },
@@ -680,61 +681,65 @@ const TransactionHistory = () => {
         }}
         summary={(pageData) => (
           <Table.Summary fixed>
-            <Table.Summary.Row>
-              <Table.Summary.Cell index={0} />
-              <Table.Summary.Cell index={1} />
-              <Table.Summary.Cell index={2} />
-              <Table.Summary.Cell index={3} />
-              <Table.Summary.Cell index={4} />
-              <Table.Summary.Cell index={5}>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    fontSize: "1.1em",
-                  }}
-                >
-                  <span style={{ marginRight: 5 }}>TOTAL:</span>
-                  <span style={{ fontWeight: 900 }}>
-                    {totalOpt.amount
-                      .toFixed(2)
-                      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                  </span>
-                </div>
-              </Table.Summary.Cell>
-              <Table.Summary.Cell index={6}>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    fontSize: "1.1em",
-                  }}
-                >
-                  <span style={{ marginRight: 5 }}>TOTAL:</span>
-                  <span style={{ fontWeight: 900 }}>
-                    {totalOpt.fee
-                      .toFixed(2)
-                      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                  </span>
-                </div>
-              </Table.Summary.Cell>
-              <Table.Summary.Cell index={7}>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    fontSize: "1.1em",
-                  }}
-                >
-                  <span style={{ marginRight: 5 }}>TOTAL:</span>
-                  <span style={{ fontWeight: 900 }}>
-                    {(totalOpt.amount + totalOpt.fee)
-                      .toFixed(2)
-                      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                  </span>
-                </div>
-              </Table.Summary.Cell>
-            </Table.Summary.Row>
+            {isMobile ? (
+              <></>
+            ) : (
+              <Table.Summary.Row>
+                <Table.Summary.Cell index={0} />
+                <Table.Summary.Cell index={1} />
+                <Table.Summary.Cell index={2} />
+                <Table.Summary.Cell index={3} />
+                <Table.Summary.Cell index={4} />
+                <Table.Summary.Cell index={5}>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      fontSize: "1.1em",
+                    }}
+                  >
+                    <span style={{ marginRight: 5 }}>TOTAL:</span>
+                    <span style={{ fontWeight: 900 }}>
+                      {totalOpt.amount
+                        .toFixed(2)
+                        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                    </span>
+                  </div>
+                </Table.Summary.Cell>
+                <Table.Summary.Cell index={6}>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      fontSize: "1.1em",
+                    }}
+                  >
+                    <span style={{ marginRight: 5 }}>TOTAL:</span>
+                    <span style={{ fontWeight: 900 }}>
+                      {totalOpt.fee
+                        .toFixed(2)
+                        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                    </span>
+                  </div>
+                </Table.Summary.Cell>
+                <Table.Summary.Cell index={7}>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      fontSize: "1.1em",
+                    }}
+                  >
+                    <span style={{ marginRight: 5 }}>TOTAL:</span>
+                    <span style={{ fontWeight: 900 }}>
+                      {(totalOpt.amount + totalOpt.fee)
+                        .toFixed(2)
+                        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                    </span>
+                  </div>
+                </Table.Summary.Cell>
+              </Table.Summary.Row>
+            )}
           </Table.Summary>
         )}
         sticky
