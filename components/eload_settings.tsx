@@ -44,6 +44,7 @@ const EloadSettings = () => {
     <Card
       style={{
         width: 300,
+        margin: 10,
       }}
       hoverable
     >

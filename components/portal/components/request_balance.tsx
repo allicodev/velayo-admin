@@ -29,15 +29,11 @@ const RequestBalance = ({ open, close, portal, isMobile }: MyBasicProps) => {
       title: "Amount",
       width: isMobile ? 90 : undefined,
       align: "center",
-      render: (_, row) => (
-        <>
-          ₱{" "}
-          {row.amount.toLocaleString(undefined, {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          })}
-        </>
-      ),
+      render: (_, row) =>
+        row.amount.toLocaleString(undefined, {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        }),
     },
     {
       title: "Status",

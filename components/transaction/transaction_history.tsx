@@ -119,7 +119,7 @@ const TransactionHistory = () => {
           : row.amount,
     },
     {
-      title: "Service Fee",
+      title: isMobile ? "Fee" : "Service Fee",
       align: "end",
       width: isMobile ? 20 : 100,
       dataIndex: "fee",
@@ -136,7 +136,7 @@ const TransactionHistory = () => {
           }}
         >
           <span>Amount</span>
-          <span>+</span> <span>Service</span>
+          <span>+</span> {!isMobile && <span>Service</span>}
           <span>Fee</span>
         </div>
       ),
@@ -157,13 +157,13 @@ const TransactionHistory = () => {
     {
       title: "Teller",
       align: "center",
-      width: isMobile ? 25 : 100,
+      width: isMobile ? 35 : 100,
       dataIndex: "tellerId",
       render: (_) => (_ as User)?.name ?? _,
     },
     {
       title: "Status",
-      width: isMobile ? 20 : 100,
+      width: isMobile ? 25 : 100,
       align: "center",
       fixed: "right",
       render: (_, row) => {
@@ -299,7 +299,7 @@ const TransactionHistory = () => {
         style={{
           display: "flex",
           gap: 10,
-          justifyContent: "start",
+          justifyContent: "space-between",
         }}
       >
         <Button

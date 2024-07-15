@@ -123,7 +123,7 @@ const BranchItemHome = ({ open, close, branch, updateBranch }: BasicProps) => {
   const columns: TableProps<BranchItem>["columns"] = [
     {
       title: "Item Code",
-      width: isMobile ? 30 : undefined,
+      width: isMobile ? 90 : undefined,
       render: (_, row) =>
         `${"00000".slice(row?.itemId?.itemCode?.toString().length)}${
           row?.itemId?.itemCode
@@ -131,18 +131,20 @@ const BranchItemHome = ({ open, close, branch, updateBranch }: BasicProps) => {
     },
     {
       title: "Name",
+      width: 120,
       render: (_, row) => row?.itemId?.name,
     },
     {
       title: "Quantity",
       align: "center",
-      width: isMobile ? 30 : 1,
+      width: isMobile ? 120 : undefined,
       dataIndex: "stock_count",
     },
     {
       title: "Functions",
-
-      width: 1,
+      align: "center",
+      width: isMobile ? 90 : undefined,
+      fixed: "right",
       render: (_, row) => (
         <Space>
           <Popconfirm
@@ -218,6 +220,10 @@ const BranchItemHome = ({ open, close, branch, updateBranch }: BasicProps) => {
           dataSource={branch?.items ?? []}
           columns={columns}
           rowKey={(e) => e.itemId?._id}
+          scroll={{
+            y: "calc(100vh - 20em)",
+            x: isMobile ? "100vw" : undefined,
+          }}
         />
       </Drawer>
 

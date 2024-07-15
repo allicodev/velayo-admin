@@ -153,7 +153,7 @@ const Attendance = () => {
       title: "Hour(s) Rendered",
       align: "center",
       fixed: "right",
-      width: isMobile ? 80 : undefined,
+      width: isMobile ? 85 : undefined,
       render: (_, row) =>
         row.timeOut == null ? (
           <Typography.Text type="secondary" italic>
@@ -171,7 +171,7 @@ const Attendance = () => {
         style={{
           display: "flex",
           gap: 10,
-          justifyContent: "start",
+          justifyContent: "space-between",
         }}
       >
         <Button

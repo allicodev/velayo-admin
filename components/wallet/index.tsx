@@ -782,7 +782,11 @@ const EWalletSettings = () => {
           </>
         </>
       ) : (
-        <Row>
+        <Row
+          style={{
+            padding: isMobile ? "10px 5px" : 0,
+          }}
+        >
           <Col span={isMobile ? 24 : 8}>
             <div
               style={{
@@ -847,10 +851,10 @@ const EWalletSettings = () => {
             <Space
               direction="vertical"
               style={{
-                height: "77vh",
+                height: isMobile ? "85vh" : "77vh",
                 overflowY: "scroll",
                 overflowX: "hidden",
-                paddingBottom: 30,
+                paddingBottom: isMobile ? 0 : 30,
                 width: "100%",
               }}
               className="no-scrollbar"

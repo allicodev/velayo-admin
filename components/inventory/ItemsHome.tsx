@@ -610,7 +610,9 @@ const ItemsHome = ({ extraData }: BasicContentProps) => {
           >
             BACK
           </Button>
-          {renderSelectedItem(selectedItem)}
+          <div style={{ paddingLeft: 5, paddingRight: 5 }}>
+            {renderSelectedItem(selectedItem)}
+          </div>
         </>
       ) : (
         <PageHeader title={width < 600 ? "" : "Items"}>

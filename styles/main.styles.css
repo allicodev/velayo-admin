@@ -672,3 +672,7 @@ label.customCheckbox span span.ant-checkbox-inner::after {
   height: auto;
   overflow: hidden;
 }
+
+.ant-page-header-content {
+  padding-block-start: 0;
+}
