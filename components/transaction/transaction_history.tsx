@@ -92,7 +92,7 @@ const TransactionHistory = () => {
     },
     {
       title: isMobile ? "Type" : "Transaction Type",
-      width: isMobile ? 15 : 70,
+      width: isMobile ? 25 : 70,
       align: isMobile ? "center" : "start",
       dataIndex: "type",
     },
