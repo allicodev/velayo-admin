@@ -88,11 +88,12 @@ const TransactionHistory = () => {
       title: "Date/Time",
       width: isMobile ? 25 : 70,
       dataIndex: "createdAt",
+      align: "center",
       render: (_) => dayjs(_).format("MM/DD/YYYY HH:mm"),
     },
     {
       title: isMobile ? "Type" : "Transaction Type",
-      width: isMobile ? 25 : 70,
+      width: isMobile ? 25 : 90,
       align: isMobile ? "center" : "start",
       dataIndex: "type",
     },
@@ -126,22 +127,9 @@ const TransactionHistory = () => {
       render: (_) => _?.toFixed(2) ?? "0.00",
     },
     {
-      title: (
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            flexDirection: "column",
-          }}
-        >
-          <span>Amount</span>
-          <span>+</span> {!isMobile && <span>Service</span>}
-          <span>Fee</span>
-        </div>
-      ),
+      title: "Amount + S.Fee",
       align: "end",
-      width: isMobile ? 25 : 100,
+      width: isMobile ? 30 : 100,
       render: (_, e) =>
         ((e.amount ?? 0) +
           (e.type == "wallet" &&
