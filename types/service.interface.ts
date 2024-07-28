@@ -25,3 +25,13 @@ export interface ItemWithCategory {
   name: string;
   items: ItemData[];
 }
+
+export interface UserCreditEdit {
+  name?: string;
+  middlename?: string;
+  lastname?: string;
+  address?: string;
+  phone?: string;
+  maxCredit?: number;
+  creditTerm?: 7 | 15 | 30;
+}

@@ -7,7 +7,7 @@ import { GoPeople, GoCreditCard } from "react-icons/go";
 import { FaMoneyBills } from "react-icons/fa6";
 import { WalletOutlined, SettingOutlined } from "@ant-design/icons";
 import { MdAutoGraph, MdPointOfSale } from "react-icons/md";
-import { TbReportAnalytics } from "react-icons/tb";
+import { TbReportAnalytics, TbCreditCardPay } from "react-icons/tb";
 
 import User from "@/components/user/user_list";
 import TransactionHistory from "@/components/transaction/transaction_history";
@@ -24,6 +24,7 @@ import { useItemStore } from "@/provider/context";
 import dayjs from "dayjs";
 import { ItemData } from "@/types";
 import ItemService from "@/provider/item.service";
+import Credit from "@/components/credit";
 
 const Admin = () => {
   const { setItems, lastDateUpdated, setLastDateUpdated, items } =
@@ -84,6 +85,11 @@ const Admin = () => {
             label: "Branch",
             key: "branch",
             icon: <LuLayoutDashboard style={{ fontSize: "1em" }} />,
+          },
+          {
+            label: "Credits",
+            key: "credit",
+            icon: <TbCreditCardPay style={{ fontSize: "1em" }} />,
           },
           {
             label: "Reports",
@@ -154,6 +160,7 @@ const Admin = () => {
             selectedKey.includes("transaction") && <TransactionHistory />}
           {selectedKey.includes("report") &&
             selectedKey.includes("attendance") && <Attendance />}
+          {selectedKey == "credit" && <Credit />}
           {selectedKey.includes("pos") && selectedKey.includes("item") && (
             <ItemsHome />
           )}

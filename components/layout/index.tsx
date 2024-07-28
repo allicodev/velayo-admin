@@ -19,6 +19,8 @@ import { verify } from "@/assets/ts/jwt_jose";
 import MobileMenu from "./mobile_menu";
 
 const Sider = ({ selectedIndex, selectedKey, items, hide }: SiderProps) => {
+  const [openKeys, setOpenKeys] = useState<string[]>([]);
+
   return hide ? null : (
     <Affix>
       <Layout.Sider
@@ -42,9 +44,10 @@ const Sider = ({ selectedIndex, selectedKey, items, hide }: SiderProps) => {
         </div>
         <Menu
           onClick={selectedIndex}
-          selectedKeys={selectedKey}
           items={items}
           mode="inline"
+          onOpenChange={(e) => setOpenKeys([e[e.length - 1]])}
+          openKeys={openKeys}
           defaultSelectedKeys={["dashboard"]}
           style={{
             height: "81vh",
@@ -92,17 +95,29 @@ const Header = ({
             backgroundColor: "#fff",
             display: "flex",
             alignItems: "center",
-            justifyContent: width < 600 ? "space-between" : "end",
+            justifyContent: "space-between",
             height: 60,
             width: "100%",
             paddingInline: 10,
           }}
         >
-          {width < 600 && (
+          <div
+            style={{
+              display: "flex",
+              gap: 10,
+            }}
+          >
+            <div
+              style={{
+                width: 5,
+                height: 30,
+                background: "#98c04c",
+              }}
+            ></div>
             <Typography.Text style={{ fontSize: "1.5em" }}>
               {selectedKey?.toLocaleUpperCase()}
             </Typography.Text>
-          )}
+          </div>
 
           {width < 600 ? (
             <Button

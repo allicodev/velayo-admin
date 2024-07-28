@@ -110,6 +110,13 @@ canvas {
     color-scheme: dark;
   }
 }
+
+@media (max-width: 480px) {
+  .ant-picker-panels {
+    flex-direction: column !important;
+  }
+}
+
 .ant-table-content table colgroup col {
   min-width: 100px;
 }

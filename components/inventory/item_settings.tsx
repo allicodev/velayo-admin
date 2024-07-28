@@ -8,7 +8,6 @@ import {
   Spin,
   Typography,
 } from "antd";
-import { PageHeader } from "@ant-design/pro-layout";
 import {
   CaretRightOutlined,
   DeleteOutlined,
@@ -191,7 +190,7 @@ const ItemSettings = () => {
   }, [trigger]);
 
   return (
-    <PageHeader title="Item App Settings">
+    <>
       <Spin spinning={loading}>
         <Button
           size="large"
@@ -230,7 +229,7 @@ const ItemSettings = () => {
           refresh={() => setTrigger(trigger + 1)}
         />
       </Spin>
-    </PageHeader>
+    </>
   );
 };
 

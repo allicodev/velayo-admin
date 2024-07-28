@@ -140,3 +140,11 @@ export interface StockHistory {
   quantity?: number;
   name?: string;
 }
+
+export type CreditStatus = "completed" | "pending" | "overdue";
+
+export interface Credit {
+  amount: number;
+  status: CreditStatus;
+  createdAt: Date;
+}

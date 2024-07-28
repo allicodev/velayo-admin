@@ -215,6 +215,13 @@ export interface Log {
   amount?: number;
   rebate?: number;
 
+  // credit
+  userCreditId?: string;
+  dueDate?: Date;
+  status?: "pending" | "completed";
+  interest?: number;
+  history?: CreditAmountHistory[];
+
   createdAt?: Date;
 }
 
@@ -316,4 +323,36 @@ export interface Wallet {
 export interface Fee {
   type: FeeType;
   fee: number | null;
+}
+
+// * Credit
+export interface UserCredit {
+  name: string;
+  middlename?: string;
+  lastname: string;
+  address: string;
+  phone: string;
+  maxCredit: number;
+  creditTerm: 7 | 15 | 30;
+}
+
+export interface UserCreditData extends UserCredit {
+  _id: string;
+  history?: CreditHistory[];
+  availableCredit: number;
+}
+
+export interface CreditHistory {
+  userCreditId: UserCreditData | string;
+  transactionId: Transaction | string;
+  status: "pending" | "completed";
+  amount: number;
+  createdAt: Date;
+  history: CreditAmountHistory[];
+}
+
+export interface CreditAmountHistory {
+  amount: number;
+  date: Date;
+  description: string;
 }

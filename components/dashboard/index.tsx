@@ -7,7 +7,6 @@ import DashboardCard from "./components/dash_card";
 import SalesPerBranch from "./components/sales_per_branch";
 import TopSales from "./components/top_sales";
 import SalesAndServices from "./components/sales";
-import { PageHeader } from "@ant-design/pro-layout";
 import EtcService from "@/provider/etc.service";
 import { DashboardData } from "@/types";
 
@@ -53,6 +52,8 @@ const Dashboard = () => {
           display: "inline-flex",
           gap: 10,
           overflowX: "scroll",
+          paddingLeft: 5,
+          paddingRight: 5,
         }}
       >
         <DashboardCard
@@ -103,8 +104,34 @@ const Dashboard = () => {
           mobile={true}
           loading={loading}
         />
+        <DashboardCard
+          icon={
+            <GrTransaction
+              color="#a96c30"
+              style={{
+                fontSize: "1.5em",
+              }}
+            />
+          }
+          subText="TRANSACTIONS TODAY"
+          value={(dashboard?.totalTransactionToday ?? 0).toLocaleString(
+            undefined,
+            {
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 0,
+            }
+          )}
+          color="#f19b44"
+          mobile={true}
+          loading={loading}
+        />
       </div>
-      <Col span={24}>
+      <Col
+        span={24}
+        style={{
+          padding: 5,
+        }}
+      >
         <Tabs
           type="card"
           tabBarStyle={{
@@ -135,7 +162,7 @@ const Dashboard = () => {
           ]}
         />
       </Col>
-      <Col span={24}>
+      <Col span={24} style={{ padding: 5 }}>
         <SalesAndServices
           data={dashboard?.salesPerMonth!}
           loading={loading}
@@ -144,86 +171,101 @@ const Dashboard = () => {
       </Col>
     </>
   ) : (
-    <PageHeader title="Dashboard">
-      <Row gutter={[16, 16]}>
-        <Col span={16}>
-          <Row gutter={[16, 16]}>
-            <Col span={24} style={{ display: "flex", gap: 16 }}>
-              <DashboardCard
-                icon={
-                  <TbCurrencyPeso
-                    color="#0000ff"
-                    style={{
-                      fontSize: "1.5em",
-                    }}
-                  />
+    <Row gutter={[16, 16]}>
+      <Col span={16}>
+        <Row gutter={[16, 16]}>
+          <Col span={24} style={{ display: "flex", gap: 16 }}>
+            <DashboardCard
+              icon={
+                <TbCurrencyPeso
+                  color="#0000ff"
+                  style={{
+                    fontSize: "1.5em",
+                  }}
+                />
+              }
+              subText="SALES"
+              value={parseToMoney(dashboard?.totalSales ?? 0)}
+              color="#0000ff"
+              loading={loading}
+            />
+            <DashboardCard
+              icon={
+                <TbCurrencyPeso
+                  color="#0ab39e"
+                  style={{
+                    fontSize: "1.5em",
+                  }}
+                />
+              }
+              subText="NET SALES"
+              value={parseToMoney(dashboard?.totalNetSales ?? 0)}
+              color="#0ab39e"
+              loading={loading}
+            />
+            <DashboardCard
+              icon={
+                <GrTransaction
+                  color="#f19b44"
+                  style={{
+                    fontSize: "1.5em",
+                  }}
+                />
+              }
+              subText="TRANSACTIONS"
+              value={(dashboard?.totalTransaction ?? 0).toLocaleString(
+                undefined,
+                {
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 0,
                 }
-                subText="SALES"
-                value={parseToMoney(dashboard?.totalSales ?? 0)}
-                color="#0000ff"
-                loading={loading}
-              />
-              <DashboardCard
-                icon={
-                  <TbCurrencyPeso
-                    color="#0ab39e"
-                    style={{
-                      fontSize: "1.5em",
-                    }}
-                  />
+              )}
+              color="#f19b44"
+              loading={loading}
+            />
+            <DashboardCard
+              icon={
+                <GrTransaction
+                  color="#a96c30"
+                  style={{
+                    fontSize: "1.5em",
+                  }}
+                />
+              }
+              subText="TRANSACTIONS TODAY"
+              value={(dashboard?.totalTransactionToday ?? 0).toLocaleString(
+                undefined,
+                {
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 0,
                 }
-                subText="NET SALES"
-                value={parseToMoney(dashboard?.totalNetSales ?? 0)}
-                color="#0ab39e"
-                loading={loading}
-              />
-              <DashboardCard
-                icon={
-                  <GrTransaction
-                    color="#f19b44"
-                    style={{
-                      fontSize: "1.5em",
-                    }}
-                  />
-                }
-                subText="TRANSACTIONS"
-                value={(dashboard?.totalTransaction ?? 0).toLocaleString(
-                  undefined,
-                  {
-                    minimumFractionDigits: 0,
-                    maximumFractionDigits: 0,
-                  }
-                )}
-                color="#f19b44"
-                loading={loading}
-              />
-            </Col>
-            <Col span={24}>
-              <SalesAndServices
-                data={dashboard?.salesPerMonth!}
-                loading={loading}
-              />
-            </Col>
-          </Row>
-        </Col>
-        <Col span={8}>
-          <Row gutter={[16, 16]}>
-            <Col span={24}>
-              <SalesPerBranch
-                data={dashboard?.branchSales ?? []}
-                loading={loading}
-              />
-            </Col>
-            <Col span={24}>
-              <TopSales
-                data={dashboard?.topItemSales ?? []}
-                loading={loading}
-              />
-            </Col>
-          </Row>
-        </Col>
-      </Row>
-    </PageHeader>
+              )}
+              color="#f19b44"
+              loading={loading}
+            />
+          </Col>
+          <Col span={24}>
+            <SalesAndServices
+              data={dashboard?.salesPerMonth!}
+              loading={loading}
+            />
+          </Col>
+        </Row>
+      </Col>
+      <Col span={8}>
+        <Row gutter={[16, 16]}>
+          <Col span={24}>
+            <SalesPerBranch
+              data={dashboard?.branchSales ?? []}
+              loading={loading}
+            />
+          </Col>
+          <Col span={24}>
+            <TopSales data={dashboard?.topItemSales ?? []} loading={loading} />
+          </Col>
+        </Row>
+      </Col>
+    </Row>
   );
 };
 

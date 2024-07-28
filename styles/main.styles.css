@@ -43,7 +43,7 @@
 }
 
 .login-container {
-  background-image: url("/login-bg.jpg");
+  background-image: url("/admin_logo.jpg");
   background-size: 100% 100%;
   background-position: center;
   background-repeat: no-repeat;
@@ -51,6 +51,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+@media (max-width: 480px) {
+  .login-container {
+    background-image: none;
+  }
 }
 
 .dashboard-btn:hover {

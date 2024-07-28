@@ -5,7 +5,6 @@ import { EditOutlined, PlusOutlined } from "@ant-design/icons";
 import type { Branch, BranchData } from "@/types";
 import NewBranch from "./new_branch";
 import BranchService from "@/provider/branch.service";
-import { PageHeader } from "@ant-design/pro-layout";
 
 interface OpenBranch {
   open: boolean;
@@ -60,7 +59,7 @@ const Branch = () => {
   }, []);
 
   return (
-    <PageHeader title={width < 600 ? "" : "Branch"}>
+    <>
       <div
         style={{
           background: "#fff",
@@ -202,7 +201,7 @@ const Branch = () => {
           data={openNewBranch.data}
         />
       </div>
-    </PageHeader>
+    </>
   );
 };
 

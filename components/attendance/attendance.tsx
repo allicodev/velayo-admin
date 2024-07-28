@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
   Button,
+  Checkbox,
   DatePicker,
   Image,
   Modal,
@@ -18,7 +19,6 @@ import Excel from "exceljs";
 import { LogData, User } from "@/types";
 import UserService from "@/provider/user.service";
 import LogService from "@/provider/log.service";
-import { PageHeader } from "@ant-design/pro-layout";
 
 // TODO: validate duplicate employee ID
 // page, pageSize, type, userId, fromDate, toDate, project
@@ -28,6 +28,7 @@ interface FilterProps {
   tellerId?: string | null;
   fromDate?: Dayjs | null;
   toDate?: Dayjs | null;
+  showImage?: boolean;
 }
 
 const Attendance = () => {
@@ -38,6 +39,7 @@ const Attendance = () => {
     tellerId: null,
     fromDate: null,
     toDate: null,
+    showImage: false,
   });
   const [photoViewer, setPhotoViewer] = useState<{
     open: boolean;
@@ -247,6 +249,18 @@ const Attendance = () => {
             });
           }}
         />
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 10,
+            cursor: "pointer",
+          }}
+          onClick={() => setFilter({ ...filter, showImage: !filter.showImage })}
+        >
+          <Checkbox className="customCheckbox" checked={filter.showImage} />
+          <span style={{ fontSize: "1.1em" }}>Show Images</span>
+        </div>
       </Space>
       <Button
         type="primary"
@@ -287,6 +301,7 @@ const Attendance = () => {
     toDate,
     project,
     updateLogs = true,
+    showImage = false,
   }: {
     page: number;
     pageSize?: number;
@@ -295,6 +310,7 @@ const Attendance = () => {
     toDate?: Dayjs | null;
     project?: Record<any, any>;
     updateLogs?: boolean;
+    showImage?: boolean | null;
   }): Promise<LogData[] | any | void> =>
     new Promise(async (resolve, reject) => {
       setFetching(true);
@@ -308,6 +324,7 @@ const Attendance = () => {
         fromDate,
         toDate,
         project,
+        showImage,
       });
 
       if (res?.success ?? false) {
@@ -472,6 +489,7 @@ const Attendance = () => {
       userId: filter.tellerId ?? null,
       fromDate: filter.fromDate ?? null,
       toDate: filter.toDate ?? null,
+      showImage: filter.showImage ?? null,
     });
   }, [filter]);
 
@@ -487,7 +505,7 @@ const Attendance = () => {
   }, []);
 
   return (
-    <PageHeader title={width < 600 ? "" : "Attendance"}>
+    <>
       <Table
         title={isMobile ? getHeaderMobile : getHeader}
         columns={columns}
@@ -649,7 +667,7 @@ const Attendance = () => {
           />
         </Space>
       </Modal>
-    </PageHeader>
+    </>
   );
 };
 

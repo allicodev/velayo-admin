@@ -26,7 +26,6 @@ import dayjs, { Dayjs } from "dayjs";
 import BillService from "@/provider/bill.service";
 import BranchService from "@/provider/branch.service";
 import UserService from "@/provider/user.service";
-import { PageHeader } from "@ant-design/pro-layout";
 
 interface FilterProps {
   status?: TransactionHistoryStatus | null;
@@ -642,15 +641,18 @@ const TransactionHistory = () => {
   }, []);
 
   return (
-    <PageHeader title={width < 600 ? "" : "Transaction"}>
+    <>
       <Table
         title={isMobile ? getHeaderMobile : getHeader}
         columns={column}
         loading={fetching}
         dataSource={transactions}
         rowKey={(e) => e._id ?? ""}
+        style={{
+          padding: 5,
+        }}
         scroll={{
-          y: "calc(100vh - 30em)",
+          y: "calc(100vh - 25em)",
           x: isMobile ? "300vw" : undefined,
         }}
         pagination={{
@@ -871,7 +873,7 @@ const TransactionHistory = () => {
           </div>
         </Space>
       </Modal>
-    </PageHeader>
+    </>
   );
 };
 

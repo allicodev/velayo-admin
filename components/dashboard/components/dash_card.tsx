@@ -22,13 +22,14 @@ const DashboardCard = ({
     <div
       style={{
         background: "#fff",
-        width: "100%",
+        width: mobile ? "50%" : "100%",
         height: "100%",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         flexDirection: "column",
-        padding: "32px 25px 32px 25px",
+        paddingTop: 15,
+        paddingBottom: 15,
         borderRadius: 8,
         border: "1px solid #f0f0f0",
         ...(mobile ? { flexBasis: "auto", flexGrow: 0, flexShrink: 0 } : {}),

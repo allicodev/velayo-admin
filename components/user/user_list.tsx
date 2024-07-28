@@ -26,7 +26,6 @@ import {
 } from "@/types";
 import NewUser from "./new_user";
 import UserService from "@/provider/user.service";
-import { PageHeader } from "@ant-design/pro-layout";
 
 const User = ({ title, style, extra, onCellClick }: BasicContentProps) => {
   const [openedNewUser, setOpenedNewUser] = useState(false);
@@ -203,29 +202,14 @@ const User = ({ title, style, extra, onCellClick }: BasicContentProps) => {
   }, []);
 
   return (
-    <PageHeader
-      title={isMobile ? "" : "Users"}
-      extra={
-        !isMobile ? (
-          <Button
-            icon={<UserAddOutlined />}
-            type="primary"
-            size="large"
-            onClick={(e) => setOpenedNewUser(true)}
-            style={{ marginBottom: 10, width: 150 }}
-          >
-            {isMobile ? "NEW" : "New User"}
-          </Button>
-        ) : null
-      }
-    >
+    <>
       {isMobile && (
         <Button
           icon={<UserAddOutlined />}
           type="primary"
           size="large"
           onClick={(e) => setOpenedNewUser(true)}
-          style={{ marginBottom: 10, width: 150 }}
+          style={{ marginBottom: 10, width: 150, margin: 5 }}
         >
           NEW
         </Button>
@@ -239,10 +223,10 @@ const User = ({ title, style, extra, onCellClick }: BasicContentProps) => {
               )
             : true
         )}
-        style={style}
+        style={{ ...style, padding: 5 }}
         rowKey={(e) => e.username}
         scroll={{
-          y: "58vh",
+          y: "75vh",
           x: true,
         }}
         onRow={(data) => {
@@ -273,7 +257,7 @@ const User = ({ title, style, extra, onCellClick }: BasicContentProps) => {
         onSave={handleSaveUser}
         user={openedUser}
       />
-    </PageHeader>
+    </>
   );
 };
 

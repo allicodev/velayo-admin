@@ -32,7 +32,6 @@ import NewItem from "./components/new_item";
 import ItemService from "@/provider/item.service";
 import BranchItemHome from "./branch_items_home";
 import BranchService from "@/provider/branch.service";
-import { PageHeader } from "@ant-design/pro-layout";
 
 const ItemsHome = ({ extraData }: BasicContentProps) => {
   const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
@@ -615,7 +614,7 @@ const ItemsHome = ({ extraData }: BasicContentProps) => {
           </div>
         </>
       ) : (
-        <PageHeader title={width < 600 ? "" : "Items"}>
+        <>
           <Row gutter={[16, 16]}>
             <Col span={isMobile ? 24 : 14}>
               <div
@@ -768,7 +767,7 @@ const ItemsHome = ({ extraData }: BasicContentProps) => {
               {selectedItem && renderSelectedItem(selectedItem)}
             </Col>
           </Row>
-        </PageHeader>
+        </>
       )}
 
       {/* context */}

@@ -55,6 +55,7 @@ export interface NewUser {
 
 export interface DashboardData {
   totalTransaction: number;
+  totalTransactionToday: number;
   totalSales: number;
   totalNetSales: number;
   totalBranch: number;
