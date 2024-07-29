@@ -196,6 +196,9 @@ const ItemSettings = () => {
           size="large"
           type="primary"
           onClick={() => setOpenNewCategory(true)}
+          style={{
+            margin: 5,
+          }}
         >
           New Category
         </Button>
@@ -207,6 +210,7 @@ const ItemSettings = () => {
             width: 300,
             marginTop: 10,
             background: "#f6f8fb",
+            padding: 5,
           }}
           expandIcon={({ isActive }) => (
             <CaretRightOutlined rotate={isActive ? 90 : 0} />

@@ -10,7 +10,11 @@ import {
   Image,
   Button,
 } from "antd";
-import { LogoutOutlined, UserOutlined, MenuOutlined } from "@ant-design/icons";
+import {
+  LogoutOutlined,
+  UserOutlined,
+  MenuUnfoldOutlined,
+} from "@ant-design/icons";
 import Cookies from "js-cookie";
 
 import { SiderProps, ContentProps } from "@/types";
@@ -107,25 +111,32 @@ const Header = ({
               gap: 10,
             }}
           >
-            <div
-              style={{
-                width: 5,
-                height: 30,
-                background: "#98c04c",
-              }}
-            ></div>
+            {width < 600 ? (
+              <Button
+                icon={
+                  <MenuUnfoldOutlined
+                    style={{ fontSize: "1.2em", padding: 10 }}
+                  />
+                }
+                type="text"
+                onClick={() => setOpenMobileMenu(true)}
+              />
+            ) : (
+              <div
+                style={{
+                  width: 5,
+                  height: 30,
+                  background: "#98c04c",
+                }}
+              ></div>
+            )}
+
             <Typography.Text style={{ fontSize: "1.5em" }}>
               {selectedKey?.toLocaleUpperCase()}
             </Typography.Text>
           </div>
 
-          {width < 600 ? (
-            <Button
-              icon={<MenuOutlined style={{ fontSize: "1.2em", padding: 10 }} />}
-              type="text"
-              onClick={() => setOpenMobileMenu(true)}
-            />
-          ) : (
+          {width > 600 && (
             <div
               style={{
                 display: "flex",

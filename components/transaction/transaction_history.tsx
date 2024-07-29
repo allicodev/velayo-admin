@@ -8,6 +8,7 @@ import {
   Space,
   Table,
   TableProps,
+  Tag,
   Typography,
   message,
 } from "antd";
@@ -156,18 +157,17 @@ const TransactionHistory = () => {
       render: (_, row) => {
         let status = row?.history.at(-1)?.status;
         return (
-          <span
-            style={{
-              color:
-                status == "completed"
-                  ? "#0f0"
-                  : status == "pending"
-                  ? "#FFA500"
-                  : "#f00",
-            }}
+          <Tag
+            color={
+              status == "completed"
+                ? "green-inverse"
+                : status == "pending"
+                ? "orange-inverse"
+                : "red-inverse"
+            }
           >
             {status?.toLocaleUpperCase()}
-          </span>
+          </Tag>
         );
       },
     },

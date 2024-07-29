@@ -6,14 +6,21 @@ import { GrTransaction } from "react-icons/gr";
 import DashboardCard from "./components/dash_card";
 import SalesPerBranch from "./components/sales_per_branch";
 import TopSales from "./components/top_sales";
-import SalesAndServices from "./components/sales";
+import SalesAndServices, { FilterProp } from "./components/sales";
 import EtcService from "@/provider/etc.service";
 import { DashboardData } from "@/types";
+import SalesPerType from "./components/sales_per_type";
 
 const Dashboard = () => {
   const [width, setWidth] = useState(0);
   const [dashboard, setDashboard] = useState<DashboardData>();
   const [loading, setLoading] = useState(false);
+  const [salesMax, setSalesMax] = useState(0);
+  const [filter, setFilter] = useState<FilterProp>({
+    type: null,
+    year: new Date().getFullYear(),
+  });
+
   const etc = new EtcService();
 
   const getData = async () => {
@@ -22,6 +29,11 @@ const Dashboard = () => {
 
     if (res?.success ?? false) {
       setDashboard(res?.data);
+      setSalesMax(
+        Math.ceil(
+          Math.max(...Object.values(res?.data?.salesPerMonth!)) / 1000000
+        ) * 1000000
+      );
       setLoading(false);
     } else setLoading(false);
   };
@@ -31,6 +43,15 @@ const Dashboard = () => {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     })}`;
+
+  const getSales = async (_filter: FilterProp) => {
+    let res = await etc.getDashboardDataSales(_filter);
+
+    if (res?.success ?? false) {
+      if (res.data != undefined)
+        setDashboard({ ...dashboard!, salesPerMonth: res.data });
+    }
+  };
 
   useEffect(() => {
     function handleResize() {
@@ -44,6 +65,10 @@ const Dashboard = () => {
 
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  useEffect(() => {
+    getSales(filter);
+  }, [filter]);
 
   return width < 600 ? (
     <>
@@ -166,6 +191,10 @@ const Dashboard = () => {
         <SalesAndServices
           data={dashboard?.salesPerMonth!}
           loading={loading}
+          filter={filter}
+          setFilter={setFilter}
+          type={filter.type}
+          max={salesMax}
           isMobile
         />
       </Col>
@@ -245,10 +274,19 @@ const Dashboard = () => {
             />
           </Col>
           <Col span={24}>
-            <SalesAndServices
+            <SalesPerType
+              data={dashboard?.salesPerType ?? []}
+              loading={loading}
+              max={salesMax}
+            />
+            {/* <SalesAndServices
               data={dashboard?.salesPerMonth!}
               loading={loading}
-            />
+              filter={filter}
+              setFilter={setFilter}
+              type={filter.type}
+              max={salesMax}
+            /> */}
           </Col>
         </Row>
       </Col>

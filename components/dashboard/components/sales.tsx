@@ -16,14 +16,27 @@ import { SalesPerMonth } from "@/types";
 
 ChartJS.register(Tooltip, Title, Legend, PointElement, LineElement, Filler);
 
+export type FilterProp = {
+  type: null | "bills" | "wallet" | "eload" | "miscellaneous";
+  year: number;
+};
+
 const SalesAndServices = ({
   isMobile,
   data,
   loading,
+  filter,
+  setFilter,
+  type,
+  max,
 }: {
   isMobile?: boolean;
   data: SalesPerMonth;
   loading?: boolean;
+  filter: FilterProp;
+  setFilter: React.Dispatch<React.SetStateAction<FilterProp>>;
+  type?: "bills" | "wallet" | "eload" | "miscellaneous" | null;
+  max: number;
 }) => {
   const [sales, setSales] = useState<SalesPerMonth>();
 
@@ -107,6 +120,7 @@ const SalesAndServices = ({
                   value: "miscellaneous",
                 },
               ]}
+              onChange={(e) => setFilter({ ...filter, type: e })}
             />
             <Select
               size="large"
@@ -120,6 +134,7 @@ const SalesAndServices = ({
                   label: new Date().getFullYear() - i,
                   value: new Date().getFullYear() - i,
                 }))}
+              onChange={(e) => setFilter({ ...filter, year: e })}
             />
           </Space>
         )}
@@ -140,7 +155,7 @@ const SalesAndServices = ({
             labels: jason.months.map((e) => e.substring(0, 3)),
             datasets: [
               {
-                label: "Sales",
+                label: type ? type.toLocaleUpperCase() : "Sales",
                 data: generateData(),
                 backgroundColor: ["#72c0c8aa"],
                 borderColor: ["#72c0c8"],
@@ -164,6 +179,9 @@ const SalesAndServices = ({
                 grid: {
                   display: false,
                 },
+              },
+              y: {
+                max: max,
               },
             },
             plugins: {

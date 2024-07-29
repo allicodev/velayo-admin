@@ -661,7 +661,7 @@ const ItemsHome = ({ extraData }: BasicContentProps) => {
                     }}
                   />
                 </div>
-                <div style={{ flex: 1, display: "flex", gap: 5 }}>
+                <div style={{ flex: 1, display: "flex", gap: 5, padding: 5 }}>
                   <Button
                     size="large"
                     style={{
@@ -714,6 +714,7 @@ const ItemsHome = ({ extraData }: BasicContentProps) => {
                   rootStyle={{
                     overflow: "scroll",
                     height: "70vh",
+                    padding: 5,
                   }}
                   onSelect={(_, f) => {
                     let e = f.node.key;

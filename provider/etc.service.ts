@@ -1,5 +1,12 @@
+import { FilterProp } from "@/components/dashboard/components/sales";
 import Api from "./api.service";
-import { DashboardData, EloadSettings, Response, Transaction } from "@/types";
+import {
+  DashboardData,
+  EloadSettings,
+  Response,
+  SalesPerMonth,
+  Transaction,
+} from "@/types";
 
 class EtcService {
   private readonly instance = new Api();
@@ -35,6 +42,13 @@ class EtcService {
   public async getDashboardData() {
     return await this.instance.get<DashboardData>({
       endpoint: "/etc/dashboard",
+    });
+  }
+
+  public async getDashboardDataSales(filter: FilterProp) {
+    return await this.instance.get<SalesPerMonth>({
+      endpoint: "/etc/get-sales",
+      query: filter,
     });
   }
 }

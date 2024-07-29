@@ -62,6 +62,7 @@ export interface DashboardData {
   branchSales: BranchSales[];
   topItemSales: TopItem[];
   salesPerMonth: SalesPerMonth;
+  salesPerType: any[];
 }
 
 export interface BranchSales {
@@ -88,4 +89,9 @@ export interface SalesPerMonth {
   Oct: number;
   Nov: number;
   Dec: number;
+}
+
+export interface SalesTypePerMonth {
+  _id: string;
+  sales: any;
 }

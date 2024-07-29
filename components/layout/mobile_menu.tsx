@@ -1,10 +1,12 @@
 import React, { useState } from "react";
-import { Button, Drawer, Image, Typography } from "antd";
-import {
-  CloseOutlined,
-  CaretRightOutlined,
-  LogoutOutlined,
-} from "@ant-design/icons";
+import { Button, Drawer, Image, Menu } from "antd";
+import { CloseOutlined, LogoutOutlined } from "@ant-design/icons";
+import { LuLayoutDashboard } from "react-icons/lu";
+import { GoPeople, GoCreditCard } from "react-icons/go";
+import { FaMoneyBills } from "react-icons/fa6";
+import { WalletOutlined, SettingOutlined } from "@ant-design/icons";
+import { MdAutoGraph, MdPointOfSale } from "react-icons/md";
+import { TbReportAnalytics, TbCreditCardPay } from "react-icons/tb";
 import Cookies from "js-cookie";
 
 interface MyProp {
@@ -14,8 +16,7 @@ interface MyProp {
 }
 
 const MobileMenu = ({ open, close, setSelectedKey }: MyProp) => {
-  const [selectedMenu, setSelectedMenu] = useState("");
-  const [expandMenu, setExpandMenu] = useState("");
+  const [openKeys, setOpenKeys] = useState<string[]>([]);
 
   return (
     <Drawer
@@ -24,6 +25,7 @@ const MobileMenu = ({ open, close, setSelectedKey }: MyProp) => {
       width="100vw"
       classNames={{ header: "mobile-menu-header" }}
       closeIcon={<CloseOutlined style={{ fontSize: "1.5em" }} />}
+      placement="left"
       style={{
         padding: 15,
       }}
@@ -46,207 +48,99 @@ const MobileMenu = ({ open, close, setSelectedKey }: MyProp) => {
       }
     >
       <div>
-        <Typography.Title
-          level={3}
-          className={`custom-menu ${
-            selectedMenu == "dashboard" ? "highlight-menu" : ""
-          }`}
-          onClick={() => {
-            setSelectedMenu("dashboard");
-            setExpandMenu("");
-            setSelectedKey("dashboard");
+        <Menu
+          onClick={(e) => {
+            setSelectedKey(e.keyPath.join(" / "));
             close();
           }}
-        >
-          Dashboard
-        </Typography.Title>
-        <Typography.Title
-          level={3}
-          className={`custom-menu ${
-            selectedMenu == "users" ? "highlight-menu" : ""
-          }`}
-          onClick={() => {
-            setSelectedMenu("users");
-            setExpandMenu("");
-            setSelectedKey("users");
-            close();
+          items={[
+            {
+              label: "Dashboard",
+              key: "dashboard",
+              icon: <MdAutoGraph style={{ fontSize: "1em" }} />,
+            },
+            {
+              label: "Users",
+              key: "users",
+              icon: <GoPeople style={{ fontSize: "1em" }} />,
+            },
+            {
+              label: "Branch",
+              key: "branch",
+              icon: <LuLayoutDashboard style={{ fontSize: "1em" }} />,
+            },
+            {
+              label: "Credits",
+              key: "credit",
+              icon: <TbCreditCardPay style={{ fontSize: "1em" }} />,
+            },
+            {
+              label: "Reports",
+              key: "report",
+              icon: <TbReportAnalytics style={{ fontSize: "1em" }} />,
+              children: [
+                {
+                  label: "Transactions",
+                  key: "transaction",
+                },
+                {
+                  label: "Attendance",
+                  key: "attendance",
+                },
+              ],
+            },
+            {
+              label: "POS",
+              key: "pos",
+              icon: <MdPointOfSale style={{ fontSize: "1em" }} />,
+              children: [
+                {
+                  label: "Items",
+                  key: "item",
+                },
+                {
+                  label: "Items App Settings",
+                  key: "settings",
+                },
+              ],
+            },
+            {
+              label: "App Settings",
+              key: "app",
+              icon: <SettingOutlined style={{ fontSize: "1em" }} />,
+              children: [
+                {
+                  label: "Bills",
+                  key: "bill settings",
+                  icon: <FaMoneyBills />,
+                },
+                {
+                  label: "E-Wallets",
+                  key: "ewallet settings",
+                  icon: <WalletOutlined />,
+                },
+                {
+                  label: "E-Load",
+                  key: "eload settings",
+                  icon: <SettingOutlined />,
+                },
+                {
+                  label: "Portals",
+                  key: "portal area",
+                  icon: <GoCreditCard />,
+                },
+              ],
+            },
+          ]}
+          mode="inline"
+          onOpenChange={(e) => setOpenKeys([e[e.length - 1]])}
+          openKeys={openKeys}
+          defaultSelectedKeys={["dashboard"]}
+          style={{
+            height: "81vh",
+            fontSize: 20,
           }}
-        >
-          Users
-        </Typography.Title>
-        <Typography.Title
-          level={3}
-          className={`custom-menu ${
-            selectedMenu == "branch" ? "highlight-menu" : ""
-          }`}
-          onClick={() => {
-            setSelectedMenu("branch");
-            setExpandMenu("");
-            setSelectedKey("branch");
-            close();
-          }}
-        >
-          Branch
-        </Typography.Title>
-        <div>
-          <div style={{ display: "flex" }}>
-            <Typography.Title
-              level={3}
-              className={`custom-menu ${
-                expandMenu == "report" ? "highlight-parent-menu" : ""
-              }`}
-              onClick={() =>
-                setExpandMenu(expandMenu == "report" ? "" : "report")
-              }
-              style={{
-                width: 130,
-              }}
-            >
-              Report
-            </Typography.Title>
-            <CaretRightOutlined style={{ fontSize: "2em" }} className="icon" />
-          </div>
-          <div className={`child-menu ${expandMenu == "report" ? "open" : ""}`}>
-            <Typography.Title
-              level={4}
-              className={`custom-menu child ${
-                selectedMenu == "transaction" ? "highlight-menu" : ""
-              }`}
-              onClick={() => {
-                setSelectedMenu("transaction");
-                setSelectedKey("report / transaction");
-                close();
-              }}
-            >
-              Transactions
-            </Typography.Title>
-            <Typography.Title
-              level={4}
-              className={`custom-menu child ${
-                selectedMenu == "attendance" ? "highlight-menu" : ""
-              }`}
-              onClick={() => {
-                setSelectedMenu("attendance");
-                setSelectedKey("report / attendance");
-                close();
-              }}
-            >
-              Attendance
-            </Typography.Title>
-          </div>
-        </div>
-        <div>
-          <div style={{ display: "flex" }}>
-            <Typography.Title
-              level={3}
-              className={`custom-menu ${
-                expandMenu == "pos" ? "highlight-parent-menu" : ""
-              }`}
-              onClick={() => setExpandMenu(expandMenu == "pos" ? "" : "pos")}
-              style={{ width: 130 }}
-            >
-              POS
-            </Typography.Title>
-            <CaretRightOutlined style={{ fontSize: "2em" }} className="icon" />
-          </div>
-          <div className={`child-menu ${expandMenu == "pos" ? "open" : ""}`}>
-            <Typography.Title
-              level={4}
-              className={`custom-menu child ${
-                selectedMenu == "items" ? "highlight-menu" : ""
-              }`}
-              onClick={() => {
-                setSelectedMenu("items");
-                setSelectedKey("pos / items");
-                close();
-              }}
-            >
-              Items
-            </Typography.Title>
-            <Typography.Title
-              level={4}
-              className={`custom-menu child ${
-                selectedMenu == "app-settings" ? "highlight-menu" : ""
-              }`}
-              onClick={() => {
-                setSelectedMenu("app-settings");
-                setSelectedKey("pos / settings");
-                close();
-              }}
-            >
-              Items App Settings
-            </Typography.Title>
-          </div>
-        </div>
-        <div>
-          <div style={{ display: "flex" }}>
-            <Typography.Title
-              level={3}
-              className={`custom-menu ${
-                expandMenu == "app" ? "highlight-parent-menu" : ""
-              }`}
-              onClick={() => setExpandMenu(expandMenu == "app" ? "" : "app")}
-              style={{ width: 130 }}
-            >
-              App Settings
-            </Typography.Title>
-            <CaretRightOutlined style={{ fontSize: "2em" }} className="icon" />
-          </div>
-          <div className={`child-menu ${expandMenu == "app" ? "open" : ""}`}>
-            <Typography.Title
-              level={4}
-              className={`custom-menu child ${
-                selectedMenu == "bills" ? "highlight-menu" : ""
-              }`}
-              onClick={() => {
-                setSelectedMenu("bills");
-                setSelectedKey("app / bills");
-                close();
-              }}
-            >
-              Bills
-            </Typography.Title>
-            <Typography.Title
-              level={4}
-              className={`custom-menu child ${
-                selectedMenu == "wallets" ? "highlight-menu" : ""
-              }`}
-              onClick={() => {
-                setSelectedMenu("wallets");
-                setSelectedKey("app / ewallet");
-                close();
-              }}
-            >
-              E-Wallets
-            </Typography.Title>
-            <Typography.Title
-              level={4}
-              className={`custom-menu child ${
-                selectedMenu == "load" ? "highlight-menu" : ""
-              }`}
-              onClick={() => {
-                setSelectedMenu("load");
-                setSelectedKey("app / eload");
-                close();
-              }}
-            >
-              E-Load
-            </Typography.Title>
-            <Typography.Title
-              level={4}
-              className={`custom-menu child ${
-                selectedMenu == "portal" ? "highlight-menu" : ""
-              }`}
-              onClick={() => {
-                setSelectedMenu("portal");
-                setSelectedKey("app / portal");
-                close();
-              }}
-            >
-              Portals
-            </Typography.Title>
-          </div>
-        </div>
+        />
       </div>
       <Button
         type="text"

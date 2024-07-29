@@ -32,7 +32,6 @@ const Login = () => {
     api.open({
       icon: <LoadingOutlined />,
       message: "Logging In....",
-      duration: 1,
     });
 
     const response = await user.login(val);
@@ -44,7 +43,7 @@ const Login = () => {
         message: "Login Success",
         description: "You will be now redirected",
         showProgress: true,
-        duration: 1,
+        duration: 2,
         onClose: () => {
           setUser(response.data);
           setAccessToken(response.data!.token);
