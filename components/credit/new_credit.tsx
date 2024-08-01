@@ -16,9 +16,10 @@ interface MyProp {
   close: () => void;
   onAdd: (_: UserCredit) => Promise<boolean>;
   user?: UserCredit | null;
+  isMobile: boolean;
 }
 
-const NewCredit = ({ open, close, onAdd, user }: MyProp) => {
+const NewCredit = ({ open, close, onAdd, user, isMobile }: MyProp) => {
   const [loading, setLoading] = useState(false);
   const [showPrefix, setShowPrefix] = useState(false);
   const [input, setInput] = useState<UserCredit>({
@@ -97,7 +98,8 @@ const NewCredit = ({ open, close, onAdd, user }: MyProp) => {
       <div
         style={{
           display: "flex",
-          gap: 16,
+          flexDirection: isMobile ? "column" : "row",
+          gap: isMobile ? 0 : 16,
         }}
       >
         <FloatLabel value={input?.name} label="First Name" style={{ flex: 3 }}>
@@ -140,7 +142,8 @@ const NewCredit = ({ open, close, onAdd, user }: MyProp) => {
       <div
         style={{
           display: "flex",
-          gap: 16,
+          flexDirection: isMobile ? "column" : "row",
+          gap: isMobile ? 0 : 16,
         }}
       >
         <FloatLabel value={input?.phone} label="Phone Number">
@@ -156,43 +159,53 @@ const NewCredit = ({ open, close, onAdd, user }: MyProp) => {
             onChange={(e) => update("phone", e.target.value)}
             maxLength={10}
             style={{
-              width: 180,
+              width: isMobile ? "100%" : 180,
             }}
           />
         </FloatLabel>
-        <FloatLabel value={input?.maxCredit?.toString()} label="Max Credit">
-          <InputNumber<number>
-            controls={false}
-            className="customInput"
-            size="large"
-            prefix="₱"
-            value={input?.maxCredit}
-            formatter={(value: any) =>
-              value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-            }
-            parser={(value: any) => value.replace(/\$\s?|(,*)/g, "")}
-            style={{
-              width: 120,
-            }}
-            onChange={(e) => update("maxCredit", e)}
-          />
-        </FloatLabel>
-        <FloatLabel value={input?.creditTerm?.toString()} label="Payment Terms">
-          <Select
-            className="customSelect"
-            size="large"
-            value={input?.creditTerm}
-            style={{
-              width: 120,
-            }}
-            options={[
-              { label: "7 Days", value: 7 },
-              { label: "15 Days", value: 15 },
-              { label: "30 Days", value: 30 },
-            ]}
-            onChange={(e) => update("creditTerm", e)}
-          />
-        </FloatLabel>
+        <div
+          style={{
+            display: "flex",
+            gap: isMobile ? 10 : 16,
+          }}
+        >
+          <FloatLabel value={input?.maxCredit?.toString()} label="Max Credit">
+            <InputNumber<number>
+              controls={false}
+              className="customInput"
+              size="large"
+              prefix="₱"
+              value={input?.maxCredit}
+              formatter={(value: any) =>
+                value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+              }
+              parser={(value: any) => value.replace(/\$\s?|(,*)/g, "")}
+              style={{
+                width: isMobile ? "100%" : 120,
+              }}
+              onChange={(e) => update("maxCredit", e)}
+            />
+          </FloatLabel>
+          <FloatLabel
+            value={input?.creditTerm?.toString()}
+            label="Payment Terms"
+          >
+            <Select
+              className="customSelect"
+              size="large"
+              value={input?.creditTerm}
+              style={{
+                width: 120,
+              }}
+              options={[
+                { label: "7 Days", value: 7 },
+                { label: "15 Days", value: 15 },
+                { label: "30 Days", value: 30 },
+              ]}
+              onChange={(e) => update("creditTerm", e)}
+            />
+          </FloatLabel>
+        </div>
       </div>
       <Button
         size="large"

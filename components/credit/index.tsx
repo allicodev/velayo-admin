@@ -3,6 +3,7 @@ import {
   Button,
   Col,
   Divider,
+  Dropdown,
   message,
   Modal,
   Popconfirm,
@@ -20,12 +21,15 @@ import {
   SettingOutlined,
   DeleteOutlined,
   EyeOutlined,
+  MoreOutlined,
+  LeftOutlined,
 } from "@ant-design/icons";
 import { CreditStatus, LogData, UserCredit, UserCreditData } from "@/types";
 import NewCredit from "./new_credit";
 import CreditService from "@/provider/credit.service";
 import dayjs from "dayjs";
 import LogService from "@/provider/log.service";
+import AmountHistoryViewer from "./amount_history";
 
 const Credit = () => {
   const [loading, setLoading] = useState(false);
@@ -39,6 +43,10 @@ const Credit = () => {
     user: UserCreditData | null;
   }>({ open: false, user: null });
 
+  // * mobile
+  const [width, setWidth] = useState(0);
+  const isMobile = width < 600;
+
   // * for amount history
   const [openAmountHistory, setOpenAmountHistory] = useState({
     open: false,
@@ -50,7 +58,7 @@ const Credit = () => {
   const refresh = () => setTrigger(trigger + 1);
 
   const rowClassName = (record: UserCreditData) =>
-    record._id === selectedUser?._id ? "selected-row" : "";
+    record._id === selectedUser?._id && !isMobile ? "selected-row" : "";
 
   const getStatus = (status: CreditStatus) => {
     switch (status) {
@@ -78,52 +86,124 @@ const Credit = () => {
                   )),
             u.maxCredit
           );
-
     return u;
   };
 
   const columns: TableProps<UserCreditData>["columns"] = [
     {
       title: "Name",
+      width: isMobile ? 120 : undefined,
       render: (_, row) => row.name + " " + row.middlename + " " + row.lastname,
     },
     {
       title: "Address",
+      width: isMobile ? 200 : undefined,
       dataIndex: "address",
     },
     {
       title: "Max Credit",
       dataIndex: "maxCredit",
       align: "center",
-      width: 100,
+      width: isMobile ? 30 : 100,
+      render: (_) =>
+        `₱` + _.toLocaleString(undefined, { maximumFractionDigits: 2 }),
     },
     {
       title: "Functions",
       align: "center",
-      render: (_, row) => (
-        <Space>
-          <Tooltip title="Update">
+      width: isMobile ? 10 : 100,
+      fixed: isMobile ? "right" : undefined,
+      render: (_, row) =>
+        isMobile ? (
+          <Dropdown
+            trigger={["click"]}
+            placement="bottomLeft"
+            menu={{
+              items: [
+                {
+                  label: (
+                    <span
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setEditUser({ open: true, user: row });
+                      }}
+                    >
+                      <SettingOutlined /> Update
+                    </span>
+                  ),
+                  key: "update",
+                },
+                {
+                  label: (
+                    <Typography.Text type="danger">
+                      <Popconfirm
+                        title="Are you sure to remove this?"
+                        okText="remove"
+                        icon={null}
+                        onConfirm={(e) => {
+                          e?.preventDefault();
+                          e?.stopPropagation();
+                          handleDelete(row._id);
+                        }}
+                        onCancel={(e) => {
+                          e?.preventDefault();
+                          e?.stopPropagation();
+                        }}
+                        okButtonProps={{
+                          danger: true,
+                        }}
+                      >
+                        <div
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            e.preventDefault();
+                          }}
+                        >
+                          <DeleteOutlined /> Delete
+                        </div>
+                      </Popconfirm>
+                    </Typography.Text>
+                  ),
+                  key: "delete",
+                },
+              ],
+            }}
+          >
             <Button
-              icon={<SettingOutlined />}
-              type="primary"
-              onClick={(e) => setEditUser({ open: true, user: row })}
-            />
-          </Tooltip>
-          <Tooltip title="Delete Customer">
-            <Popconfirm
-              title="Are you sure to remove this?"
-              okText="remove"
-              icon={null}
-              onConfirm={() => handleDelete(row._id)}
-              okButtonProps={{
-                danger: true,
+              type="text"
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
               }}
             >
-              <Button icon={<DeleteOutlined />} type="primary" danger />
-            </Popconfirm>
-          </Tooltip>
-        </Space>
-      ),
+              <MoreOutlined />
+            </Button>
+          </Dropdown>
+        ) : (
+          <Space>
+            <Tooltip title="Update">
+              <Button
+                icon={<SettingOutlined />}
+                type="primary"
+                onClick={(e) => setEditUser({ open: true, user: row })}
+              />
+            </Tooltip>
+            <Tooltip title="Delete Customer">
+              <Popconfirm
+                title="Are you sure to remove this?"
+                okText="remove"
+                icon={null}
+                onConfirm={() => handleDelete(row._id)}
+                okButtonProps={{
+                  danger: true,
+                }}
+              >
+                <Button icon={<DeleteOutlined />} type="primary" danger />
+              </Popconfirm>
+            </Tooltip>
+          </Space>
+        ),
     },
   ];
 
@@ -131,7 +211,7 @@ const Credit = () => {
     {
       title: "Amount",
       dataIndex: "amount",
-      width: 150,
+      width: isMobile ? 0 : 150,
       render: (_, row) => (
         <div style={{ display: "flex", gap: 5, alignItems: "center" }}>
           <div>
@@ -153,28 +233,36 @@ const Credit = () => {
                 })}
             </span>
           </div>
-          <Tooltip title="Show Payment History">
-            <Button
-              icon={<EyeOutlined />}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                fetchLogs(row._id);
-                setOpenAmountHistory({ open: true, logId: row._id });
-              }}
-            />
-          </Tooltip>
+          {!isMobile && (
+            <Tooltip title="Show Payment History">
+              <Button
+                icon={<EyeOutlined />}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  fetchLogs(row._id);
+                  setOpenAmountHistory({ open: true, logId: row._id });
+                }}
+              />
+            </Tooltip>
+          )}
         </div>
       ),
     },
     {
       title: "Status",
       dataIndex: "status",
-      render: (_) => getStatus(_),
+      align: isMobile ? "center" : "start",
+      render: (_, row) =>
+        dayjs(row.dueDate).isAfter(dayjs()) && row.status == "pending" ? (
+          <Tag color="red-inverse">Overdue</Tag>
+        ) : (
+          getStatus(_)
+        ),
     },
     {
-      title: "Date",
-      dataIndex: "createdAt",
+      title: "Due Date",
+      dataIndex: "dueDate",
       render: (_) => dayjs(_).format("MMM DD, YYYY - hh:mma"),
     },
   ];
@@ -213,7 +301,7 @@ const Credit = () => {
       setUsers(res?.data ?? []);
 
       if (res?.data!.length > 0) {
-        setSelectedUser(processWithTotal(res!.data![0]!));
+        if (!isMobile) setSelectedUser(processWithTotal(res!.data![0]!));
         fetchLogs(res!.data![0]!._id);
       }
     } else setLoading(false);
@@ -238,11 +326,19 @@ const Credit = () => {
     });
 
     if (res?.success ?? false) {
-      setLogs(
+      // sort via date
+      let _logs =
         res?.data?.sort((a, b) =>
           dayjs(a.createdAt).isAfter(dayjs(b.createdAt)) ? 1 : -1
-        ) ?? []
-      );
+        ) ?? [];
+
+      // sort again via status
+      _logs = _logs.sort((a, b) => {
+        if (a.status === "pending" && b.status === "completed") return -1;
+        if (a.status === "completed" && b.status === "pending") return 1;
+        return 0;
+      });
+      setLogs(_logs);
 
       setCreditLog(
         res?.data?.sort((a, b) =>
@@ -254,85 +350,150 @@ const Credit = () => {
   };
 
   useEffect(() => {
+    function handleResize() {
+      setWidth(window.innerWidth);
+    }
+
+    window.addEventListener("resize", handleResize);
+    handleResize(); // Set initial width
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  useEffect(() => {
     getUsers();
-  }, [trigger]);
+  }, [trigger, width]);
 
   return (
     <>
       <Spin spinning={loading}>
-        <Button
-          size="large"
-          type="primary"
-          onClick={() => setEditUser({ open: true, user: null })}
-          style={{ marginBottom: 5 }}
-        >
-          New User Credit
-        </Button>
+        {(!isMobile || (isMobile && selectedUser == null)) && (
+          <Button
+            size="large"
+            type="primary"
+            onClick={() => setEditUser({ open: true, user: null })}
+            style={{ margin: isMobile ? 10 : 0, marginBottom: 5 }}
+          >
+            New User Credit
+          </Button>
+        )}
+
         <Row gutter={14}>
-          <Col span={13}>
-            <Table
-              columns={columns}
-              dataSource={users}
-              rowClassName={rowClassName}
-              rowKey={(e) => e._id}
-              style={{
-                cursor: "pointer",
-              }}
-              onRow={(row) => {
-                return {
-                  onClick: () => setSelectedUser(row),
-                };
-              }}
-              bordered
-            />
-          </Col>
-          {selectedUser != null && (
-            <Col span={11}>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
+          {(!isMobile || (isMobile && selectedUser == null)) && (
+            <Col span={isMobile ? 24 : 13}>
+              <Table
+                columns={columns}
+                dataSource={users}
+                rowClassName={rowClassName}
+                rowKey={(e) => e._id}
+                scroll={{
+                  x: isMobile ? "150vw" : undefined,
                 }}
-              >
-                <Typography.Title level={4} style={{ margin: 0 }}>
-                  Credit Payment:{" "}
-                  <span style={{ fontWeight: 700 }}>
-                    ₱
-                    {creditLog
-                      .reduce(
-                        (p, n) =>
-                          n.status == "pending"
-                            ? p +
-                              n.history!.reduce(
-                                (p, n) => p + parseFloat(n.amount.toString()),
-                                0
-                              )
-                            : 0,
-                        0
-                      )
-                      .toLocaleString(undefined, {
+                style={{
+                  cursor: "pointer",
+                  margin: isMobile ? 10 : 5,
+                }}
+                onRow={(row) => {
+                  return {
+                    onClick: () => {
+                      setSelectedUser(processWithTotal(row));
+                      fetchLogs(row._id);
+                    },
+                  };
+                }}
+                bordered
+              />
+            </Col>
+          )}
+          {selectedUser != null && (
+            <Col span={isMobile ? 24 : 11}>
+              <div>
+                {isMobile && (
+                  <Button
+                    icon={<LeftOutlined />}
+                    size="large"
+                    type="text"
+                    style={{ width: 70, marginBottom: 10 }}
+                    onClick={() => setSelectedUser(null)}
+                  >
+                    BACK
+                  </Button>
+                )}
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <Typography.Title
+                    level={isMobile ? 5 : 4}
+                    style={{
+                      margin: isMobile ? 10 : 0,
+                      marginBottom: 5,
+                      textAlign: "start",
+                    }}
+                  >
+                    Credit Payment
+                    <br />
+                    <span style={{ fontWeight: 700 }}>
+                      ₱{" "}
+                      {creditLog
+                        .reduce(
+                          (p, n) =>
+                            n.status == "pending"
+                              ? p +
+                                n.history!.reduce(
+                                  (p, n) => p + parseFloat(n.amount.toString()),
+                                  0
+                                )
+                              : 0,
+                          0
+                        )
+                        .toLocaleString(undefined, {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })}
+                    </span>
+                  </Typography.Title>
+                  <Typography.Title
+                    level={isMobile ? 5 : 4}
+                    style={{ margin: 0, marginRight: 10, textAlign: "end" }}
+                  >
+                    Available Credit
+                    <br />
+                    <span style={{ fontWeight: 700 }}>
+                      ₱{" "}
+                      {selectedUser?.availableCredit.toLocaleString(undefined, {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2,
                       })}
-                  </span>
-                </Typography.Title>
-                <Typography.Title level={4} style={{ margin: 0 }}>
-                  Available Credit:{" "}
-                  <span style={{ fontWeight: 700 }}>
-                    ₱
-                    {selectedUser.availableCredit.toLocaleString(undefined, {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    })}
-                  </span>
-                </Typography.Title>
+                    </span>
+                  </Typography.Title>
+                </div>
               </div>
               <Table
                 columns={columns2}
                 dataSource={logs}
+                rowKey={(e) => e._id}
                 scroll={{
-                  y: "65vh",
+                  y: "60vh",
+                }}
+                style={{
+                  margin: isMobile ? 10 : 0,
+                  marginTop: 0,
+                }}
+                onRow={(row) => {
+                  return {
+                    onClick: isMobile
+                      ? () => {
+                          fetchLogs(row._id);
+                          setOpenAmountHistory({ open: true, logId: row._id });
+                        }
+                      : undefined,
+                  };
                 }}
               />
             </Col>
@@ -346,215 +507,14 @@ const Credit = () => {
         close={() => setEditUser({ open: false, user: null })}
         onAdd={handleNewUser}
         user={editUser.user}
+        isMobile={isMobile}
       />
-      <Modal
-        open={openAmountHistory.open}
-        onCancel={() => setOpenAmountHistory({ open: false, logId: "" })}
-        closable={false}
-        zIndex={2}
-        width={650}
-        footer={null}
-        destroyOnClose
-      >
-        <Row gutter={8}>
-          <Col span={11}>
-            <Timeline
-              mode="left"
-              className="no-scrollbar"
-              style={{
-                maxHeight: "50vh",
-                overflow: "scroll",
-                padding: 25,
-              }}
-              items={
-                logs.length > 0 && openAmountHistory.logId != ""
-                  ? logs
-                      .filter((e) => e._id == openAmountHistory.logId)[0]
-                      .history!.map((e) => ({
-                        label: dayjs(e.date).format("MMM DD, YYYY hh:mma"),
-                        children: (
-                          <>
-                            <p>{e.description}</p>
-                            <p
-                              style={{ color: e.amount > 0 ? "green" : "red" }}
-                            >
-                              {e.amount > 0 ? "+ " : "- "}₱
-                              {Math.abs(e.amount).toLocaleString(undefined, {
-                                maximumFractionDigits: 2,
-                              })}
-                            </p>
-                          </>
-                        ),
-                      }))
-                  : []
-              }
-            />
-          </Col>
-          <Col span={2}>
-            <Divider type="vertical" style={{ height: "100%" }} />
-          </Col>
-          {logs.length > 0 && openAmountHistory.logId != "" && (
-            <Col span={11}>
-              <div
-                style={{
-                  border: "1px solid #aaa",
-                  borderRadius: 10,
-                  display: "inline-block",
-                  padding: "10px 10px",
-                  fontSize: "2.5em",
-                  width: 200,
-                  textAlign: "center",
-                  position: "relative",
-                }}
-              >
-                <span style={{ color: "#777" }}>
-                  ₱
-                  {logs
-                    .filter((e) => e._id == openAmountHistory.logId)[0]
-                    .amount?.toLocaleString(undefined, {
-                      maximumFractionDigits: 2,
-                    })}
-                </span>
-                <span
-                  style={{
-                    position: "absolute",
-                    top: -10,
-                    left: "50%",
-                    fontSize: "0.5em",
-                    background: "#fff",
-                    padding: "3px 5px",
-                    borderRadius: 10,
-                    lineHeight: 1,
-                    display: "inline-block",
-                    transform: "translateX(-50%)",
-                  }}
-                >
-                  Base Amount
-                </span>
-              </div>
-              <Divider />
-              <div
-                style={{
-                  border: "1px solid #aaa",
-                  borderRadius: 10,
-                  display: "inline-block",
-                  padding: "10px 10px",
-                  fontSize: "2.5em",
-                  width: 200,
-                  textAlign: "center",
-                  position: "relative",
-                  marginTop: 20,
-                }}
-              >
-                <span style={{ color: "#777" }}>
-                  {
-                    logs
-                      .filter((e) => e._id == openAmountHistory.logId)[0]
-                      .history!.filter((e) =>
-                        e.description.toLocaleLowerCase().includes("interest")
-                      ).length
-                  }
-                </span>
-                <span
-                  style={{
-                    position: "absolute",
-                    top: -10,
-                    lineHeight: 1,
-                    left: "50%",
-                    fontSize: "0.5em",
-                    background: "#fff",
-                    padding: "3px 5px",
-                    borderRadius: 10,
-                    width: "80%",
-                    transform: "translateX(-50%)",
-                  }}
-                >
-                  No. of Overdue Days
-                </span>
-              </div>
-              <div
-                style={{
-                  border: "1px solid #aaa",
-                  borderRadius: 10,
-                  display: "inline-block",
-                  padding: "10px 10px",
-                  fontSize: "2.5em",
-                  width: 200,
-                  textAlign: "center",
-                  position: "relative",
-                  marginTop: 20,
-                }}
-              >
-                <span style={{ color: "#777" }}>
-                  ₱
-                  {logs
-                    .filter((e) => e._id == openAmountHistory.logId)[0]
-                    .history!.filter((e) =>
-                      e.description.toLocaleLowerCase().includes("interest")
-                    )
-                    .reduce((p, n) => p + parseFloat(n.amount.toString()), 0)
-                    .toLocaleString(undefined, { maximumFractionDigits: 2 })}
-                </span>
-                <span
-                  style={{
-                    position: "absolute",
-                    top: -10,
-                    lineHeight: 1,
-                    left: "50%",
-                    fontSize: "0.5em",
-                    background: "#fff",
-                    padding: "3px 5px",
-                    borderRadius: 10,
-                    transform: "translateX(-50%)",
-                  }}
-                >
-                  Interest
-                </span>
-              </div>
-              <div
-                style={{
-                  border: "1px solid #aaa",
-                  borderRadius: 10,
-                  display: "inline-block",
-                  padding: "10px 10px",
-                  fontSize: "2.5em",
-                  width: 200,
-                  textAlign: "center",
-                  position: "relative",
-                  marginTop: 20,
-                }}
-              >
-                <span style={{ color: "#777" }}>
-                  ₱
-                  {Math.abs(
-                    logs
-                      .filter((e) => e._id == openAmountHistory.logId)[0]
-                      .history!.reduce(
-                        (p, n) => p + parseFloat(n.amount.toString()),
-                        0
-                      )
-                  ).toLocaleString(undefined, { maximumFractionDigits: 2 })}
-                </span>
-                <span
-                  style={{
-                    position: "absolute",
-                    top: -10,
-                    lineHeight: 1,
-                    left: "50%",
-                    fontSize: "0.5em",
-                    background: "#fff",
-                    padding: "3px 5px",
-                    borderRadius: 10,
-                    transform: "translateX(-50%)",
-                  }}
-                >
-                  Total
-                </span>
-              </div>
-            </Col>
-          )}
-        </Row>
-      </Modal>
+      <AmountHistoryViewer
+        {...openAmountHistory}
+        close={() => setOpenAmountHistory({ open: false, logId: "" })}
+        logs={logs}
+        isMobile={isMobile}
+      />
     </>
   );
 };

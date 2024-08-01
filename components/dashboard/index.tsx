@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Col, Row, Segmented, Tabs } from "antd";
+import { Col, Row, Tabs } from "antd";
 import { TbCurrencyPeso } from "react-icons/tb";
 import { GrTransaction } from "react-icons/gr";
 
