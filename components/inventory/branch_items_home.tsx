@@ -10,7 +10,6 @@ import {
   Table,
   TableProps,
   Popconfirm,
-  Menu,
 } from "antd";
 import {
   VerticalAlignTopOutlined,

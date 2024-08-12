@@ -238,6 +238,13 @@ textarea.customInput {
   left: 30px;
   z-index: 999;
 }
+
+.ant-input-number-outlined.customInput.custom1 + label {
+  top: 12px;
+  left: 30px;
+  z-index: 999;
+}
+
 .ant-input-number-outlined.customInput.no-prefix + label {
   top: 5px;
   left: 15px;
@@ -293,6 +300,14 @@ textarea.customInput {
 .ant-input-number-outlined.customInput.no-prefix + label.label-float {
   top: -10px;
   left: 15px;
+}
+
+.customInput.custom1
+  .ant-input-number
+  .ant-input-number-input-wrap
+  .ant-input-number-input {
+  font-size: 1.5em;
+  height: 50px;
 }
 
 textarea.customInput + label {
@@ -649,4 +664,17 @@ label.customCheckbox span span.ant-checkbox-inner::after {
 
 .ant-page-header-content {
   padding-block-start: 0;
+}
+
+.must_remove_late {
+  color: #98c04b;
+  background: #294b0f;
+}
+
+.no-padding .ant-table-cell {
+  padding: 0 !important;
+}
+
+.no-header thead {
+  display: none;
 }

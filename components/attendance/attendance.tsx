@@ -16,7 +16,7 @@ import { SettingOutlined } from "@ant-design/icons";
 import dayjs, { Dayjs } from "dayjs";
 import Excel from "exceljs";
 
-import { LogData, User } from "@/types";
+import { LogData, LogTime, User } from "@/types";
 import UserService from "@/provider/user.service";
 import LogService from "@/provider/log.service";
 
@@ -59,12 +59,60 @@ const Attendance = () => {
 
   const isMobile = width < 600;
 
+  const showFlexiTime = (_: LogTime[]) => {
+    let time = _.reduce((p: any, n: LogTime, index: any) => {
+      if (index % 2 === 0) p.push([n]);
+      else p[p.length - 1].push(n);
+      return p;
+    }, []);
+
+    return (
+      <div
+        style={{
+          textAlign: "start",
+          display: "grid",
+          placeItems: "center",
+        }}
+      >
+        {time.map((e: LogTime[]) => (
+          <>
+            <div style={{ display: "inline-block" }}>
+              <span>{dayjs(e[0].time).format("hh:mma")}</span>
+              {e.length > 1 &&
+                e[1].type == "time-out" &&
+                ` - ${dayjs(e[1].time).format("hh:mma")}`}
+            </div>
+          </>
+        ))}
+      </div>
+    );
+  };
+
+  const showFlexiTimeRaw = (_: LogTime[]) => {
+    let time = _.reduce((p: any, n: LogTime, index: any) => {
+      if (index % 2 === 0) p.push([n]);
+      else p[p.length - 1].push(n);
+      return p;
+    }, []);
+
+    return time
+      .map(
+        (e: LogTime[]) =>
+          `${dayjs(e[0].time).format("hh:mma")} ${
+            e.length > 1 && e[1].type == "time-out"
+              ? "- " + dayjs(e[1].time).format("hh:mma")
+              : ""
+          }`
+      )
+      .join("\n");
+  };
+
   const columns: TableProps<LogData>["columns"] = [
     {
       title: "ID",
-      dataIndex: "userId",
+      dataIndex: "_id",
       width: isMobile ? 120 : undefined,
-      render: (_) => _.employeeId,
+      render: (_) => _,
     },
     {
       title: "User",
@@ -85,84 +133,24 @@ const Attendance = () => {
       render: (_) => dayjs(_).format("MMMM DD, YYYY"),
     },
     {
-      title: "Time In",
+      title: "Time Records",
       align: "center",
-      width: isMobile ? 120 : undefined,
-      render: ({ userId, timeInPhoto, createdAt, branchId, timeIn }) => (
-        <div>
-          {dayjs(timeIn).format("hh:mma")}
-          {timeInPhoto && (
-            <Typography.Link
-              style={{
-                display: "block",
-                textAlign: "center",
-              }}
-              onClick={() =>
-                setPhotoViewer({
-                  open: true,
-                  src: timeInPhoto,
-                  details: ["admin", "encoder"].includes(userId.role)
-                    ? ""
-                    : `Taken in Branch ${branchId} at ${dayjs(createdAt).format(
-                        "MMMM DD, YYYY - hh:mma"
-                      )}`,
-                })
-              }
-            >
-              view photo
-            </Typography.Link>
-          )}
-        </div>
-      ),
-    },
-    {
-      title: "Time Out",
-      align: "center",
-      width: isMobile ? 120 : undefined,
-      render: ({ userId, timeOutPhoto, createdAt, branchId, timeOut }) =>
-        timeOut ? (
-          <div>
-            {dayjs(timeOut).format("hh:mma")}
-            {timeOutPhoto && (
-              <Typography.Link
-                style={{
-                  display: "block",
-                  textAlign: "center",
-                }}
-                onClick={() =>
-                  setPhotoViewer({
-                    open: true,
-                    src: timeOutPhoto,
-                    details: ["admin", "encoder"].includes(userId.role)
-                      ? ""
-                      : `Taken in Branch ${branchId} at ${dayjs(
-                          createdAt
-                        ).format("MMMM DD, YYYY - hh:mma")}`,
-                  })
-                }
-              >
-                view photo
-              </Typography.Link>
-            )}
-          </div>
-        ) : (
-          <Typography.Text type="secondary" italic>
-            N/A
-          </Typography.Text>
-        ),
+      dataIndex: "flexiTime",
+      render: (_) => showFlexiTime(_),
     },
     {
       title: "Hour(s) Rendered",
       align: "center",
       fixed: "right",
+      dataIndex: "flexiTime",
       width: isMobile ? 85 : undefined,
-      render: (_, row) =>
-        row.timeOut == null ? (
+      render: (_) =>
+        _.length <= 1 ? (
           <Typography.Text type="secondary" italic>
             N/A
           </Typography.Text>
         ) : (
-          <span>{calculateHoursRendered(row).toFixed(2)}</span>
+          <span>{calculateHoursRendered(_).toFixed(2)}</span>
         ),
     },
   ];
@@ -284,13 +272,25 @@ const Attendance = () => {
     </div>
   );
 
-  const calculateHoursRendered = (__log: LogData): number => {
-    if (__log.timeOut == null) return 0;
-    let hours = dayjs(__log.timeOut).diff(dayjs(__log.timeIn), "hour");
-    let minutes =
-      Math.abs(dayjs(__log.timeOut).minute() - dayjs(__log.timeIn).minute()) /
-      60;
-    return hours + minutes;
+  const calculateHoursRendered = (_: LogTime[]): number => {
+    let time = _.reduce((p: any, n: LogTime, index: any) => {
+      if (_.length == 1) p.push(n);
+      else if (index % 2 === 0) p.push([n]);
+      else p[p.length - 1].push(n);
+      return p;
+    }, []).filter((e: any) => e.length > 1);
+
+    let renderedHours = time
+      .map((e: LogTime[]) => {
+        let hours = dayjs(e[1].time).diff(dayjs(e[0].time), "hour");
+        let min =
+          Math.abs(dayjs(e[1].time).minute() - dayjs(e[0].time).minute()) / 60;
+
+        return hours + min;
+      })
+      .reduce((p: number, n: number) => p + n, 0);
+
+    return renderedHours;
   };
 
   const getLogs = async ({
@@ -373,8 +373,7 @@ const Attendance = () => {
       "Employee Name",
       "Role",
       "Date",
-      "Time In",
-      "Time Out",
+      "Time Record",
       "Hour(s) Rendered",
     ];
     sheet.properties.defaultRowHeight = 20;
@@ -397,12 +396,8 @@ const Attendance = () => {
         width: 22,
       },
       {
-        key: "timeIn",
-        width: 15,
-      },
-      {
-        key: "timeOut",
-        width: 15,
+        key: "timeRecord",
+        width: 30,
       },
       {
         key: "renderedHours",
@@ -419,9 +414,11 @@ const Attendance = () => {
           .join(" "),
         type: e.userId.role.toLocaleUpperCase(),
         date: dayjs(e?.createdAt).format("MM/DD/YYYY"),
-        timeIn: dayjs(e.timeIn).format("hh:mma"),
-        timeOut: dayjs(e.timeOut).format("hh:mma"),
-        renderedHours: calculateHoursRendered(e).toFixed(2),
+        timeRecord: showFlexiTimeRaw(e.flexiTime),
+        renderedHours:
+          e.flexiTime.length <= 1
+            ? ""
+            : calculateHoursRendered(e.flexiTime).toFixed(2),
       });
     });
 
@@ -438,7 +435,16 @@ const Attendance = () => {
       bold: true,
     };
 
-    const total = _logs.reduce((p, n) => p + calculateHoursRendered(n), 0);
+    let total = 0;
+
+    for (let i = 0; i < _logs.length; i++) {
+      let item = _logs[i];
+
+      if (item.flexiTime.length > 1) {
+        total += calculateHoursRendered(item.flexiTime);
+      }
+    }
+
     s("g").value = total.toFixed(2);
 
     // * styles the headers and lower cells
@@ -505,7 +511,7 @@ const Attendance = () => {
   }, []);
 
   return (
-    <>
+    <div style={{ padding: 10 }}>
       <Table
         title={isMobile ? getHeaderMobile : getHeader}
         columns={columns}
@@ -528,42 +534,42 @@ const Attendance = () => {
               toDate: filter.toDate ?? null,
             }),
         }}
-        summary={() => (
-          <Table.Summary fixed>
-            {isMobile ? (
-              <div
-                style={{
-                  padding: 10,
-                }}
-              >
-                <strong>Total:</strong> {totalRenderedHourse.toFixed(2)}
-              </div>
-            ) : (
-              <Table.Summary.Row>
-                <Table.Summary.Cell index={0} />
-                <Table.Summary.Cell index={1} />
-                <Table.Summary.Cell index={2} />
-                <Table.Summary.Cell index={3} />
-                <Table.Summary.Cell index={4} />
-                <Table.Summary.Cell index={5} />
-                <Table.Summary.Cell index={6}>
-                  <div
-                    style={{
-                      display: "flex",
-                    }}
-                  >
-                    <Typography.Text style={{ flex: 5 }} strong>
-                      Total:
-                    </Typography.Text>
-                    <span style={{ flex: 7 }}>
-                      {totalRenderedHourse.toFixed(2)}
-                    </span>
-                  </div>
-                </Table.Summary.Cell>
-              </Table.Summary.Row>
-            )}
-          </Table.Summary>
-        )}
+        // summary={() => (
+        //   <Table.Summary fixed>
+        //     {isMobile ? (
+        //       <div
+        //         style={{
+        //           padding: 10,
+        //         }}
+        //       >
+        //         <strong>Total:</strong> {totalRenderedHourse.toFixed(2)}
+        //       </div>
+        //     ) : (
+        //       <Table.Summary.Row>
+        //         <Table.Summary.Cell index={0} />
+        //         <Table.Summary.Cell index={1} />
+        //         <Table.Summary.Cell index={2} />
+        //         <Table.Summary.Cell index={3} />
+        //         <Table.Summary.Cell index={4} />
+        //         <Table.Summary.Cell index={5} />
+        //         <Table.Summary.Cell index={6}>
+        //           <div
+        //             style={{
+        //               display: "flex",
+        //             }}
+        //           >
+        //             <Typography.Text style={{ flex: 5 }} strong>
+        //               Total:
+        //             </Typography.Text>
+        //             <span style={{ flex: 7 }}>
+        //               {totalRenderedHourse.toFixed(2)}
+        //             </span>
+        //           </div>
+        //         </Table.Summary.Cell>
+        //       </Table.Summary.Row>
+        //     )}
+        //   </Table.Summary>
+        // )}
         sticky
         bordered
       />
@@ -667,7 +673,7 @@ const Attendance = () => {
           />
         </Space>
       </Modal>
-    </>
+    </div>
   );
 };
 

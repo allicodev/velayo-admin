@@ -44,6 +44,10 @@ export interface PageProps {
   [key: string]: any;
 }
 
+export type Deduction = {
+  name?: string | null;
+  amount?: number | null;
+};
 export interface NewUser {
   name: string;
   email: string;
@@ -51,6 +55,8 @@ export interface NewUser {
   role: string;
   password?: string;
   employeeId?: string;
+  baseSalary: number;
+  deductions: Deduction[];
 }
 
 export interface DashboardData {

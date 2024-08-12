@@ -59,7 +59,6 @@ export interface BasicContentProps {
   style?: CSSProperties;
   extra?: ReactNode;
   extraData?: any;
-  onCellClick?: (str: any) => void;
   refresh?: number;
 }
 
@@ -147,4 +146,8 @@ export interface Credit {
   amount: number;
   status: CreditStatus;
   createdAt: Date;
+}
+
+export interface DailyTimeRecord {
+  date: Date;
 }

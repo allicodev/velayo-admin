@@ -31,6 +31,7 @@ const Login = () => {
   const handleFinish = async (val: UserLoginProps) => {
     api.open({
       icon: <LoadingOutlined />,
+      pauseOnHover: false,
       message: "Logging In....",
     });
 
@@ -43,6 +44,7 @@ const Login = () => {
         message: "Login Success",
         description: "You will be now redirected",
         showProgress: true,
+        pauseOnHover: false,
         duration: 2,
         onClose: () => {
           setUser(response.data);
@@ -52,6 +54,7 @@ const Login = () => {
         },
       });
     } else {
+      api.destroy();
       message.error(
         response?.data?.role != "admin"
           ? "Invalid Credentials"

@@ -57,6 +57,11 @@ export interface UserWithToken extends User {
   token: string;
 }
 
+export interface UserWithAttendance {
+  user?: User | null;
+  attendace?: LogData;
+}
+
 export interface Transaction {
   _id?: string;
   type: TransactionType;
@@ -201,10 +206,11 @@ export interface Log {
   branchId?: Branch;
 
   // for attendance
-  timeIn?: Date;
-  timeOut?: Date;
-  timeInPhoto?: string;
-  timeOutPhoto?: string;
+  flexiTime: LogTime[];
+  // timeIn?: Date;
+  // timeOut?: Date;
+  // timeInPhoto?: string;
+  // timeOutPhoto?: string;
 
   // for stock
   stockType?: "stock-in" | "stock-out";
@@ -228,6 +234,12 @@ export interface Log {
 export interface LogData extends Log {
   _id: string;
   createdAt?: Date;
+}
+
+export interface LogTime {
+  type: string;
+  time: Date;
+  photo: String;
 }
 
 // * PORTAL

@@ -1,21 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { CSSProperties, useEffect, useState } from "react";
 import {
-  Drawer,
-  Typography,
   TableProps,
-  Space,
   Button,
   Table,
   Popconfirm,
   message,
-  Tooltip,
+  Dropdown,
+  notification,
 } from "antd";
 import {
-  DownOutlined,
   DeleteOutlined,
   UserAddOutlined,
   EditOutlined,
+  PlusOutlined,
 } from "@ant-design/icons";
+import { CgMore } from "react-icons/cg";
 
 import dayjs from "dayjs";
 
@@ -26,20 +25,30 @@ import {
 } from "@/types";
 import NewUser from "./new_user";
 import UserService from "@/provider/user.service";
+import ViewUser from "./view_user";
 
-const User = ({ title, style, extra, onCellClick }: BasicContentProps) => {
+const User = ({ title, style, extra }: BasicContentProps) => {
   const [openedNewUser, setOpenedNewUser] = useState(false);
   const [openedUser, setOpenedUser] = useState<NewUserProp | null>(null);
+  const [selectedUser, setSelectedUser] = useState<UserProp | null>();
   const [users, setUsers] = useState<UserProp[]>([]);
   const [trigger, setTrigger] = useState(0);
   const [total, setTotal] = useState(0);
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
+  const [fetching, setFetching] = useState(false);
 
   const [width, setWidth] = useState(0);
 
   const isMobile = width < 600;
 
   const user = new UserService();
+
+  const moreInfoStyle: CSSProperties = {
+    display: "flex",
+    paddingLeft: 10,
+    paddingRight: 10,
+    width: "100%",
+  };
 
   const columns: TableProps<UserProp>["columns"] = [
     {
@@ -86,35 +95,99 @@ const User = ({ title, style, extra, onCellClick }: BasicContentProps) => {
       fixed: "right",
       width: 100,
       render: (_, row) => (
-        <Space>
-          <Tooltip title="Edit User">
-            <Button
-              size="large"
-              icon={<EditOutlined />}
-              onClick={() => {
-                let $ = row as any;
-                delete $.__v;
-                delete $.updatedAt;
-                delete $.createdAt;
-                delete $.password;
+        <Dropdown
+          trigger={["click"]}
+          placement="bottomLeft"
+          menu={{
+            items: [
+              {
+                label: (
+                  <div style={moreInfoStyle}>
+                    <EditOutlined
+                      style={{
+                        marginRight: 5,
+                      }}
+                    />
+                    Edit User
+                  </div>
+                ),
+                key: "update",
+                onClick: (e) => {
+                  // e.stopPropagation();
+                  // e.preventDefault();
 
-                setOpenedUser($);
-                setOpenedNewUser(true);
+                  let $ = row as any;
+                  delete $.__v;
+                  delete $.updatedAt;
+                  delete $.createdAt;
+                  delete $.password;
+
+                  setOpenedUser($);
+                  setOpenedNewUser(true);
+                },
+              },
+              {
+                label: (
+                  <Popconfirm
+                    title="Delete Confirmation"
+                    okText="Confirm"
+                    icon={null}
+                    onConfirm={(e) => {
+                      e?.preventDefault();
+                      e?.stopPropagation();
+                      handeRemoveUser(row?._id ?? "");
+                    }}
+                    onCancel={(e) => {
+                      e?.preventDefault();
+                      e?.stopPropagation();
+                    }}
+                    okButtonProps={{
+                      danger: true,
+                    }}
+                  >
+                    <div style={moreInfoStyle}>
+                      <DeleteOutlined
+                        style={{
+                          marginRight: 5,
+                        }}
+                      />
+                      Delete
+                    </div>
+                  </Popconfirm>
+                ),
+                key: "delete",
+                danger: true,
+              },
+            ],
+          }}
+        >
+          <Button
+            type="text"
+            onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+            }}
+          >
+            <CgMore
+              style={{
+                fontSize: "1.4em",
               }}
             />
-          </Tooltip>
-          <Popconfirm
-            title="Delete Confirmation"
-            description="Are you sure to archive this user?"
-            okText="Confirm"
-            onConfirm={() => handeRemoveUser(row?._id ?? "")}
-          >
-            <Button icon={<DeleteOutlined />} danger />
-          </Popconfirm>
-        </Space>
+          </Button>
+        </Dropdown>
       ),
     },
   ];
+
+  const getHeader = () => (
+    <Button
+      icon={<PlusOutlined />}
+      type="primary"
+      size="large"
+      onClick={(e) => setOpenedNewUser(true)}
+      style={{ marginBottom: 10, margin: 5 }}
+    />
+  );
 
   const handleNewUser = (obj: any) => {
     (async (_) => {
@@ -162,7 +235,7 @@ const User = ({ title, style, extra, onCellClick }: BasicContentProps) => {
     updateUsers?: boolean;
   }): Promise<UserProp[] | any | void> =>
     new Promise(async (resolve, reject) => {
-      // setFetching(true);
+      setFetching(true);
       if (!pageSize) pageSize = 10;
 
       let res = await user.getUsers({
@@ -176,12 +249,12 @@ const User = ({ title, style, extra, onCellClick }: BasicContentProps) => {
           return resolve(res.data);
         }
 
-        // setFetching(false);
+        setFetching(false);
         setUsers(res?.data ?? []);
         setTotal(res.meta?.total ?? 10);
         resolve(res.data);
       } else {
-        // setFetching(false);
+        setFetching(false);
         reject();
       }
     });
@@ -202,19 +275,10 @@ const User = ({ title, style, extra, onCellClick }: BasicContentProps) => {
   }, []);
 
   return (
-    <>
-      {isMobile && (
-        <Button
-          icon={<UserAddOutlined />}
-          type="primary"
-          size="large"
-          onClick={(e) => setOpenedNewUser(true)}
-          style={{ marginBottom: 10, width: 150, margin: 5 }}
-        >
-          NEW
-        </Button>
-      )}
+    <div style={{ padding: 10 }}>
+      {getHeader()}
       <Table
+        loading={fetching}
         dataSource={users}
         columns={columns.filter((e) =>
           isMobile
@@ -223,7 +287,7 @@ const User = ({ title, style, extra, onCellClick }: BasicContentProps) => {
               )
             : true
         )}
-        style={{ ...style, padding: 5 }}
+        style={{ ...style, padding: 5, cursor: "pointer" }}
         rowKey={(e) => e.username}
         scroll={{
           y: "75vh",
@@ -231,7 +295,7 @@ const User = ({ title, style, extra, onCellClick }: BasicContentProps) => {
         }}
         onRow={(data) => {
           return {
-            onClick: () => (onCellClick ? onCellClick(data) : null),
+            onClick: () => setSelectedUser(data),
           };
         }}
         pagination={{
@@ -257,7 +321,12 @@ const User = ({ title, style, extra, onCellClick }: BasicContentProps) => {
         onSave={handleSaveUser}
         user={openedUser}
       />
-    </>
+      <ViewUser
+        user={selectedUser}
+        open={selectedUser != null}
+        close={() => setSelectedUser(null)}
+      />
+    </div>
   );
 };
 

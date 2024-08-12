@@ -784,7 +784,7 @@ const EWalletSettings = () => {
       ) : (
         <Row
           style={{
-            padding: isMobile ? "10px 5px" : 0,
+            padding: isMobile ? "10px 5px" : 10,
           }}
         >
           <Col span={isMobile ? 24 : 8}>

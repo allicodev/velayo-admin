@@ -65,6 +65,7 @@ const Branch = () => {
           background: "#fff",
           borderRadius: 10,
           padding: 10,
+          margin: 10,
         }}
       >
         <Tabs

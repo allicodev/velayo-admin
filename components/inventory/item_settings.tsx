@@ -190,7 +190,7 @@ const ItemSettings = () => {
   }, [trigger]);
 
   return (
-    <>
+    <div style={{ padding: 10 }}>
       <Spin spinning={loading}>
         <Button
           size="large"
@@ -233,7 +233,7 @@ const ItemSettings = () => {
           refresh={() => setTrigger(trigger + 1)}
         />
       </Spin>
-    </>
+    </div>
   );
 };
 

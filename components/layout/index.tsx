@@ -219,7 +219,6 @@ const Content = ({ selectedKey, children }: ContentProps) => {
       style={{
         backgroundColor: "#f6f8fb",
         minHeight: "94vh",
-        padding: width < 600 ? 0 : 10,
         overflow: width < 600 ? "scroll" : "hidden",
       }}
     >

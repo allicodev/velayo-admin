@@ -614,7 +614,7 @@ const ItemsHome = ({ extraData }: BasicContentProps) => {
           </div>
         </>
       ) : (
-        <>
+        <div style={{ padding: 10 }}>
           <Row gutter={[16, 16]}>
             <Col span={isMobile ? 24 : 14}>
               <div
@@ -768,7 +768,7 @@ const ItemsHome = ({ extraData }: BasicContentProps) => {
               {selectedItem && renderSelectedItem(selectedItem)}
             </Col>
           </Row>
-        </>
+        </div>
       )}
 
       {/* context */}

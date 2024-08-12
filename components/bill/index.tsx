@@ -611,7 +611,7 @@ const BillingSettings = () => {
           </FloatButton.Group>
         </>
       ) : (
-        <>
+        <div style={{ padding: 10 }}>
           <Row
             style={{
               padding: isMobile ? "10px 5px" : 0,
@@ -820,7 +820,7 @@ const BillingSettings = () => {
               }
             </Col>
           </Row>
-        </>
+        </div>
       )}
 
       {/* context */}

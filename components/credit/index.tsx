@@ -367,7 +367,7 @@ const Credit = () => {
   }, [trigger, width]);
 
   return (
-    <>
+    <div style={{ padding: 10 }}>
       <Spin spinning={loading}>
         {(!isMobile || (isMobile && selectedUser == null)) && (
           <Button
@@ -393,7 +393,8 @@ const Credit = () => {
                 }}
                 style={{
                   cursor: "pointer",
-                  margin: isMobile ? 10 : 5,
+                  margin: isMobile ? 10 : 0,
+                  marginTop: 5,
                 }}
                 onRow={(row) => {
                   return {
@@ -515,7 +516,7 @@ const Credit = () => {
         logs={logs}
         isMobile={isMobile}
       />
-    </>
+    </div>
   );
 };
 

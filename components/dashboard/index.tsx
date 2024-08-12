@@ -200,7 +200,7 @@ const Dashboard = () => {
       </Col>
     </>
   ) : (
-    <Row gutter={[16, 16]}>
+    <Row gutter={[16, 16]} style={{ padding: 10 }}>
       <Col span={16}>
         <Row gutter={[16, 16]}>
           <Col span={24} style={{ display: "flex", gap: 16 }}>
