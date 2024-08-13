@@ -110,9 +110,9 @@ const Attendance = () => {
   const columns: TableProps<LogData>["columns"] = [
     {
       title: "ID",
-      dataIndex: "_id",
+      dataIndex: "userId",
       width: isMobile ? 120 : undefined,
-      render: (_) => _,
+      render: (_) => _.employeeId,
     },
     {
       title: "User",

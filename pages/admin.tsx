@@ -1,5 +1,5 @@
 import React, { useEffect, useLayoutEffect, useState } from "react";
-import { Affix, Layout } from "antd";
+import { notification, Layout } from "antd";
 import { Content, Header, Sider } from "@/components/layout";
 
 import { LuLayoutDashboard } from "react-icons/lu";
@@ -25,12 +25,14 @@ import dayjs from "dayjs";
 import { ItemData } from "@/types";
 import ItemService from "@/provider/item.service";
 import Credit from "@/components/credit";
+import Cookies from "js-cookie";
 
 const Admin = () => {
   const { setItems, lastDateUpdated, setLastDateUpdated, items } =
     useItemStore();
   const [selectedKey, setSelectedKey] = useState("dashboard");
   const [width, setWidth] = useState(0);
+  const [api, contextHolder] = notification.useNotification();
 
   const item = new ItemService();
 
@@ -54,7 +56,19 @@ const Admin = () => {
       items.length == 0
     ) {
       (async (_) => {
-        let res = await _.getItems();
+        let res = await _.getItems().catch((e) => {
+          api.open({
+            type: "warning",
+            message: "Session Expired",
+            description: "You will be now redirected to Login Page",
+            pauseOnHover: false,
+            duration: 2,
+            onClose: () => {
+              Cookies.remove("token");
+              window.location.reload();
+            },
+          });
+        });
         if (res?.success ?? false) {
           setItems((res?.data as ItemData[]) ?? []);
           setLastDateUpdated(dayjs());
@@ -65,123 +79,125 @@ const Admin = () => {
   }, []);
 
   return (
-    <Layout>
-      <Sider
-        selectedIndex={(e) => setSelectedKey(e.keyPath.reverse().join(" / "))}
-        selectedKey={selectedKey.split(" / ")}
-        hide={width < 600}
-        items={[
-          {
-            label: "Dashboard",
-            key: "dashboard",
-            icon: <MdAutoGraph style={{ fontSize: "1em" }} />,
-          },
-          {
-            label: "Users",
-            key: "users",
-            icon: <GoPeople style={{ fontSize: "1em" }} />,
-          },
-          {
-            label: "Branch",
-            key: "branch",
-            icon: <LuLayoutDashboard style={{ fontSize: "1em" }} />,
-          },
-          {
-            label: "Credits",
-            key: "credit",
-            icon: <TbCreditCardPay style={{ fontSize: "1em" }} />,
-          },
-          {
-            label: "Reports",
-            key: "report",
-            icon: <TbReportAnalytics style={{ fontSize: "1em" }} />,
-            children: [
-              {
-                label: "Transactions",
-                key: "transaction",
-              },
-              {
-                label: "Attendance",
-                key: "attendance",
-              },
-            ],
-          },
-          {
-            label: "POS",
-            key: "pos",
-            icon: <MdPointOfSale style={{ fontSize: "1em" }} />,
-            children: [
-              {
-                label: "Items",
-                key: "item",
-              },
-              {
-                label: "Items App Settings",
-                key: "settings",
-              },
-            ],
-          },
-          {
-            label: "App Settings",
-            key: "app",
-            icon: <SettingOutlined style={{ fontSize: "1em" }} />,
-            children: [
-              {
-                label: "Bills",
-                key: "bill settings",
-                icon: <FaMoneyBills />,
-              },
-              {
-                label: "E-Wallets",
-                key: "ewallet settings",
-                icon: <WalletOutlined />,
-              },
-              {
-                label: "E-Load",
-                key: "eload settings",
-                icon: <SettingOutlined />,
-              },
-              {
-                label: "Portals",
-                key: "portal area",
-                icon: <GoCreditCard />,
-              },
-            ],
-          },
-        ]}
-      />
+    <>
+      {contextHolder}
       <Layout>
-        <Header selectedKey={selectedKey} setSelectedKey={setSelectedKey} />
-        <Content selectedKey={selectedKey}>
-          {selectedKey == "dashboard" && <Dashboard />}
-          {selectedKey == "users" && <User />}
-          {selectedKey == "branch" && <Branch />}
-          {selectedKey.includes("report") &&
-            selectedKey.includes("transaction") && <TransactionHistory />}
-          {selectedKey.includes("report") &&
-            selectedKey.includes("attendance") && <Attendance />}
-          {selectedKey == "credit" && <Credit />}
-          {selectedKey.includes("pos") && selectedKey.includes("item") && (
-            <ItemsHome />
-          )}
-          {selectedKey.includes("pos") && selectedKey.includes("settings") && (
-            <ItemSettings />
-          )}
-          {selectedKey.includes("app") && selectedKey.includes("bill") && (
-            <BillingSettings />
-          )}
-          {selectedKey.includes("app") && selectedKey.includes("ewallet") && (
-            <EWalletSettings />
-          )}
-          {selectedKey.includes("app") && selectedKey.includes("eload") && (
-            <EloadSettings />
-          )}
-          {selectedKey.includes("app") && selectedKey.includes("portal") && (
-            <Portal />
-          )}
-        </Content>
+        <Sider
+          selectedIndex={(e) => setSelectedKey(e.keyPath.reverse().join(" / "))}
+          selectedKey={selectedKey.split(" / ")}
+          hide={width < 600}
+          items={[
+            {
+              label: "Dashboard",
+              key: "dashboard",
+              icon: <MdAutoGraph style={{ fontSize: "1em" }} />,
+            },
+            {
+              label: "Users",
+              key: "users",
+              icon: <GoPeople style={{ fontSize: "1em" }} />,
+            },
+            {
+              label: "Branch",
+              key: "branch",
+              icon: <LuLayoutDashboard style={{ fontSize: "1em" }} />,
+            },
+            {
+              label: "Credits",
+              key: "credit",
+              icon: <TbCreditCardPay style={{ fontSize: "1em" }} />,
+            },
+            {
+              label: "Reports",
+              key: "report",
+              icon: <TbReportAnalytics style={{ fontSize: "1em" }} />,
+              children: [
+                {
+                  label: "Transactions",
+                  key: "transaction",
+                },
+                {
+                  label: "Attendance",
+                  key: "attendance",
+                },
+              ],
+            },
+            {
+              label: "POS",
+              key: "pos",
+              icon: <MdPointOfSale style={{ fontSize: "1em" }} />,
+              children: [
+                {
+                  label: "Items",
+                  key: "item",
+                },
+                {
+                  label: "Items App Settings",
+                  key: "settings",
+                },
+              ],
+            },
+            {
+              label: "App Settings",
+              key: "app",
+              icon: <SettingOutlined style={{ fontSize: "1em" }} />,
+              children: [
+                {
+                  label: "Bills",
+                  key: "bill settings",
+                  icon: <FaMoneyBills />,
+                },
+                {
+                  label: "E-Wallets",
+                  key: "ewallet settings",
+                  icon: <WalletOutlined />,
+                },
+                {
+                  label: "E-Load",
+                  key: "eload settings",
+                  icon: <SettingOutlined />,
+                },
+                {
+                  label: "Portals",
+                  key: "portal area",
+                  icon: <GoCreditCard />,
+                },
+              ],
+            },
+          ]}
+        />
+        <Layout>
+          <Header selectedKey={selectedKey} setSelectedKey={setSelectedKey} />
+          <Content selectedKey={selectedKey}>
+            {selectedKey == "dashboard" && <Dashboard />}
+            {selectedKey == "users" && <User />}
+            {selectedKey == "branch" && <Branch />}
+            {selectedKey.includes("report") &&
+              selectedKey.includes("transaction") && <TransactionHistory />}
+            {selectedKey.includes("report") &&
+              selectedKey.includes("attendance") && <Attendance />}
+            {selectedKey == "credit" && <Credit />}
+            {selectedKey.includes("pos") && selectedKey.includes("item") && (
+              <ItemsHome />
+            )}
+            {selectedKey.includes("pos") &&
+              selectedKey.includes("settings") && <ItemSettings />}
+            {selectedKey.includes("app") && selectedKey.includes("bill") && (
+              <BillingSettings />
+            )}
+            {selectedKey.includes("app") && selectedKey.includes("ewallet") && (
+              <EWalletSettings />
+            )}
+            {selectedKey.includes("app") && selectedKey.includes("eload") && (
+              <EloadSettings />
+            )}
+            {selectedKey.includes("app") && selectedKey.includes("portal") && (
+              <Portal />
+            )}
+          </Content>
+        </Layout>
       </Layout>
-    </Layout>
+    </>
   );
 };
 
