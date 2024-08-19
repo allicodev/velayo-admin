@@ -33,6 +33,7 @@ const Stock = ({
 }: StockProps) => {
   const [items, setItems] = useState<ItemData[]>([]);
   const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const { items: lcItems } = useItemStore();
 
@@ -43,6 +44,7 @@ const Stock = ({
   const dispatch = useDispatch<AppDispatch>();
 
   const handleSave = async () => {
+    setLoading(true);
     if (selectedItem.map((e) => e.quantity).some((e) => e == 0)) {
       message.warning(
         "Some of the Item has no quantity. Please provide or remove the Item."
@@ -84,6 +86,8 @@ const Stock = ({
           if (res?.success ?? false) onSubmit(res?.data ?? null);
           close();
         } else message.error(e?.message ?? "Error");
+
+        setLoading(false);
       });
   };
 
@@ -110,6 +114,7 @@ const Stock = ({
           style={{ height: 50, width: 120, fontSize: "1.6em" }}
           onClick={handleSave}
           disabled={selectedItem.length == 0}
+          loading={loading}
         >
           SUBMIT
         </Button>,
