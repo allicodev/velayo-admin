@@ -254,7 +254,7 @@ const Credit = () => {
       dataIndex: "status",
       align: isMobile ? "center" : "start",
       render: (_, row) =>
-        dayjs(row.dueDate).isAfter(dayjs()) && row.status == "pending" ? (
+        dayjs(row.dueDate).isBefore(dayjs()) && row.status == "pending" ? (
           <Tag color="red-inverse">Overdue</Tag>
         ) : (
           getStatus(_)
