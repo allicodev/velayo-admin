@@ -317,6 +317,7 @@ const Credit = () => {
   };
 
   const fetchLogs = async (userCreditId: string) => {
+    setLogs([]);
     setLoading(true);
     let res = await logService.getLog({
       page: 1,
