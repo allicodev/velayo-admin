@@ -20,8 +20,9 @@ const AmountHistoryViewer = ({
   isMobile,
 }: MyProp) => {
   const [selectedType, setSelectedType] = useState("amount");
-  const logData =
-    logs.length > 0 && logId != "" ? logs.filter((e) => e._id == logId) : [];
+  const logData = logs.filter((e) => e._id == logId);
+
+  console.log(logId);
 
   const showDesktop = () => (
     <Row gutter={8}>

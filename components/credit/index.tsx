@@ -240,8 +240,11 @@ const Credit = () => {
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
-                  fetchLogs(row._id);
-                  setOpenAmountHistory({ open: true, logId: row._id });
+                  // fetchLogs(row.userCreditId ?? "");
+                  setOpenAmountHistory({
+                    open: true,
+                    logId: row._id ?? "",
+                  });
                 }}
               />
             </Tooltip>
