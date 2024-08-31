@@ -21,8 +21,8 @@ import UserService from "@/provider/user.service";
 import LogService from "@/provider/log.service";
 
 // TODO: validate duplicate employee ID
-// page, pageSize, type, userId, fromDate, toDate, project
-// TODO: clear user query onClear error
+
+// ! BACKLOGS: Add Photo Viewer per flexi time and fix CRON job for auto delete images
 
 interface FilterProps {
   tellerId?: string | null;
@@ -302,6 +302,7 @@ const Attendance = () => {
     project,
     updateLogs = true,
     showImage = false,
+    fetchTotalTimer = false,
   }: {
     page: number;
     pageSize?: number;
@@ -311,6 +312,7 @@ const Attendance = () => {
     project?: Record<any, any>;
     updateLogs?: boolean;
     showImage?: boolean | null;
+    fetchTotalTimer?: boolean | null;
   }): Promise<LogData[] | any | void> =>
     new Promise(async (resolve, reject) => {
       setFetching(true);
@@ -325,6 +327,7 @@ const Attendance = () => {
         toDate,
         project,
         showImage,
+        fetchTotalTimer,
       });
 
       if (res?.success ?? false) {
@@ -335,16 +338,18 @@ const Attendance = () => {
         setFetching(false);
         setLogs(res?.data ?? []);
         setTotal(res.meta?.total ?? 10);
-        setTotalRenderedHours(
-          res?.meta?.timers.reduce((p: any, n: any) => {
-            if (n.timeOut == null) return p;
-            let hours = dayjs(n.timeOut).diff(dayjs(n.timeIn), "hour");
-            let minutes =
-              Math.abs(dayjs(n.timeOut).minute() - dayjs(n.timeIn).minute()) /
-              60;
-            return p + hours + minutes;
-          }, 0)
-        );
+
+        if (fetchTotalTimer)
+          setTotalRenderedHours(
+            res?.meta?.timers.reduce((p: any, n: any) => {
+              if (n.timeOut == null) return p;
+              let hours = dayjs(n.timeOut).diff(dayjs(n.timeIn), "hour");
+              let minutes =
+                Math.abs(dayjs(n.timeOut).minute() - dayjs(n.timeIn).minute()) /
+                60;
+              return p + hours + minutes;
+            }, 0)
+          );
         resolve(res.data);
       } else {
         setFetching(false);
