@@ -28,6 +28,13 @@ class BranchService {
     });
   }
 
+  public async deleteBranch(_id: string): Promise<Response> {
+    return await this.instance.get<Response>({
+      endpoint: "/branch/delete",
+      query: { _id },
+    });
+  }
+
   public async updateBranch({ ...props }: BranchData) {
     return await this.instance.post<Response>({
       endpoint: "/branch",
@@ -71,6 +78,7 @@ class BranchService {
 
     return branch.data?.items?.filter((e) => e.itemId._id == itemId);
   }
+
   public async removeBranchItem(branchId: string, itemId: string) {
     return await this.instance.get<Response>({
       endpoint: "/branch/remove-item",

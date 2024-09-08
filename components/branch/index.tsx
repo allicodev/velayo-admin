@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Button, Space, Tabs, Tooltip, Typography, message } from "antd";
-import { EditOutlined, PlusOutlined } from "@ant-design/icons";
+import { Button, Popconfirm, Space, Tabs, Typography, message } from "antd";
+import { EditOutlined, PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 
 import type { Branch, BranchData } from "@/types";
 import NewBranch from "./new_branch";
@@ -38,6 +38,15 @@ const Branch = () => {
 
   const handleOpenEdit = (obj: BranchData) => {
     setOpenNewBranch({ open: true, data: obj });
+  };
+
+  const handleDeleteBranch = async (id: string) => {
+    let { success, message: ApiMessage } = await branch.deleteBranch(id);
+
+    if (success ?? false) {
+      message.success(ApiMessage ?? "Error in the Server");
+      setTrigger(trigger + 1);
+    } else message.error(ApiMessage ?? "Error in the Server");
   };
 
   useEffect(() => {
@@ -161,33 +170,34 @@ const Branch = () => {
                       {_.spm}
                     </Typography.Text>
                   </div>
-                  <div>
-                    <label
-                      htmlFor="spm"
-                      style={{
-                        display: "inline-block",
-                        width: 100,
-                        fontSize: "1.5em",
-                      }}
+                  <Space>
+                    <Button
+                      size="large"
+                      icon={<EditOutlined />}
+                      onClick={() => handleOpenEdit(_)}
                     >
-                      App PIN :{" "}
-                    </label>
-                    <Typography.Text
-                      id="spm"
-                      style={{
-                        fontSize: "1.5em",
-                      }}
+                      EDIT
+                    </Button>
+                    <Popconfirm
+                      title="Are you sure you want to delete this biller ?"
+                      okType="primary"
+                      okText="DELETE"
+                      okButtonProps={{ danger: true }}
+                      onConfirm={() => handleDeleteBranch(_?._id ?? "")}
                     >
-                      {_.pin}
-                    </Typography.Text>
-                  </div>
-                  <Button
-                    size="large"
-                    icon={<EditOutlined />}
-                    onClick={() => handleOpenEdit(_)}
-                  >
-                    EDIT
-                  </Button>
+                      <Button
+                        size="large"
+                        icon={<DeleteOutlined />}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          e.preventDefault();
+                        }}
+                        danger
+                      >
+                        DELETE
+                      </Button>
+                    </Popconfirm>
+                  </Space>
                 </Space>
               ),
             };

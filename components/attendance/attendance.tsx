@@ -7,6 +7,7 @@ import {
   Modal,
   Select,
   Space,
+  Switch,
   Table,
   TableProps,
   Typography,
@@ -19,6 +20,7 @@ import Excel from "exceljs";
 import { LogData, LogTime, User } from "@/types";
 import UserService from "@/provider/user.service";
 import LogService from "@/provider/log.service";
+import { useUserStore } from "@/provider/context";
 
 // TODO: validate duplicate employee ID
 
@@ -48,6 +50,8 @@ const Attendance = () => {
   }>({ open: false, src: "", details: undefined });
   const [tellerName, setTellerName] = useState("");
 
+  const { currentUser } = useUserStore();
+
   const [total, setTotal] = useState(0);
   const [totalRenderedHourse, setTotalRenderedHours] = useState(0);
   const [width, setWidth] = useState(0);
@@ -59,12 +63,20 @@ const Attendance = () => {
 
   const isMobile = width < 600;
 
-  const showFlexiTime = (_: LogTime[]) => {
+  const showFlexiTime = (_: LogTime[], __: LogData) => {
     let time = _.reduce((p: any, n: LogTime, index: any) => {
       if (index % 2 === 0) p.push([n]);
       else p[p.length - 1].push(n);
       return p;
     }, []);
+
+    const getDetails = () => {
+      if (__?.branchId?.name != null)
+        return `Taken in Branch ${__?.branchId?.name ?? ""} at ${dayjs(
+          __?.createdAt
+        ).format("MMMM DD, YYYY")}`;
+      return `Taken at ${dayjs(__?.createdAt).format("MMMM DD, YYYY")}`;
+    };
 
     return (
       <div
@@ -77,10 +89,45 @@ const Attendance = () => {
         {time.map((e: LogTime[]) => (
           <>
             <div style={{ display: "inline-block" }}>
-              <span>{dayjs(e[0].time).format("hh:mma")}</span>
-              {e.length > 1 &&
-                e[1].type == "time-out" &&
-                ` - ${dayjs(e[1].time).format("hh:mma")}`}
+              {filter.showImage ? (
+                <Typography.Link
+                  onClick={() =>
+                    setPhotoViewer({
+                      open: true,
+                      src: e[0].photo,
+                      details:
+                        (currentUser?.role ?? "") == "admin"
+                          ? getDetails()
+                          : "",
+                    })
+                  }
+                >
+                  {dayjs(e[0].time).format("hh:mma")}
+                </Typography.Link>
+              ) : (
+                <span>{dayjs(e[0].time).format("hh:mma")}</span>
+              )}
+
+              {e.length > 1 && e[1].type == "time-out" ? (
+                filter.showImage ? (
+                  <Typography.Link
+                    onClick={() =>
+                      setPhotoViewer({
+                        open: true,
+                        src: e[1].photo,
+                        details:
+                          (currentUser?.role ?? "") == "admin"
+                            ? getDetails()
+                            : "",
+                      })
+                    }
+                  >
+                    {` - ${dayjs(e[1].time).format("hh:mma")}`}
+                  </Typography.Link>
+                ) : (
+                  ` - ${dayjs(e[1].time).format("hh:mma")}`
+                )
+              ) : null}
             </div>
           </>
         ))}
@@ -136,7 +183,7 @@ const Attendance = () => {
       title: "Time Records",
       align: "center",
       dataIndex: "flexiTime",
-      render: (_) => showFlexiTime(_),
+      render: (_, data) => showFlexiTime(_, data),
     },
     {
       title: "Hour(s) Rendered",
@@ -246,8 +293,12 @@ const Attendance = () => {
           }}
           onClick={() => setFilter({ ...filter, showImage: !filter.showImage })}
         >
-          <Checkbox className="customCheckbox" checked={filter.showImage} />
-          <span style={{ fontSize: "1.1em" }}>Show Images</span>
+          <Switch
+            checkedChildren="Show Photos"
+            unCheckedChildren="Hide Photos"
+            defaultChecked={false}
+            value={filter.showImage}
+          />
         </div>
       </Space>
       <Button
@@ -580,31 +631,30 @@ const Attendance = () => {
       />
 
       {/* context */}
-      <Modal
-        open={photoViewer.open}
-        width={650}
-        onCancel={() =>
-          setPhotoViewer({
-            open: false,
-            src: undefined,
-            details: "",
-          })
-        }
-        footer={null}
-        closable={false}
-      >
-        <Image
-          src={photoViewer.src ?? ""}
-          alt="just-an-image"
-          style={{
-            borderRadius: 10,
-          }}
-        />
-
-        {/* <Typography.Text style={{ paddingTop: 25, fontSize: "1.25em" }}>
-          {photoViewer.details ?? ""}
-        </Typography.Text> */}
-      </Modal>
+      <Image
+        width={200}
+        style={{ display: "none" }}
+        alt="no-image"
+        preview={{
+          visible: photoViewer.open,
+          src: photoViewer.src,
+          title: (
+            <div
+              style={{
+                background: "#eee",
+                borderRadius: 4,
+                display: "inline-block",
+                padding: "2px 3px",
+              }}
+            >
+              {photoViewer.details ?? ""}
+            </div>
+          ),
+          onVisibleChange: (value) => {
+            setPhotoViewer({ ...photoViewer, open: value });
+          },
+        }}
+      />
 
       {/* context */}
       <Modal

@@ -113,6 +113,8 @@ const User = ({ title, style, extra }: BasicContentProps) => {
                 ),
                 key: "update",
                 onClick: (e) => {
+                  e.domEvent.stopPropagation();
+                  e.domEvent.preventDefault();
                   // e.stopPropagation();
                   // e.preventDefault();
 
@@ -157,6 +159,10 @@ const User = ({ title, style, extra }: BasicContentProps) => {
                 ),
                 key: "delete",
                 danger: true,
+                onClick: (e) => {
+                  e.domEvent.stopPropagation();
+                  e.domEvent.preventDefault();
+                },
               },
             ],
           }}
@@ -295,7 +301,7 @@ const User = ({ title, style, extra }: BasicContentProps) => {
         }}
         onRow={(data) => {
           return {
-            onClick: () => setSelectedUser(data),
+            onClick: () => (isMobile ? null : setSelectedUser(data)),
           };
         }}
         pagination={{

@@ -22,8 +22,6 @@ const AmountHistoryViewer = ({
   const [selectedType, setSelectedType] = useState("amount");
   const logData = logs.filter((e) => e._id == logId);
 
-  console.log(logId);
-
   const showDesktop = () => (
     <Row gutter={8}>
       <Col span={11}>

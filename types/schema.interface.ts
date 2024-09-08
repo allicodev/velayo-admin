@@ -3,6 +3,12 @@ import { ItemWithCategory } from "./service.interface";
 export type ItemUnit = "pc(s)" | "bot(s)" | "kit(s)";
 export type RoleType = "teller" | "encoder" | "accounting" | "admin";
 export type TransactionHistoryStatus = "completed" | "failed" | "pending";
+
+interface Deductions {
+  name: string;
+  amount: number;
+}
+
 export type TransactionType =
   | "bills"
   | "wallet"
@@ -51,6 +57,8 @@ export interface User {
   createdAt: Date;
   updatedAt: Date;
   employeeId?: string;
+  deductions: Deductions[];
+  baseSalary: number;
 }
 
 export interface UserWithToken extends User {
@@ -100,7 +108,6 @@ export interface Branch {
   address: string;
   device: string;
   spm: string;
-  pin: string;
   items?: BranchItem[];
 }
 
@@ -198,7 +205,14 @@ export interface SelectItem {
 }
 
 // * LOG
-export type LogType = "attendance" | "stock" | "credit" | "debit" | "portal";
+export type LogType =
+  | "attendance"
+  | "stock"
+  | "credit"
+  | "debit"
+  | "portal"
+  | "error"
+  | "ca";
 
 export interface Log {
   type: LogType;
@@ -228,6 +242,7 @@ export interface Log {
   interest?: number;
   history?: CreditAmountHistory[];
 
+  remarks?: string;
   createdAt?: Date;
 }
 
@@ -239,7 +254,7 @@ export interface LogData extends Log {
 export interface LogTime {
   type: string;
   time: Date;
-  photo: String;
+  photo: string;
 }
 
 // * PORTAL

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
   Button,
+  Card,
   Col,
   Divider,
   Dropdown,
@@ -433,7 +434,57 @@ const Credit = () => {
                     alignItems: "center",
                   }}
                 >
-                  <Typography.Title
+                  <Card
+                    style={{ border: "1px solid #d9d9d9", borderRadius: 8 }}
+                    styles={{
+                      body: {
+                        padding: 0,
+                      },
+                    }}
+                    hoverable
+                  >
+                    <div
+                      style={{
+                        background: "#d9d9d9",
+                        padding: 10,
+                      }}
+                    >
+                      <Typography.Title
+                        level={4}
+                        style={{
+                          fontFamily: "abel",
+                          margin: 0,
+                        }}
+                      >
+                        Credit Payment
+                      </Typography.Title>
+                    </div>
+                    <div
+                      style={{
+                        padding: 10,
+                        fontSize: "1.5em",
+                        textAlign: "end",
+                      }}
+                    >
+                      ₱{" "}
+                      {creditLog
+                        .reduce(
+                          (p, n) =>
+                            n.status == "pending"
+                              ? p +
+                                n.history!.reduce(
+                                  (p, n) => p + parseFloat(n.amount.toString()),
+                                  0
+                                )
+                              : 0,
+                          0
+                        )
+                        .toLocaleString(undefined, {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })}
+                    </div>
+                    {/* <Typography.Title
                     level={isMobile ? 5 : 4}
                     style={{
                       margin: isMobile ? 10 : 0,
@@ -462,8 +513,48 @@ const Credit = () => {
                           maximumFractionDigits: 2,
                         })}
                     </span>
-                  </Typography.Title>
-                  <Typography.Title
+                  </Typography.Title> */}
+                  </Card>
+                  <Card
+                    style={{ border: "1px solid #d9d9d9", borderRadius: 8 }}
+                    styles={{
+                      body: {
+                        padding: 0,
+                      },
+                    }}
+                    hoverable
+                  >
+                    <div
+                      style={{
+                        background: "#d9d9d9",
+                        padding: 10,
+                      }}
+                    >
+                      <Typography.Title
+                        level={4}
+                        style={{
+                          fontFamily: "abel",
+                          margin: 0,
+                        }}
+                      >
+                        Available Credit
+                      </Typography.Title>
+                    </div>
+                    <div
+                      style={{
+                        padding: 10,
+                        fontSize: "1.5em",
+                        textAlign: "end",
+                      }}
+                    >
+                      ₱{" "}
+                      {selectedUser?.availableCredit.toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
+                    </div>
+                  </Card>
+                  {/* <Typography.Title
                     level={isMobile ? 5 : 4}
                     style={{ margin: 0, marginRight: 10, textAlign: "end" }}
                   >
@@ -476,7 +567,7 @@ const Credit = () => {
                         maximumFractionDigits: 2,
                       })}
                     </span>
-                  </Typography.Title>
+                  </Typography.Title> */}
                 </div>
               </div>
               <Table
@@ -488,7 +579,7 @@ const Credit = () => {
                 }}
                 style={{
                   margin: isMobile ? 10 : 0,
-                  marginTop: 0,
+                  marginTop: 8,
                 }}
                 onRow={(row) => {
                   return {

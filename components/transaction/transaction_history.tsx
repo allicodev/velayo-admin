@@ -75,7 +75,7 @@ const TransactionHistory = () => {
   const column: TableProps<Transaction>["columns"] = [
     {
       title: "Ref Code",
-      width: isMobile ? 30 : 80,
+      width: isMobile ? 30 : 100,
       dataIndex: "reference",
     },
     {

@@ -1,0 +1,93 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #fff;
+}
+
+.container {
+  width: 100%;
+  border: 1px solid #000;
+  padding: 20px;
+  box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.ps-header {
+  display: flex;
+  align-items: center;
+  border-bottom: 2px solid #000;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+.logo img {
+  width: 50px;
+  height: auto;
+  margin-right: 20px;
+}
+
+.company-name {
+  flex-grow: 1;
+  font-family: "Courier New", Courier, monospace;
+}
+
+.payroll-details,
+.employee-details {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  color: #5a5a5a;
+}
+
+.employee-info p {
+  margin: 0;
+}
+
+.earnings-deductions-summary {
+  border: 1px solid #000;
+  padding: 8px;
+}
+
+.table {
+  display: flex;
+  justify-content: space-between;
+}
+
+.column {
+  width: 30%;
+  border-right: 1px dashed #000;
+  padding-right: 20px;
+}
+
+.column:last-child {
+  border-right: none;
+}
+
+.column h3 {
+  text-align: left;
+  margin-bottom: 10px;
+}
+
+.column p {
+  display: flex;
+  justify-content: space-between;
+  margin: 5px 0;
+}
+
+.certification {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.certified,
+.received {
+  width: 45%;
+}
+
+.certified p,
+.received p {
+  margin: 0;
+  text-align: left;
+}

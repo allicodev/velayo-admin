@@ -148,6 +148,22 @@ export interface Credit {
   createdAt: Date;
 }
 
-export interface DailyTimeRecord {
-  date: Date;
+export interface DTRCardTime {
+  total: number;
+  late: number;
+  undertime: number;
+  overtime: number;
+}
+
+export interface PayslipGeneratorProp {
+  open: boolean;
+  close: () => void;
+  userId: string;
+  cutOffDate: string;
+  errors: any[];
+  cashAdvance: any[];
+}
+
+export interface PayslipProp {
+  ref: React.RefObject<HTMLDivElement>;
 }

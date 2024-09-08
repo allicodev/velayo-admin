@@ -1,23 +1,70 @@
-import React, { CSSProperties, useState } from "react";
+import React, { memo, useState } from "react";
 import { Button, Col, Drawer, Flex, Row } from "antd";
 
 import { UserWithAttendance } from "@/types";
 import { UserProfilePlaceholder } from "../utilities";
 import DailyTimeRecord from "./dtr_table";
+import useLogs from "./user.hooks";
+import dayjs from "dayjs";
+import DeductionsErrors from "./deductions_errors";
 
 interface MyProp extends UserWithAttendance {
   open: boolean;
   close: () => void;
 }
 
-const ViewUser = (prop: MyProp) => {
+const ViewUser = memo((prop: MyProp) => {
   const { user, open, close } = prop;
+
   const [selectedKey, setSelectedKey] = useState("dtr");
+  const [selectedMonth, setSelectedMonth] = useState<number>(dayjs().month());
+
+  const [cutOff, setCutOff] = useState<"first" | "second">(
+    dayjs().date() < 16 ? "first" : "second"
+  );
+  const [pagination, setPagination] = useState({
+    page: 1,
+    pageSize: 10,
+  });
+
+  const { logs, fetching, total, queryTime } = useLogs({
+    type: "attendance",
+    userId: user?._id,
+    forcedSearchhWithUser: true,
+    month: selectedMonth,
+    fromDate:
+      cutOff == "first"
+        ? dayjs().month(selectedMonth).date(1).toDate()
+        : dayjs().month(selectedMonth).date(16).toDate(),
+    toDate:
+      cutOff == "first"
+        ? dayjs().month(selectedMonth).date(15).toDate()
+        : dayjs()
+            .month(selectedMonth)
+            .date(dayjs().endOf("month").date())
+            .toDate(),
+    ...pagination,
+  });
 
   const showContent = (key: string) => {
     switch (key) {
       case "dtr":
-        return <DailyTimeRecord />;
+        return (
+          <DailyTimeRecord
+            loading={fetching}
+            logs={logs}
+            setMonth={setSelectedMonth}
+            month={selectedMonth}
+            total={total}
+            pagination={pagination}
+            setPagination={setPagination}
+            cutOff={cutOff}
+            setCutOff={setCutOff}
+            time={queryTime}
+          />
+        );
+      case "sde":
+        return <DeductionsErrors user={user!} />;
       default:
         return <></>;
     }
@@ -26,9 +73,13 @@ const ViewUser = (prop: MyProp) => {
   return (
     <Drawer
       open={open}
-      width={"88vw"}
+      width={"85vw"}
       closable={false}
-      onClose={close}
+      onClose={() => {
+        setSelectedMonth(dayjs().month());
+        setCutOff(dayjs().date() < 16 ? "first" : "second");
+        close();
+      }}
       styles={{
         wrapper: {
           boxShadow: "none",
@@ -49,7 +100,7 @@ const ViewUser = (prop: MyProp) => {
           span={4}
           style={{
             background: "#98c04c",
-            minHeight: "93.5vh",
+            height: "93.5vh",
             display: "flex",
             alignItems: "center",
             flexDirection: "column",
@@ -83,18 +134,32 @@ const ViewUser = (prop: MyProp) => {
           >
             {user?.role.toLocaleUpperCase()}
           </span>
-          <Flex vertical gap={5} style={{ marginTop: 15 }}>
+          <Flex vertical style={{ marginTop: 15, width: "100%" }}>
             <Button
               size="large"
               style={{
-                width: 250,
+                width: "100%",
                 borderRadius: 0,
-                background: "#294b0f",
+                background: selectedKey == "dtr" ? "#294b0f" : "#98c04c",
                 color: "#fff",
                 border: "none",
               }}
+              onClick={() => setSelectedKey("dtr")}
             >
               Daily Time Record
+            </Button>
+            <Button
+              size="large"
+              style={{
+                width: "100%",
+                borderRadius: 0,
+                background: selectedKey == "sde" ? "#294b0f" : "#98c04c",
+                color: "#fff",
+                border: "none",
+              }}
+              onClick={() => setSelectedKey("sde")}
+            >
+              Deductions and Errors
             </Button>
           </Flex>
           <Button
@@ -116,6 +181,6 @@ const ViewUser = (prop: MyProp) => {
       </Row>
     </Drawer>
   );
-};
+});
 
 export default ViewUser;

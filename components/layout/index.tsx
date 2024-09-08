@@ -34,6 +34,7 @@ const Sider = ({ selectedIndex, selectedKey, items, hide }: SiderProps) => {
           minHeight: "100vh",
           zIndex: 2,
         }}
+        width={"15vw"}
         collapsible
       >
         <div
@@ -86,6 +87,7 @@ const Header = ({
   }, []);
 
   const { currentUser } = useUserStore();
+
   return (
     <>
       <Affix

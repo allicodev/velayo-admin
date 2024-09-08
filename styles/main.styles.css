@@ -675,6 +675,9 @@ label.customCheckbox span span.ant-checkbox-inner::after {
   padding: 0 !important;
 }
 
-.no-header thead {
-  display: none;
+.no-header thead tr th {
+  padding: 10px !important;
+  font-weight: 900;
+  font-family: sans-serif;
+  text-transform: uppercase;
 }

@@ -32,6 +32,7 @@ const Login = () => {
     api.open({
       icon: <LoadingOutlined />,
       pauseOnHover: false,
+      closable: false,
       message: "Logging In....",
     });
 
@@ -46,6 +47,7 @@ const Login = () => {
         showProgress: true,
         pauseOnHover: false,
         duration: 2,
+        closable: false,
         onClose: () => {
           setUser(response.data);
           setAccessToken(response.data!.token);

@@ -26,15 +26,16 @@ class LogService {
     });
   }
 
-  public async getLog(props: any): Promise<ExtendedResponse<any[]>> {
+  public async getLog(props: any): Promise<ExtendedResponse<LogData[]>> {
     let project: any = {};
 
     if (props.showImage == false) {
-      project.timeInPhoto = 0;
-      project.timeOutPhoto = 0;
+      // project.timeInPhoto = 0;
+      // project.timeOutPhoto = 0;
+      project["flexiTime.photo"] = 0;
       delete project.showImage;
     }
-    return await this.instance.get<any[]>({
+    return await this.instance.get<LogData[]>({
       endpoint: "/log",
       query: { ...props, project: JSON.stringify(project) },
     });

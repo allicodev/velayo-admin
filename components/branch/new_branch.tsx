@@ -20,7 +20,6 @@ const NewBranch = ({
     address: "",
     device: "",
     spm: "",
-    pin: "",
   });
 
   const update = (key: string, value: string) =>
@@ -35,18 +34,12 @@ const NewBranch = ({
       return;
     }
 
-    if (input.pin.length < 6) {
-      message.warning("Application PIN should be a 6 digit PIN");
-      return;
-    }
-
     onSave(data ? "save" : "new", { ...input, name });
     setInput({
       name: "",
       address: "",
       device: "",
       spm: "",
-      pin: "",
     });
   };
 
@@ -63,7 +56,6 @@ const NewBranch = ({
           address: "",
           device: "",
           spm: "",
-          pin: "",
         });
         close();
       }}
@@ -98,17 +90,6 @@ const NewBranch = ({
           size="large"
           value={input.spm}
           onChange={(e) => update("spm", e.target.value)}
-        />
-      </FloatLabel>
-      <FloatLabel label="App PIN" value={input.pin}>
-        <InputNumber
-          size="large"
-          className="customInput no-prefix"
-          value={input.pin}
-          onChange={(e) => update("pin", e?.toString() ?? "")}
-          minLength={6}
-          maxLength={6}
-          controls={false}
         />
       </FloatLabel>
       <Button type="primary" size="large" onClick={validate} block>

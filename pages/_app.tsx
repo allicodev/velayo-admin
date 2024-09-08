@@ -2,6 +2,8 @@ import type { AppProps } from "next/app";
 
 import "@/styles/globals.css";
 import "@/styles/main.styles.css";
+import "@/styles/payslip.styles.css";
+
 import { ConfigProvider } from "antd";
 import { Provider } from "react-redux";
 import Head from "next/head";
