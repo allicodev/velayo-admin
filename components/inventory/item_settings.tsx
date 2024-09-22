@@ -120,7 +120,7 @@ const ItemSettings = () => {
                   setOpenAddItem({
                     open: true,
                     id: e._id ?? "",
-                    itemsId: e.items?.map((e) => e._id) ?? [],
+                    itemsId: e.items?.map((e: any) => e._id) ?? [],
                   });
                 }}
               />
@@ -134,7 +134,7 @@ const ItemSettings = () => {
         },
         children: (
           <div>
-            {e.items?.map((ee) => (
+            {e.items?.map((ee: any) => (
               <div
                 style={{
                   display: "flex",

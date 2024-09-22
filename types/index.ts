@@ -101,3 +101,9 @@ export interface SalesTypePerMonth {
   _id: string;
   sales: any;
 }
+
+export type TransactionHistoryDataType_type =
+  | "request"
+  | "pending"
+  | "completed"
+  | "failed";

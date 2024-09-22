@@ -1,4 +1,4 @@
-import { ItemUnit } from "./schema.interface";
+import { ItemUnit, User } from "./schema.interface";
 
 export interface ItemState {
   _id?: string;
@@ -17,4 +17,12 @@ export interface ItemBranchState {
   name: string;
   itemCode: number;
   price: number;
+}
+
+export interface TellerState {
+  data: User[];
+}
+
+export interface FilterState {
+  [key: string]: any;
 }

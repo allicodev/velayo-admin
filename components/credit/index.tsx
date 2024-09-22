@@ -25,12 +25,19 @@ import {
   MoreOutlined,
   LeftOutlined,
 } from "@ant-design/icons";
-import { CreditStatus, LogData, UserCredit, UserCreditData } from "@/types";
+import {
+  CreditStatus,
+  LogData,
+  Transaction,
+  UserCredit,
+  UserCreditData,
+} from "@/types";
 import NewCredit from "./new_credit";
 import CreditService from "@/provider/credit.service";
 import dayjs from "dayjs";
 import LogService from "@/provider/log.service";
 import AmountHistoryViewer from "./amount_history";
+import TransactionDetails from "../transaction/transaction_details";
 
 const Credit = () => {
   const [loading, setLoading] = useState(false);
@@ -43,6 +50,10 @@ const Credit = () => {
     open: boolean;
     user: UserCreditData | null;
   }>({ open: false, user: null });
+  const [openTransactionDetails, setTransactionDetails] = useState<{
+    open: boolean;
+    transaction: Transaction | null;
+  }>({ open: false, transaction: null });
 
   // * mobile
   const [width, setWidth] = useState(0);
@@ -214,42 +225,21 @@ const Credit = () => {
       dataIndex: "amount",
       width: isMobile ? 0 : 150,
       render: (_, row) => (
-        <div style={{ display: "flex", gap: 5, alignItems: "center" }}>
-          <div>
-            ₱{" "}
-            <span
-              style={{
-                textDecoration:
-                  row.status == "completed" ? "line-through" : undefined,
-              }}
-            >
-              {row
-                .history!.reduce(
-                  (p, n) => p + parseFloat(n.amount.toString()),
-                  0
-                )
-                .toLocaleString(undefined, {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}
-            </span>
-          </div>
-          {!isMobile && (
-            <Tooltip title="Show Payment History">
-              <Button
-                icon={<EyeOutlined />}
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  // fetchLogs(row.userCreditId ?? "");
-                  setOpenAmountHistory({
-                    open: true,
-                    logId: row._id ?? "",
-                  });
-                }}
-              />
-            </Tooltip>
-          )}
+        <div>
+          ₱{" "}
+          <span
+            style={{
+              textDecoration:
+                row.status == "completed" ? "line-through" : undefined,
+            }}
+          >
+            {row
+              .history!.reduce((p, n) => p + parseFloat(n.amount.toString()), 0)
+              .toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
+          </span>
         </div>
       ),
     },
@@ -267,7 +257,28 @@ const Credit = () => {
     {
       title: "Due Date",
       dataIndex: "dueDate",
-      render: (_) => dayjs(_).format("MMM DD, YYYY - hh:mma"),
+      render: (_) => dayjs(_).format("MMM DD, YYYY"),
+    },
+    {
+      title: "Functions",
+      align: "center",
+      render: (_, row) =>
+        !isMobile && (
+          <Tooltip title="Show Payment History">
+            <Button
+              icon={<EyeOutlined />}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                // fetchLogs(row.userCreditId ?? "");
+                setOpenAmountHistory({
+                  open: true,
+                  logId: row._id ?? "",
+                });
+              }}
+            />
+          </Tooltip>
+        ),
     },
   ];
 
@@ -484,36 +495,6 @@ const Credit = () => {
                           maximumFractionDigits: 2,
                         })}
                     </div>
-                    {/* <Typography.Title
-                    level={isMobile ? 5 : 4}
-                    style={{
-                      margin: isMobile ? 10 : 0,
-                      marginBottom: 5,
-                      textAlign: "start",
-                    }}
-                  >
-                    Credit Payment
-                    <br />
-                    <span style={{ fontWeight: 700 }}>
-                      ₱{" "}
-                      {creditLog
-                        .reduce(
-                          (p, n) =>
-                            n.status == "pending"
-                              ? p +
-                                n.history!.reduce(
-                                  (p, n) => p + parseFloat(n.amount.toString()),
-                                  0
-                                )
-                              : 0,
-                          0
-                        )
-                        .toLocaleString(undefined, {
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2,
-                        })}
-                    </span>
-                  </Typography.Title> */}
                   </Card>
                   <Card
                     style={{ border: "1px solid #d9d9d9", borderRadius: 8 }}
@@ -554,20 +535,6 @@ const Credit = () => {
                       })}
                     </div>
                   </Card>
-                  {/* <Typography.Title
-                    level={isMobile ? 5 : 4}
-                    style={{ margin: 0, marginRight: 10, textAlign: "end" }}
-                  >
-                    Available Credit
-                    <br />
-                    <span style={{ fontWeight: 700 }}>
-                      ₱{" "}
-                      {selectedUser?.availableCredit.toLocaleString(undefined, {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      })}
-                    </span>
-                  </Typography.Title> */}
                 </div>
               </div>
               <Table
@@ -576,6 +543,15 @@ const Credit = () => {
                 rowKey={(e) => e._id}
                 scroll={{
                   y: "60vh",
+                }}
+                components={{
+                  body: {
+                    row: (prop: any) => (
+                      <Tooltip title="Click to view Transaction">
+                        <tr {...prop} />
+                      </Tooltip>
+                    ),
+                  },
                 }}
                 style={{
                   margin: isMobile ? 10 : 0,
@@ -588,7 +564,14 @@ const Credit = () => {
                           fetchLogs(row._id);
                           setOpenAmountHistory({ open: true, logId: row._id });
                         }
-                      : undefined,
+                      : () => {
+                          if (row.transactionId)
+                            setTransactionDetails({
+                              open: true,
+                              transaction: row.transactionId as Transaction,
+                            });
+                          else message.error("Transaction not found");
+                        },
                   };
                 }}
               />
@@ -610,6 +593,11 @@ const Credit = () => {
         close={() => setOpenAmountHistory({ open: false, logId: "" })}
         logs={logs}
         isMobile={isMobile}
+      />
+      <TransactionDetails
+        open={openTransactionDetails.open}
+        transaction={openTransactionDetails.transaction}
+        close={() => setTransactionDetails({ open: false, transaction: null })}
       />
     </div>
   );

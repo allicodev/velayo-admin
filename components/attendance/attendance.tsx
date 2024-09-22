@@ -3,6 +3,7 @@ import {
   Button,
   Checkbox,
   DatePicker,
+  Divider,
   Image,
   Modal,
   Select,
@@ -23,8 +24,6 @@ import LogService from "@/provider/log.service";
 import { useUserStore } from "@/provider/context";
 
 // TODO: validate duplicate employee ID
-
-// ! BACKLOGS: Add Photo Viewer per flexi time and fix CRON job for auto delete images
 
 interface FilterProps {
   tellerId?: string | null;
@@ -48,7 +47,7 @@ const Attendance = () => {
     src: string | undefined;
     details?: string;
   }>({ open: false, src: "", details: undefined });
-  const [tellerName, setTellerName] = useState("");
+  const [tellerName, setTellerName] = useState(null);
 
   const { currentUser } = useUserStore();
 
@@ -89,7 +88,7 @@ const Attendance = () => {
         {time.map((e: LogTime[]) => (
           <>
             <div style={{ display: "inline-block" }}>
-              {filter.showImage ? (
+              {filter.showImage && e[0].photo != null ? (
                 <Typography.Link
                   onClick={() =>
                     setPhotoViewer({
@@ -109,7 +108,7 @@ const Attendance = () => {
               )}
 
               {e.length > 1 && e[1].type == "time-out" ? (
-                filter.showImage ? (
+                filter.showImage && e[0].photo != null ? (
                   <Typography.Link
                     onClick={() =>
                       setPhotoViewer({
@@ -249,7 +248,7 @@ const Attendance = () => {
         justifyContent: "space-between",
       }}
     >
-      <Space size={[32, 0]}>
+      <div>
         <Select
           size="large"
           style={{ width: 250 }}
@@ -273,9 +272,11 @@ const Attendance = () => {
           allowClear
           showSearch
         />
+        <Divider type="vertical" />
         <DatePicker.RangePicker
           size="large"
           format="MMMM DD, YYYY"
+          placeholder={["From Date", "To Date"]}
           onChange={(e) => {
             setFilter({
               ...filter,
@@ -284,23 +285,23 @@ const Attendance = () => {
             });
           }}
         />
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 10,
-            cursor: "pointer",
-          }}
-          onClick={() => setFilter({ ...filter, showImage: !filter.showImage })}
-        >
-          <Switch
-            checkedChildren="Show Photos"
-            unCheckedChildren="Hide Photos"
-            defaultChecked={false}
-            value={filter.showImage}
-          />
-        </div>
-      </Space>
+      </div>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 10,
+          cursor: "pointer",
+        }}
+        onClick={() => setFilter({ ...filter, showImage: !filter.showImage })}
+      >
+        <Switch
+          checkedChildren="Show Photos"
+          unCheckedChildren="Hide Photos"
+          defaultChecked={false}
+          value={filter.showImage}
+        />
+      </div>
       <Button
         type="primary"
         size="large"
@@ -588,44 +589,9 @@ const Attendance = () => {
               userId: filter.tellerId ?? null,
               fromDate: filter.fromDate ?? null,
               toDate: filter.toDate ?? null,
+              showImage: filter.showImage ?? null,
             }),
         }}
-        // summary={() => (
-        //   <Table.Summary fixed>
-        //     {isMobile ? (
-        //       <div
-        //         style={{
-        //           padding: 10,
-        //         }}
-        //       >
-        //         <strong>Total:</strong> {totalRenderedHourse.toFixed(2)}
-        //       </div>
-        //     ) : (
-        //       <Table.Summary.Row>
-        //         <Table.Summary.Cell index={0} />
-        //         <Table.Summary.Cell index={1} />
-        //         <Table.Summary.Cell index={2} />
-        //         <Table.Summary.Cell index={3} />
-        //         <Table.Summary.Cell index={4} />
-        //         <Table.Summary.Cell index={5} />
-        //         <Table.Summary.Cell index={6}>
-        //           <div
-        //             style={{
-        //               display: "flex",
-        //             }}
-        //           >
-        //             <Typography.Text style={{ flex: 5 }} strong>
-        //               Total:
-        //             </Typography.Text>
-        //             <span style={{ flex: 7 }}>
-        //               {totalRenderedHourse.toFixed(2)}
-        //             </span>
-        //           </div>
-        //         </Table.Summary.Cell>
-        //       </Table.Summary.Row>
-        //     )}
-        //   </Table.Summary>
-        // )}
         sticky
         bordered
       />
@@ -655,8 +621,6 @@ const Attendance = () => {
           },
         }}
       />
-
-      {/* context */}
       <Modal
         open={openFilter}
         onCancel={() => setOpenFilter(false)}

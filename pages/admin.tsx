@@ -26,6 +26,7 @@ import { ItemData } from "@/types";
 import ItemService from "@/provider/item.service";
 import Credit from "@/components/credit";
 import Cookies from "js-cookie";
+import Disbursement from "@/components/disbursement/disbursement";
 
 const Admin = () => {
   const { setItems, lastDateUpdated, setLastDateUpdated, items } =
@@ -120,6 +121,10 @@ const Admin = () => {
                   label: "Attendance",
                   key: "attendance",
                 },
+                {
+                  label: "Disbursement",
+                  key: "disbursement",
+                },
               ],
             },
             {
@@ -176,6 +181,8 @@ const Admin = () => {
               selectedKey.includes("transaction") && <TransactionHistory />}
             {selectedKey.includes("report") &&
               selectedKey.includes("attendance") && <Attendance />}
+            {selectedKey.includes("report") &&
+              selectedKey.includes("disbursement") && <Disbursement />}
             {selectedKey == "credit" && <Credit />}
             {selectedKey.includes("pos") && selectedKey.includes("item") && (
               <ItemsHome />

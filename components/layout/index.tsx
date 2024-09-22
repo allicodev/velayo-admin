@@ -259,7 +259,6 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       throw new Error("No bearer token");
     }
   } catch (e) {
-    console.log(e);
     return {
       redirect: {
         permanent: false,

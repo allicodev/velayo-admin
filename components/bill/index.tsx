@@ -36,7 +36,6 @@ import {
   BillingSettingsType,
   BillingsFormField,
   OptionTypeWithFlag,
-  UpdateFeeProps,
 } from "@/types";
 
 import { NewBiller, NewOption, UpdateBiller } from "../modals";
@@ -466,7 +465,7 @@ const BillingSettings = () => {
   };
 
   const handleSaveFee = () => {
-    let _fee: UpdateFeeProps = {
+    let _fee = {
       id: selectedBiller?._id ?? "",
       fee: feeOpt?.fee ?? 0,
       threshold: feeOpt?.threshold ?? 0,

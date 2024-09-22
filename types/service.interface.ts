@@ -1,4 +1,4 @@
-import { ItemData } from "./schema.interface";
+import { ItemData, UserCreditData } from "./schema.interface";
 
 export interface EloadSettings {
   _id: string;

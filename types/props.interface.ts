@@ -5,6 +5,9 @@ import {
   BranchItem,
   ItemUnit,
   LogType,
+  Transaction,
+  TransactionPOS,
+  UserCreditData,
   Wallet,
 } from "./schema.interface";
 import { NewUser } from ".";
@@ -146,6 +149,8 @@ export interface Credit {
   amount: number;
   status: CreditStatus;
   createdAt: Date;
+  userCreditId: string | UserCreditData;
+  _id?: string;
 }
 
 export interface DTRCardTime {
@@ -166,4 +171,20 @@ export interface PayslipGeneratorProp {
 
 export interface PayslipProp {
   ref: React.RefObject<HTMLDivElement>;
+}
+
+export interface TransactionDetailsProps {
+  open: boolean;
+  close: () => void;
+  transaction: Transaction | TransactionPOS | null;
+  requestId?: string | null;
+}
+
+export interface CashBoxColumn {
+  name?: string;
+  type: string;
+  amount: number;
+  reason: string;
+  cash_from: string;
+  createdAt: Date;
 }

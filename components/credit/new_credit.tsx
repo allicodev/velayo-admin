@@ -111,7 +111,7 @@ const NewCredit = ({ open, close, onAdd, user, isMobile }: MyProp) => {
         </FloatLabel>
         <FloatLabel
           value={input?.middlename}
-          label="Middle Name"
+          label="M. Name"
           style={{ flex: 2 }}
         >
           <Input

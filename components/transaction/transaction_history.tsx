@@ -649,7 +649,7 @@ const TransactionHistory = () => {
         dataSource={transactions}
         rowKey={(e) => e._id ?? ""}
         style={{
-          padding: 5,
+          padding: 10,
         }}
         scroll={{
           y: "calc(100vh - 25em)",

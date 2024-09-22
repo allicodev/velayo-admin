@@ -87,6 +87,10 @@ const MobileMenu = ({ open, close, setSelectedKey }: MyProp) => {
                   label: "Attendance",
                   key: "attendance",
                 },
+                {
+                  label: "Disbursement",
+                  key: "disbursement",
+                },
               ],
             },
             {

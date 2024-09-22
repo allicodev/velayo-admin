@@ -1,8 +1,13 @@
+import { Credit } from "./props.interface";
 import { ItemWithCategory } from "./service.interface";
 
 export type ItemUnit = "pc(s)" | "bot(s)" | "kit(s)";
 export type RoleType = "teller" | "encoder" | "accounting" | "admin";
-export type TransactionHistoryStatus = "completed" | "failed" | "pending";
+export type TransactionHistoryStatus =
+  | "completed"
+  | "failed"
+  | "pending"
+  | "request";
 
 interface Deductions {
   name: string;
@@ -90,6 +95,13 @@ export interface Transaction {
   portal?: string;
   receiverName?: string;
   recieverNum?: string;
+  creditId?: string | Credit | null;
+}
+
+export interface UserCreditData extends UserCredit {
+  _id: string;
+  history?: CreditHistory[];
+  availableCredit: number;
 }
 
 export interface TransactionHistory {
@@ -218,6 +230,7 @@ export interface Log {
   type: LogType;
   userId: User;
   branchId?: Branch;
+  transactionId?: Transaction | string;
 
   // for attendance
   flexiTime: LogTime[];
@@ -242,6 +255,10 @@ export interface Log {
   interest?: number;
   history?: CreditAmountHistory[];
 
+  // cashbox
+  subType?: string;
+
+  attributes?: string;
   remarks?: string;
   createdAt?: Date;
 }
@@ -382,4 +399,8 @@ export interface CreditAmountHistory {
   amount: number;
   date: Date;
   description: string;
+}
+
+export interface TransactionPOS extends Transaction {
+  cash: number;
 }
