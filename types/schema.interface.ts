@@ -371,6 +371,7 @@ export interface Fee {
 
 // * Credit
 export interface UserCredit {
+  _id?: string;
   name: string;
   middlename?: string;
   lastname: string;

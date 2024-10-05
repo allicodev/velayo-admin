@@ -21,6 +21,13 @@ abstract class CreditService {
   public static async deleteCreditUser(_id: string) {
     return this.instance.get({ endpoint: "/credit/delete", query: { _id } });
   }
+
+  public static async getAccountReceivable(id?: string | null) {
+    return this.instance.get({
+      endpoint: "/credit/receivables",
+      query: { id },
+    });
+  }
 }
 
 export default CreditService;

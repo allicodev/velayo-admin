@@ -26,3 +26,10 @@ export interface TellerState {
 export interface FilterState {
   [key: string]: any;
 }
+
+export interface AccountReceivableState {
+  userId: string | User;
+  amount: number;
+  date: Date;
+  description: string;
+}

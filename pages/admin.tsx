@@ -27,6 +27,7 @@ import ItemService from "@/provider/item.service";
 import Credit from "@/components/credit";
 import Cookies from "js-cookie";
 import Disbursement from "@/components/disbursement/disbursement";
+import { AccountsReceivable } from "@/components/credit/accounts_receivable";
 
 const Admin = () => {
   const { setItems, lastDateUpdated, setLastDateUpdated, items } =
@@ -107,6 +108,16 @@ const Admin = () => {
               label: "Credits",
               key: "credit",
               icon: <TbCreditCardPay style={{ fontSize: "1em" }} />,
+              children: [
+                {
+                  label: "Credit Users",
+                  key: "users",
+                },
+                {
+                  label: "Accounts Receivable",
+                  key: "account",
+                },
+              ],
             },
             {
               label: "Reports",
@@ -183,7 +194,10 @@ const Admin = () => {
               selectedKey.includes("attendance") && <Attendance />}
             {selectedKey.includes("report") &&
               selectedKey.includes("disbursement") && <Disbursement />}
-            {selectedKey == "credit" && <Credit />}
+            {selectedKey.includes("credit") &&
+              selectedKey.includes("users") && <Credit />}
+            {selectedKey.includes("credit") &&
+              selectedKey.includes("account") && <AccountsReceivable />}
             {selectedKey.includes("pos") && selectedKey.includes("item") && (
               <ItemsHome />
             )}

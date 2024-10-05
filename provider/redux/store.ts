@@ -4,6 +4,8 @@ import counterReducer from "./counterSlice";
 import tellerSlice from "./tellerSlice";
 import filterSlice from "./filterSlice/filterSlice";
 import logSlice from "./logSlice/logSlice";
+import creditRedux from "./credit/credit.redux";
+import userRedux from "./user/user.redux";
 
 export const store = configureStore({
   reducer: {
@@ -12,6 +14,8 @@ export const store = configureStore({
     teller: tellerSlice,
     filter: filterSlice,
     logs: logSlice,
+    credit: creditRedux,
+    users: userRedux,
   },
 });
 

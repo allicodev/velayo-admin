@@ -396,7 +396,7 @@ const Credit = () => {
           </Button>
         )}
 
-        <Row gutter={14}>
+        <Row gutter={14} style={{ marginTop: 10 }}>
           {(!isMobile || (isMobile && selectedUser == null)) && (
             <Col span={isMobile ? 24 : 13}>
               <Table
