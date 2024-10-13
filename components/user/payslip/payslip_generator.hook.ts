@@ -24,10 +24,10 @@ const usePayslipGenerator = (prop: PayslipGeneratorProp) => {
         setUser(user);
 
         setTotalDeduction(
-          user.deductions.reduce((p, n) => p + n.amount / 2, 0)
+          (user?.deductions ?? []).reduce((p, n) => p + n.amount / 2, 0)
         );
 
-        setTotalEarningWithTax(user.baseSalary);
+        setTotalEarningWithTax(user?.baseSalary ?? 0);
       } else message.error(ApiMessage ?? "Error in the Server");
     }
   };

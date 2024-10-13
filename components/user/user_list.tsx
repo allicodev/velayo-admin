@@ -1,20 +1,7 @@
 import React, { CSSProperties, useEffect, useState } from "react";
-import {
-  TableProps,
-  Button,
-  Table,
-  Popconfirm,
-  message,
-  Dropdown,
-  notification,
-} from "antd";
-import {
-  DeleteOutlined,
-  UserAddOutlined,
-  EditOutlined,
-  PlusOutlined,
-} from "@ant-design/icons";
-import { CgMore } from "react-icons/cg";
+import { TableProps, Button, Table, Popconfirm, message, Dropdown } from "antd";
+import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
+import { IoIosMore } from "react-icons/io";
 
 import dayjs from "dayjs";
 
@@ -174,7 +161,7 @@ const User = ({ title, style, extra }: BasicContentProps) => {
               e.preventDefault();
             }}
           >
-            <CgMore
+            <IoIosMore
               style={{
                 fontSize: "1.4em",
               }}
@@ -192,7 +179,9 @@ const User = ({ title, style, extra }: BasicContentProps) => {
       size="large"
       onClick={(e) => setOpenedNewUser(true)}
       style={{ marginBottom: 10, margin: 5 }}
-    />
+    >
+      New User
+    </Button>
   );
 
   const handleNewUser = (obj: any) => {
