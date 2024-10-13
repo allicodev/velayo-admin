@@ -17,7 +17,7 @@ const usePayslipGenerator = (prop: PayslipGeneratorProp) => {
         success,
         data,
         message: ApiMessage,
-      } = await userService.getUsers({ employeeId: "true", _id: userId });
+      } = await userService.getUsers({ userId });
 
       if (success ?? false) {
         let user = data as any as User;
