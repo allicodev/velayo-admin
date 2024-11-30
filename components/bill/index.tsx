@@ -72,8 +72,6 @@ const BillingSettings = () => {
     id: null,
   });
 
-  const bill = new BillService();
-
   // * mobile
   const [width, setWidth] = useState(0);
   const isMobile = width < 600;
@@ -263,7 +261,7 @@ const BillingSettings = () => {
                               if (res.success)
                                 message.success(res?.message ?? "Success");
                             }
-                          })(bill);
+                          })(BillService);
 
                           setSelectedBiller(_);
                         }
@@ -407,7 +405,7 @@ const BillingSettings = () => {
         if (res.data)
           setSelectedBiller(res.data[billers.indexOf(selectedBiller)]);
       }
-    })(bill);
+    })(BillService);
   };
 
   const handleNewBiller = (name: string) => {
@@ -419,7 +417,7 @@ const BillingSettings = () => {
         setOpenNewBiller(false);
         if (res.data) setBillers([...billers, res.data]);
       }
-    })(bill);
+    })(BillService);
   };
 
   const handleNewOption = (opt: BillingsFormField) => {
@@ -443,7 +441,7 @@ const BillingSettings = () => {
             message.success(res?.message ?? "Success");
           }
         }
-      })(bill);
+      })(BillService);
     } else {
       (async (_) => {
         if (selectedBiller?._id != undefined) {
@@ -460,7 +458,7 @@ const BillingSettings = () => {
             message.success(res?.message ?? "Success");
           }
         }
-      })(bill);
+      })(BillService);
     }
   };
 
@@ -480,7 +478,7 @@ const BillingSettings = () => {
         message.success(res?.message ?? "Success");
         setTrigger(trigger + 1);
       }
-    })(bill);
+    })(BillService);
   };
 
   const handleMarkAsMain = (id: string, index: number) => {
@@ -493,7 +491,7 @@ const BillingSettings = () => {
           return true;
         }
       }
-    })(bill);
+    })(BillService);
   };
 
   const handleDeleteOption = (id: string, index: number) => {
@@ -506,7 +504,7 @@ const BillingSettings = () => {
           return true;
         }
       }
-    })(bill);
+    })(BillService);
   };
 
   const handleDeleteBiller = () => {
@@ -517,7 +515,7 @@ const BillingSettings = () => {
         setSelectedBiller(null);
         message.success(res?.message ?? "Success");
       }
-    })(bill);
+    })(BillService);
   };
 
   useEffect(() => {
@@ -715,7 +713,7 @@ const BillingSettings = () => {
                           height: 60,
                           background: e.isDisabled
                             ? "#eee"
-                            : selectedBiller?._id == e._id ?? false
+                            : selectedBiller?._id == e._id
                             ? "#294B0F"
                             : "#fff",
                         }}
@@ -730,7 +728,7 @@ const BillingSettings = () => {
                             fontSize: 30,
                             color: e.isDisabled
                               ? "#aaa"
-                              : selectedBiller?._id == e._id ?? false
+                              : selectedBiller?._id == e._id
                               ? "#fff"
                               : "#000",
                             maxWidth: 270,
@@ -860,7 +858,7 @@ const BillingSettings = () => {
                 setTrigger(trigger + 1);
               }
             }
-          })(bill);
+          })(BillService);
         }}
         name={selectedBiller?.name ?? ""}
       />

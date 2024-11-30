@@ -16,10 +16,6 @@ const RequestBalance = ({ open, close, portal, isMobile }: MyBasicProps) => {
   const [requests, setRequests] = useState<BalanceRequest[]>([]);
   const [trigger, setTrigger] = useState(0);
 
-  // * etc and services
-  const portalService = new PortalService();
-  const log = new LogService();
-
   const columns: TableProps<BalanceRequest>["columns"] = [
     {
       title: "Encoder Name",
@@ -96,7 +92,7 @@ const RequestBalance = ({ open, close, portal, isMobile }: MyBasicProps) => {
     page?: number;
     pageSize?: number;
   }) => {
-    let res = await portalService.getBalanceRequest({
+    let res = await PortalService.getBalanceRequest({
       portalId: portal._id ?? "",
       page,
       pageSize,
@@ -106,12 +102,12 @@ const RequestBalance = ({ open, close, portal, isMobile }: MyBasicProps) => {
   };
 
   const handleCormfirmRequest = async (_id: string) => {
-    let res = await portalService.updateBalanceRequest(_id, {
+    let res = await PortalService.updateBalanceRequest(_id, {
       status: "completed",
     });
 
     if (res?.success ?? false) {
-      let res2 = await log.newLog({
+      let res2 = await LogService.newLog({
         userId: res?.data?.encoderId.toString() ?? "",
         type: "portal",
         portalId: res?.data?.portalId,
@@ -126,7 +122,7 @@ const RequestBalance = ({ open, close, portal, isMobile }: MyBasicProps) => {
   };
 
   const handleRejectRequest = async (_id: string) => {
-    let res = await portalService.updateBalanceRequest(_id, {
+    let res = await PortalService.updateBalanceRequest(_id, {
       status: "rejected",
     });
 

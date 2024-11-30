@@ -21,11 +21,9 @@ const Dashboard = () => {
     year: new Date().getFullYear(),
   });
 
-  const etc = new EtcService();
-
   const getData = async () => {
     setLoading(true);
-    let res = await etc.getDashboardData();
+    let res = await EtcService.getDashboardData();
 
     if (res?.success ?? false) {
       setDashboard(res?.data);
@@ -45,7 +43,7 @@ const Dashboard = () => {
     })}`;
 
   const getSales = async (_filter: FilterProp) => {
-    let res = await etc.getDashboardDataSales(_filter);
+    let res = await EtcService.getDashboardDataSales(_filter);
 
     if (res?.success ?? false) {
       if (res.data != undefined)

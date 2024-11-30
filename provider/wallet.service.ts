@@ -1,4 +1,4 @@
-import Api from "./api.service";
+import API from "./api.service";
 import {
   BillingsFormField,
   ExtendedResponse,
@@ -9,30 +9,30 @@ import {
   ExceptionItemProps,
 } from "@/types";
 
-class WalletService {
-  private readonly instance = new Api();
-
-  public async getWallet(_id?: string | null) {
-    return await this.instance.get<Wallet[]>({
+abstract class WalletService {
+  public static async getWallet(_id?: string | null) {
+    return await API.get<Wallet[]>({
       endpoint: "/wallet/get-wallet",
       query: { _id },
     });
   }
 
-  public async newWallet(payload: Wallet): Promise<ExtendedResponse<Wallet>> {
-    return await this.instance.post<Wallet>({
+  public static async newWallet(
+    payload: Wallet
+  ): Promise<ExtendedResponse<Wallet>> {
+    return await API.post<Wallet>({
       endpoint: "/wallet/new-wallet",
       payload,
     });
   }
 
-  public async updateWalletFee(
+  public static async updateWalletFee(
     payload: Wallet
   ): Promise<ExtendedResponse<Wallet>> {
     if (payload.cashinFeeValue == null) payload.cashinFeeValue = 0;
     if (payload.cashoutFeeValue == null) payload.cashoutFeeValue = 0;
 
-    const response = await this.instance.post<Wallet>({
+    const response = await API.post<Wallet>({
       endpoint: "/wallet/update-wallet-option",
       payload: {
         id: payload._id,
@@ -42,11 +42,11 @@ class WalletService {
     return response;
   }
 
-  public async updateName(
+  public static async updateName(
     id: string,
     name: string
   ): Promise<ExtendedResponse<Wallet>> {
-    const response = await this.instance.post<Wallet>({
+    const response = await API.post<Wallet>({
       endpoint: "/wallet/update-name",
       payload: {
         id,
@@ -56,7 +56,7 @@ class WalletService {
     return response;
   }
 
-  public async pushToFormFields(
+  public static async pushToFormFields(
     billId: string,
     formfield: BillingsFormField,
     type: WalletType
@@ -64,7 +64,7 @@ class WalletService {
     formfield.slug_name = formfield.name
       .replaceAll(" ", "_")
       .toLocaleLowerCase();
-    const response = await this.instance.post<Wallet>({
+    const response = await API.post<Wallet>({
       endpoint: "/wallet/new-option",
       payload: {
         id: billId,
@@ -75,7 +75,7 @@ class WalletService {
     return response;
   }
 
-  public async updateWalletFormFields(
+  public static async updateWalletFormFields(
     billId: string,
     formfield: BillingsFormField,
     index: number,
@@ -84,7 +84,7 @@ class WalletService {
     formfield.slug_name = formfield.name
       .replaceAll(" ", "_")
       .toLocaleLowerCase();
-    const response = await this.instance.post<Wallet>({
+    const response = await API.post<Wallet>({
       endpoint: "/wallet/update-wallet",
       payload: {
         id: billId,
@@ -96,8 +96,11 @@ class WalletService {
     return response;
   }
 
-  public async updateWalletOption(walletId: string, walletOption: Wallet) {
-    const response = await this.instance.post<Wallet>({
+  public static async updateWalletOption(
+    walletId: string,
+    walletOption: Wallet
+  ) {
+    const response = await API.post<Wallet>({
       endpoint: "/wallet/update-wallet-option",
       payload: {
         id: walletId,
@@ -107,12 +110,12 @@ class WalletService {
     return response;
   }
 
-  public async markWalletMainAmount(
+  public static async markWalletMainAmount(
     billId: string,
     index: number,
     type: WalletType
   ) {
-    const response = await this.instance.post<Wallet>({
+    const response = await API.post<Wallet>({
       endpoint: "/wallet/mark-as-main",
       payload: {
         id: billId,
@@ -123,12 +126,12 @@ class WalletService {
     return response;
   }
 
-  public async removeWalletOptionIndexed(
+  public static async removeWalletOptionIndexed(
     billId: string,
     index: number,
     type: WalletType
   ) {
-    const response = await this.instance.get<Wallet>({
+    const response = await API.get<Wallet>({
       endpoint: "/wallet/delete-wallet-option",
       query: {
         id: billId,
@@ -139,7 +142,7 @@ class WalletService {
     return response;
   }
 
-  public async requestWalletTransaction(
+  public static async requestWalletTransaction(
     biller_name: string,
     bill: string,
     amount: number,
@@ -169,28 +172,28 @@ class WalletService {
 
     if (traceId) transaction.traceId = traceId;
 
-    const response = await this.instance.post<Response>({
+    const response = await API.post<Response>({
       endpoint: "/bill/request-transaction",
       payload: { ...transaction, branchId },
     });
     return response;
   }
 
-  public async deleteWallet(_id: string): Promise<Response> {
-    const response = await this.instance.get<Response>({
+  public static async deleteWallet(_id: string): Promise<Response> {
+    const response = await API.get<Response>({
       endpoint: "/wallet/delete-wallet",
       query: { _id },
     });
     return response;
   }
 
-  public async updateExceptionWallet(
+  public static async updateExceptionWallet(
     _id: string,
     direction: string,
     type: string,
     excludeItems: ExceptionItemProps[]
   ): Promise<Response> {
-    const response = await this.instance.post<Response>({
+    const response = await API.post<Response>({
       endpoint: "/wallet/update-exception",
       payload: { _id, direction, excludeItems, type },
     });

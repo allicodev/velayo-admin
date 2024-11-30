@@ -117,9 +117,6 @@ const PrinterException = ({
   //updateExceptionBiller
   const [targetKeys, setTargetKeys] = useState<TransferProps["targetKeys"]>([]);
 
-  const bill = new BillService();
-  const walletService = new WalletService();
-
   let dataSource = biller
     ? biller?.formField?.map((e, i) => ({
         ...e,
@@ -154,7 +151,7 @@ const PrinterException = ({
           message.success(res?.message ?? "Updated");
           refresh();
         }
-      })(bill);
+      })(BillService);
     else
       (async (_) => {
         let res = await _.updateExceptionWallet(
@@ -168,7 +165,7 @@ const PrinterException = ({
           message.success(res?.message ?? "Updated");
           refresh();
         }
-      })(walletService);
+      })(WalletService);
   };
 
   // set except form field to active target keys

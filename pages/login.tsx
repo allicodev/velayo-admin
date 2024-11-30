@@ -23,7 +23,6 @@ const Login = () => {
   const [form] = Form.useForm();
   const { setUser } = useUserStore();
   const { setAccessToken } = AuthStore();
-  const user = new UserService();
 
   const [isMobile, setIsMobile] = useState(false);
   const [api, contextHolder] = notification.useNotification();
@@ -36,7 +35,7 @@ const Login = () => {
       message: "Logging In....",
     });
 
-    const response = await user.login(val);
+    const response = await UserService.login(val);
     if (response.success && response?.data?.role == "admin") {
       api.destroy();
 

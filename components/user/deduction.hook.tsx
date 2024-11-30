@@ -35,8 +35,6 @@ const useDeductionsErrors = ({
     createdAt: Dayjs | null;
   }>({ amount: null, remarks: null, createdAt: null });
 
-  const log = new LogService();
-
   const clearLoading = () => setLoading("");
 
   const updateInput = (key: string, value: any) =>
@@ -127,7 +125,7 @@ const useDeductionsErrors = ({
           success,
           data,
           message: ApiMessage,
-        } = await log.getLog({
+        } = await LogService.getLog({
           page: 1,
           pageSize: 9999999,
           type: "error",
@@ -156,7 +154,7 @@ const useDeductionsErrors = ({
           success,
           data,
           message: ApiMessage,
-        } = await log.getLog({
+        } = await LogService.getLog({
           page: 1,
           pageSize: 9999999,
           type: "ca",
@@ -193,7 +191,7 @@ const useDeductionsErrors = ({
       return;
     }
 
-    const { success, message: ApiMessage } = await log.newLog({
+    const { success, message: ApiMessage } = await LogService.newLog({
       userId: user?._id ?? "",
       type: "error",
       ...input,
@@ -215,7 +213,7 @@ const useDeductionsErrors = ({
       return;
     }
 
-    const { success, message: ApiMessage } = await log.newLog({
+    const { success, message: ApiMessage } = await LogService.newLog({
       userId: user?._id ?? "",
       type: "ca",
       ...input2,

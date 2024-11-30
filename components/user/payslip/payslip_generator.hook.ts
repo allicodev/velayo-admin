@@ -6,7 +6,7 @@ import { PayslipGeneratorProp, User } from "@/types";
 
 const usePayslipGenerator = (prop: PayslipGeneratorProp) => {
   const { userId, cashAdvance, errors } = prop;
-  const userService = new UserService();
+
   const [user, setUser] = useState<User | null>(null);
   const [totalDeduction, setTotalDeduction] = useState(0);
   const [totalEarningWithTax, setTotalEarningWithTax] = useState(0);
@@ -17,7 +17,7 @@ const usePayslipGenerator = (prop: PayslipGeneratorProp) => {
         success,
         data,
         message: ApiMessage,
-      } = await userService.getUsers({ userId });
+      } = await UserService.getUsers({ userId });
 
       if (success ?? false) {
         let user = data as any as User;

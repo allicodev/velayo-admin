@@ -16,10 +16,8 @@ const EloadSettings = () => {
     additionalFee: null,
   });
 
-  const etc = new EtcService();
-
   const handleUpdate = async () => {
-    let res = await etc.updateEloadSettings(feeOpt);
+    let res = await EtcService.updateEloadSettings(feeOpt);
 
     if (res?.success ?? false) {
       message.success(res?.message ?? "Success");
@@ -37,7 +35,7 @@ const EloadSettings = () => {
           additionalFee: res?.data?.additionalFee,
         });
       }
-    })(etc);
+    })(EtcService);
   }, []);
 
   return (

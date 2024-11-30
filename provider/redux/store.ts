@@ -6,6 +6,9 @@ import filterSlice from "./filterSlice/filterSlice";
 import logSlice from "./logSlice/logSlice";
 import creditRedux from "./credit/credit.redux";
 import userRedux from "./user/user.redux";
+import transactionReducer from "./reducer/transactions.reducer";
+import branchReducer from "./reducer/branch.reducer";
+import userReducer from "./reducer/user.reducer";
 
 export const store = configureStore({
   reducer: {
@@ -16,6 +19,9 @@ export const store = configureStore({
     logs: logSlice,
     credit: creditRedux,
     users: userRedux,
+    transaction: transactionReducer,
+    branch: branchReducer,
+    user: userReducer,
   },
 });
 

@@ -7,8 +7,7 @@ const initialState: UserState = { status: Status.IDLE, credit: [] };
 const getUser = createAsyncThunk<any, GetUserParams>(
   "user/getUser",
   async ({ type, fetchAll = true, pageSize }) => {
-    const user = new UserService();
-    const { success, data } = await user.getUsers({
+    const { success, data } = await UserService.getUsers({
       page: 1,
       pageSize: fetchAll ? 9999 : pageSize,
       type: "credit",

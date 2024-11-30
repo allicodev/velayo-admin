@@ -1,4 +1,4 @@
-import Api from "./api.service";
+import API from "./api.service";
 import {
   InputProps,
   Item,
@@ -9,18 +9,16 @@ import {
   ItemWithCategory,
 } from "@/types";
 
-class ItemService {
-  private readonly instance = new Api();
-
-  public async getItems(query?: any) {
-    return await this.instance.get<BranchData[] | ItemData[]>({
+abstract class ItemService {
+  public static async getItems(query?: any) {
+    return await API.get<BranchData[] | ItemData[]>({
       endpoint: "/item/all",
       query,
     });
   }
 
-  public async newItem(str: any, parentId?: string) {
-    return await this.instance.post<Response>({
+  public static async newItem(str: any, parentId?: string) {
+    return await API.post<Response>({
       endpoint: "/item/new",
       payload: {
         ...str,
@@ -29,14 +27,14 @@ class ItemService {
     });
   }
 
-  public async getLastItemcode() {
-    return await this.instance.get<ItemCode>({
+  public static async getLastItemcode() {
+    return await API.get<ItemCode>({
       endpoint: "/item/get-last-itemcode",
     });
   }
 
-  public async getItemSpecific(id: string) {
-    return await this.instance.get<ItemData>({
+  public static async getItemSpecific(id: string) {
+    return await API.get<ItemData>({
       endpoint: "/item/specific",
       query: {
         id,
@@ -44,8 +42,8 @@ class ItemService {
     });
   }
 
-  public async deleteItem(id: string) {
-    return await this.instance.get<Item>({
+  public static async deleteItem(id: string) {
+    return await API.get<Item>({
       endpoint: "/item/delete",
       query: {
         id,
@@ -53,8 +51,8 @@ class ItemService {
     });
   }
 
-  public async updateItem(id: string, item: InputProps) {
-    return await this.instance.post<ItemData>({
+  public static async updateItem(id: string, item: InputProps) {
+    return await API.post<ItemData>({
       endpoint: "/item/update",
       payload: {
         ...item,
@@ -63,8 +61,8 @@ class ItemService {
     });
   }
 
-  public async searchItem(search: string) {
-    return await this.instance.get<ItemData[]>({
+  public static async searchItem(search: string) {
+    return await API.get<ItemData[]>({
       endpoint: "/item/search",
       query: {
         search,
@@ -72,8 +70,8 @@ class ItemService {
     });
   }
 
-  public async purgeItem(id: string) {
-    return await this.instance.get<ItemData[]>({
+  public static async purgeItem(id: string) {
+    return await API.get<ItemData[]>({
       endpoint: "/item/purge-item",
       query: {
         id,
@@ -81,14 +79,14 @@ class ItemService {
     });
   }
 
-  public async getItemsWithCategory() {
-    return this.instance.get<ItemWithCategory[]>({
+  public static async getItemsWithCategory() {
+    return API.get<ItemWithCategory[]>({
       endpoint: "/item/get-items",
     });
   }
 
-  public async newCategory(name: string) {
-    return this.instance.post<Response>({
+  public static async newCategory(name: string) {
+    return API.post<Response>({
       endpoint: "/item/new-category",
       payload: {
         name,
@@ -96,8 +94,11 @@ class ItemService {
     });
   }
 
-  public async updateItemCategory(itemIds: string[], itemCategory: string) {
-    return this.instance.post<Response>({
+  public static async updateItemCategory(
+    itemIds: string[],
+    itemCategory: string
+  ) {
+    return API.post<Response>({
       endpoint: "/item/update-item-category",
       payload: {
         itemIds,
@@ -106,8 +107,8 @@ class ItemService {
     });
   }
 
-  public async removeItemCategory(itemId: string) {
-    return this.instance.get<Response>({
+  public static async removeItemCategory(itemId: string) {
+    return API.get<Response>({
       endpoint: "/item/delete-item-category",
       query: {
         id: itemId,
@@ -115,8 +116,8 @@ class ItemService {
     });
   }
 
-  public async deleteCategory(id: string) {
-    return this.instance.get<Response>({
+  public static async deleteCategory(id: string) {
+    return API.get<Response>({
       endpoint: "/item/delete-category",
       query: {
         id,

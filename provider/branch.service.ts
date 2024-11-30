@@ -1,4 +1,4 @@
-import Api from "./api.service";
+import API from "./api.service";
 import {
   Branch,
   BranchData,
@@ -7,71 +7,69 @@ import {
   Response,
 } from "@/types";
 
-class BranchService {
-  private readonly instance = new Api();
-
-  public async newBranch({ ...props }: Branch): Promise<Response> {
-    return await this.instance.post<Branch>({
+abstract class BranchService {
+  public static async newBranch({ ...props }: Branch): Promise<Response> {
+    return await API.post<Branch>({
       endpoint: "/branch",
       payload: props,
     });
   }
 
-  public async getBranch({
+  public static async getBranch({
     _id,
   }: {
     _id?: string;
   }): Promise<ExtendedResponse<BranchData[]>> {
-    return await this.instance.get<BranchData[]>({
+    return await API.get<BranchData[]>({
       endpoint: "/branch",
       query: { _id },
     });
   }
 
-  public async deleteBranch(_id: string): Promise<Response> {
-    return await this.instance.get<Response>({
+  public static async deleteBranch(_id: string): Promise<Response> {
+    return await API.get<Response>({
       endpoint: "/branch/delete",
       query: { _id },
     });
   }
 
-  public async updateBranch({ ...props }: BranchData) {
-    return await this.instance.post<Response>({
+  public static async updateBranch({ ...props }: BranchData) {
+    return await API.post<Response>({
       endpoint: "/branch",
       payload: props,
     });
   }
 
-  public async getBranchSpecific(
+  public static async getBranchSpecific(
     _id: string
   ): Promise<ExtendedResponse<BranchData>> {
-    return await this.instance.get<BranchData>({
+    return await API.get<BranchData>({
       endpoint: "/branch/get-branch",
       query: { _id },
     });
   }
 
-  public async newItemBranch(_id: string, itemIds: string[]) {
-    return await this.instance.post<BranchData>({
+  public static async newItemBranch(_id: string, itemIds: string[]) {
+    return await API.post<BranchData>({
       endpoint: "/branch/new-item",
       payload: { _id, itemIds },
     });
   }
 
-  public async updateItemBranch(
+  public static async updateItemBranch(
     _id: string,
     type: string,
     items: BranchItemUpdate[],
     transactId?: string
   ) {
-    return await this.instance.post<BranchData>({
+    return await API.post<BranchData>({
       endpoint: "/branch/update-items",
       payload: { _id, items, type, transactId },
     });
   }
 
-  public async getItemSpecific(branchId: string, itemId: string) {
-    let branch = await this.instance.get<BranchData>({
+  public static async getItemSpecific(branchId: string, itemId: string) {
+    let branch = await API.get<BranchData>({
       endpoint: "/branch/get-item-specific",
       query: { branchId },
     });
@@ -79,8 +77,8 @@ class BranchService {
     return branch.data?.items?.filter((e) => e.itemId._id == itemId);
   }
 
-  public async removeBranchItem(branchId: string, itemId: string) {
-    return await this.instance.get<Response>({
+  public static async removeBranchItem(branchId: string, itemId: string) {
+    return await API.get<Response>({
       endpoint: "/branch/remove-item",
       query: { branchId, itemId },
     });

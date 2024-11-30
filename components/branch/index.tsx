@@ -20,8 +20,6 @@ const Branch = () => {
   });
   const [width, setWidth] = useState(0);
 
-  const branch = new BranchService();
-
   const handleNewBranch = (mode: string, obj: Branch | BranchData) => {
     (async (_) => {
       let res;
@@ -33,7 +31,7 @@ const Branch = () => {
         setTrigger(trigger + 1);
         setOpenNewBranch({ open: false, data: null });
       }
-    })(branch);
+    })(BranchService);
   };
 
   const handleOpenEdit = (obj: BranchData) => {
@@ -41,7 +39,7 @@ const Branch = () => {
   };
 
   const handleDeleteBranch = async (id: string) => {
-    let { success, message: ApiMessage } = await branch.deleteBranch(id);
+    let { success, message: ApiMessage } = await BranchService.deleteBranch(id);
 
     if (success ?? false) {
       message.success(ApiMessage ?? "Error in the Server");
@@ -53,7 +51,7 @@ const Branch = () => {
     (async (_) => {
       let res2 = await _.getBranch({});
       if (res2?.success ?? false) setBranches(res2?.data ?? []);
-    })(branch);
+    })(BranchService);
   }, [trigger]);
 
   useEffect(() => {

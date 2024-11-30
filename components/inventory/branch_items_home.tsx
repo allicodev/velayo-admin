@@ -46,7 +46,6 @@ const BranchItemHome = ({ open, close, branch, updateBranch }: BasicProps) => {
   }>({ open: false, type: "stock-in" });
 
   //   etc and services
-  const branchService = new BranchService();
 
   const [width, setWidth] = useState(0);
   const isMobile = width < 600;
@@ -174,7 +173,7 @@ const BranchItemHome = ({ open, close, branch, updateBranch }: BasicProps) => {
   ];
 
   const handleItemPushToBranch = async (ids: string[]) => {
-    await branchService.newItemBranch(branch._id ?? "", ids).then((e) => {
+    await BranchService.newItemBranch(branch._id ?? "", ids).then((e) => {
       if (e.success ?? false) {
         updateBranch(e.data);
         message.success(e?.message ?? "Success");
@@ -183,7 +182,7 @@ const BranchItemHome = ({ open, close, branch, updateBranch }: BasicProps) => {
   };
 
   const handleDeleteItem = async (itemId: string, branchId: string) => {
-    let res = await branchService.removeBranchItem(branchId, itemId);
+    let res = await BranchService.removeBranchItem(branchId, itemId);
 
     if (res?.success ?? false) {
       message.success(res?.message ?? "Success");

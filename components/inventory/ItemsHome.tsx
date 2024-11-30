@@ -59,8 +59,6 @@ const ItemsHome = ({ extraData }: BasicContentProps) => {
     price: 0,
     cost: 0,
   });
-  const itemService = new ItemService();
-  const branch = new BranchService();
 
   // * onclick utils variables
   const [selectedKey, setSelectedKey] = useState<React.Key | null>(null);
@@ -108,7 +106,7 @@ const ItemsHome = ({ extraData }: BasicContentProps) => {
         setShowSaved(true);
         setTimeout(() => setShowSaved(false), 3000);
       }
-    })(itemService);
+    })(ItemService);
   };
 
   const handleItemOnAddClick = (id: string) =>
@@ -126,7 +124,7 @@ const ItemsHome = ({ extraData }: BasicContentProps) => {
         fetchItems();
         return true;
       } else return false;
-    })(itemService);
+    })(ItemService);
   };
 
   const fetchItems = () => {
@@ -146,7 +144,7 @@ const ItemsHome = ({ extraData }: BasicContentProps) => {
           );
         }
       }
-    })(itemService);
+    })(ItemService);
   };
 
   const handlePurgeItem = (id: string) => {
@@ -157,7 +155,7 @@ const ItemsHome = ({ extraData }: BasicContentProps) => {
         message.success(res?.message ?? "Success");
         fetchItems();
       }
-    })(itemService);
+    })(ItemService);
   };
 
   const updateSelectedItem = (id: string) => {
@@ -174,7 +172,7 @@ const ItemsHome = ({ extraData }: BasicContentProps) => {
         if (!cost) cost = 0;
         setInput({ name, unit, price, cost });
       }
-    })(itemService);
+    })(ItemService);
   };
 
   const highlightSearchItems = (search: string, isMobile: boolean) => {
@@ -534,7 +532,7 @@ const ItemsHome = ({ extraData }: BasicContentProps) => {
                       setSelectedItem(null);
                       fetchItems();
                     }
-                  })(itemService);
+                  })(ItemService);
                 }}
               >
                 <Button
@@ -679,7 +677,7 @@ const ItemsHome = ({ extraData }: BasicContentProps) => {
                       setSelectedItem(null);
                       highlightSearchItems("", isMobile);
                       new Promise(async (resolve) => {
-                        let res = await branch.getBranch({});
+                        let res = await BranchService.getBranch({});
                         if (res?.success ?? false) resolve(res?.data ?? []);
                       }).then((_: any) =>
                         setOpenBranchChoicer({ open: true, branches: _ })

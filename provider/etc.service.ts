@@ -1,5 +1,5 @@
 import { FilterProp } from "@/components/dashboard/components/sales";
-import Api from "./api.service";
+import API from "./api.service";
 import {
   DashboardData,
   EloadSettings,
@@ -8,11 +8,9 @@ import {
   Transaction,
 } from "@/types";
 
-class EtcService {
-  private readonly instance = new Api();
-
-  public async getTransactionFromTraceId(traceId: string) {
-    return await this.instance.get<Transaction>({
+abstract class EtcService {
+  public static async getTransactionFromTraceId(traceId: string) {
+    return await API.get<Transaction>({
       endpoint: "/transaction/search-transaction",
       query: {
         traceId,
@@ -20,33 +18,33 @@ class EtcService {
     });
   }
 
-  public async checkSettings() {
-    return await this.instance.get<Response>({
+  public static async checkSettings() {
+    return await API.get<Response>({
       endpoint: "/etc/check-settings",
     });
   }
 
-  public async getEloadSettings() {
-    return await this.instance.get<EloadSettings>({
+  public static async getEloadSettings() {
+    return await API.get<EloadSettings>({
       endpoint: "/etc/eload-settings",
     });
   }
 
-  public async updateEloadSettings(payload: any) {
-    return await this.instance.post<Response>({
+  public static async updateEloadSettings(payload: any) {
+    return await API.post<Response>({
       endpoint: "/etc/eload-settings-update",
       payload,
     });
   }
 
-  public async getDashboardData() {
-    return await this.instance.get<DashboardData>({
+  public static async getDashboardData() {
+    return await API.get<DashboardData>({
       endpoint: "/etc/dashboard",
     });
   }
 
-  public async getDashboardDataSales(filter: FilterProp) {
-    return await this.instance.get<SalesPerMonth>({
+  public static async getDashboardDataSales(filter: FilterProp) {
+    return await API.get<SalesPerMonth>({
       endpoint: "/etc/get-sales",
       query: filter,
     });

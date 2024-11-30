@@ -10,7 +10,7 @@ import { MdAutoGraph, MdPointOfSale } from "react-icons/md";
 import { TbReportAnalytics, TbCreditCardPay } from "react-icons/tb";
 
 import User from "@/components/user/user_list";
-import TransactionHistory from "@/components/transaction/transaction_history";
+import Transaction from "@/components/transaction/transaction";
 import Attendance from "@/components/attendance/attendance";
 import ItemsHome from "@/components/inventory/ItemsHome";
 import BillingSettings from "@/components/bill";
@@ -189,7 +189,7 @@ const Admin = () => {
             {selectedKey == "users" && <User />}
             {selectedKey == "branch" && <Branch />}
             {selectedKey.includes("report") &&
-              selectedKey.includes("transaction") && <TransactionHistory />}
+              selectedKey.includes("transaction") && <Transaction />}
             {selectedKey.includes("report") &&
               selectedKey.includes("attendance") && <Attendance />}
             {selectedKey.includes("report") &&

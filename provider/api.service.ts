@@ -3,16 +3,16 @@ import axios from "axios";
 import { AuthStore } from "./context";
 import { ExtendedResponse, ApiGetProps, ApiPostProps } from "@/types";
 
-class API {
-  public async get<T>({
+abstract class API {
+  public static async get<T>({
     endpoint,
     query,
   }: ApiGetProps): Promise<ExtendedResponse<T>> {
     const { accessToken: token } = AuthStore.getState();
 
     const request = await axios.get(
-      `https://velayo-eservice.vercel.app/api${endpoint}`,
-      // `http://localhost:3000/api${endpoint}`,
+      // `https://velayo-eservice.vercel.app/api${endpoint}`,
+      `http://localhost:3000/api${endpoint}`,
       {
         params: query,
         headers: {
@@ -37,15 +37,15 @@ class API {
       };
   }
 
-  public async post<T>({
+  public static async post<T>({
     endpoint,
     payload,
   }: ApiPostProps): Promise<ExtendedResponse<T>> {
     const { accessToken: token } = AuthStore.getState();
 
     const request = await axios.post(
-      `https://velayo-eservice.vercel.app/api${endpoint}`,
-      // `http://localhost:3000/api${endpoint}`,
+      // `https://velayo-eservice.vercel.app/api${endpoint}`,
+      `http://localhost:3000/api${endpoint}`,
       payload,
       {
         headers: {

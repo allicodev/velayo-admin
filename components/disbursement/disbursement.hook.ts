@@ -24,8 +24,6 @@ const useDisbursement = () => {
   );
 
   const dispatch = useDispatch();
-  const userService = new UserService();
-  const logService = new LogService();
 
   const columns: TableProps<CashBoxColumn>["columns"] = [
     ...(_.isEmpty(reduxFilter.disbursement) ||
@@ -75,7 +73,7 @@ const useDisbursement = () => {
       success,
       data,
       message: apiMessage,
-    } = await userService.getUsers({
+    } = await UserService.getUsers({
       page: 1,
       pageSize: 9999,
       role: ["teller"],
@@ -108,7 +106,7 @@ const useDisbursement = () => {
       success,
       data,
       message: apiMessage,
-    } = await logService.getLog({
+    } = await LogService.getLog({
       page: 1,
       pageSize: 999,
       type: "disbursement",

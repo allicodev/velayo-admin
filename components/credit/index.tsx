@@ -37,7 +37,7 @@ import CreditService from "@/provider/credit.service";
 import dayjs from "dayjs";
 import LogService from "@/provider/log.service";
 import AmountHistoryViewer from "./amount_history";
-import TransactionDetails from "../transaction/transaction_details";
+import TransactionDetails from "../transaction/components/transaction_details";
 
 const Credit = () => {
   const [loading, setLoading] = useState(false);
@@ -64,8 +64,6 @@ const Credit = () => {
     open: false,
     logId: "",
   });
-
-  const logService = new LogService();
 
   const refresh = () => setTrigger(trigger + 1);
 
@@ -334,7 +332,7 @@ const Credit = () => {
   const fetchLogs = async (userCreditId: string) => {
     setLogs([]);
     setLoading(true);
-    let res = await logService.getLog({
+    let res = await LogService.getLog({
       page: 1,
       pageSize: 99999,
       type: "credit",

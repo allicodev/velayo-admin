@@ -25,7 +25,6 @@ const AddItem = ({
 }: MyProps) => {
   const [searchWord, setSearchWord] = useState("");
   const [items, setItems] = useState<ItemData[]>([]);
-  const itemService = new ItemService();
 
   const { items: lcItems } = useItemStore();
   const selectedItem = useSelector((state: RootState) => state.branchItem);
@@ -45,7 +44,7 @@ const AddItem = ({
   };
 
   const update = async () => {
-    let res = await itemService.updateItemCategory(
+    let res = await ItemService.updateItemCategory(
       selectedItem.map((e) => e._id!),
       categoryId
     );

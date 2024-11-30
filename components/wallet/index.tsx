@@ -65,8 +65,6 @@ const EWalletSettings = () => {
   const [openUpdateName, setOpenUpdateName] = useState(false);
   const [selectedTabs, setSelectedTabs] = useState("fee-settings-tabs");
 
-  const wallet = new WalletService();
-
   // * mobile
   const [width, setWidth] = useState(0);
   const isMobile = width < 600;
@@ -274,7 +272,7 @@ const EWalletSettings = () => {
                               if (res.success)
                                 message.success(res?.message ?? "Success");
                             }
-                          })(wallet);
+                          })(WalletService);
 
                           setSelectedWallet(_);
                         }
@@ -354,7 +352,7 @@ const EWalletSettings = () => {
                               if (res.success)
                                 message.success(res?.message ?? "Success");
                             }
-                          })(wallet);
+                          })(WalletService);
 
                           setSelectedWallet(_);
                         }
@@ -559,7 +557,7 @@ const EWalletSettings = () => {
             setSelectedWallet(res.data[wallets.indexOf(selectedWallet)]);
         }
       }
-    })(wallet);
+    })(WalletService);
   };
 
   const handleNewWallet = async (_wallet: Wallet): Promise<string> => {
@@ -583,7 +581,7 @@ const EWalletSettings = () => {
           setTrigger(trigger + 1);
           resolve("Successfully Added");
         } else reject("Error in the server.");
-      })(wallet);
+      })(WalletService);
     });
   };
 
@@ -597,7 +595,7 @@ const EWalletSettings = () => {
           setTrigger(trigger + 1);
         }
       }
-    })(wallet);
+    })(WalletService);
   };
 
   const handleSave = () => {
@@ -609,7 +607,7 @@ const EWalletSettings = () => {
           setTrigger(trigger + 1);
         }
       }
-    })(wallet);
+    })(WalletService);
   };
 
   const handleNewOption = (opt: BillingsFormField) => {
@@ -634,7 +632,7 @@ const EWalletSettings = () => {
             message.success(res?.message ?? "Success");
           }
         }
-      })(wallet);
+      })(WalletService);
     } else {
       (async (_) => {
         if (selectedWallet?._id != undefined) {
@@ -655,7 +653,7 @@ const EWalletSettings = () => {
             message.success(res?.message ?? "Success");
           }
         }
-      })(wallet);
+      })(WalletService);
     }
   };
 
@@ -673,7 +671,7 @@ const EWalletSettings = () => {
           return true;
         }
       }
-    })(wallet);
+    })(WalletService);
   };
 
   const handleDeleteOption = (id: string, index: number) => {
@@ -690,7 +688,7 @@ const EWalletSettings = () => {
           return true;
         }
       }
-    })(wallet);
+    })(WalletService);
   };
   const handleDeleteWallet = () => {
     (async (_) => {
@@ -700,7 +698,7 @@ const EWalletSettings = () => {
         setSelectedWallet(null);
         message.success(res?.message ?? "Success");
       }
-    })(wallet);
+    })(WalletService);
   };
 
   useEffect(() => {
@@ -887,7 +885,7 @@ const EWalletSettings = () => {
                         height: 60,
                         background: e.isDisabled
                           ? "#eee"
-                          : selectedWallet?._id == e._id ?? false
+                          : selectedWallet?._id == e._id
                           ? "#294B0F"
                           : "#fff",
                       }}
@@ -902,7 +900,7 @@ const EWalletSettings = () => {
                           fontSize: 30,
                           color: e.isDisabled
                             ? "#aaa"
-                            : selectedWallet?._id == e._id ?? false
+                            : selectedWallet?._id == e._id
                             ? "#fff"
                             : "#000",
                           maxWidth: 270,

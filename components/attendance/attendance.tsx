@@ -56,10 +56,6 @@ const Attendance = () => {
   const [width, setWidth] = useState(0);
   const [openFilter, setOpenFilter] = useState(false);
 
-  // context and services
-  const user = new UserService();
-  const log = new LogService();
-
   const isMobile = width < 600;
 
   const showFlexiTime = (_: LogTime[], __: LogData) => {
@@ -370,7 +366,7 @@ const Attendance = () => {
       setFetching(true);
       if (!pageSize) pageSize = 10;
 
-      let res = await log.getLog({
+      let res = await LogService.getLog({
         page,
         pageSize,
         type: "attendance",
@@ -545,7 +541,7 @@ const Attendance = () => {
       });
 
       if (res?.success ?? false) setTellers((res?.data as User[]) ?? []);
-    })(user);
+    })(UserService);
 
     getLogs({
       page: 1,

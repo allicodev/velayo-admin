@@ -1,13 +1,11 @@
-import Api from "./api.service";
+import API from "./api.service";
 import { ExtendedResponse, LogData, NewLog, Response } from "@/types";
 
-class LogService {
-  private readonly instance = new Api();
-
-  public async newLog({
+abstract class LogService {
+  public static async newLog({
     ...props
   }: NewLog): Promise<ExtendedResponse<LogData>> {
-    return await this.instance.post<LogData>({
+    return await API.post<LogData>({
       endpoint: "/log",
       payload: {
         postType: "new",
@@ -16,8 +14,8 @@ class LogService {
     });
   }
 
-  public async updateLog({ ...props }: { [key: string]: any }) {
-    return await this.instance.post<Response>({
+  public static async updateLog({ ...props }: { [key: string]: any }) {
+    return await API.post<Response>({
       endpoint: "/log",
       payload: {
         postType: "update",
@@ -26,7 +24,7 @@ class LogService {
     });
   }
 
-  public async getLog(props: any): Promise<ExtendedResponse<LogData[]>> {
+  public static async getLog(props: any): Promise<ExtendedResponse<LogData[]>> {
     let project: any = {};
 
     if (props.showImage == false) {
@@ -35,7 +33,7 @@ class LogService {
       project["flexiTime.photo"] = 0;
       delete project.showImage;
     }
-    return await this.instance.get<LogData[]>({
+    return await API.get<LogData[]>({
       endpoint: "/log",
       query: { ...props, project: JSON.stringify(project) },
     });

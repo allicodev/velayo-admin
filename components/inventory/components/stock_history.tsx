@@ -38,7 +38,6 @@ const StockHistory = ({ open, close, branchId, isMobile }: BasicProps) => {
   const [openFilter, setOpenFilter] = useState(false);
 
   // service and etc
-  const log = new LogService();
 
   const getStockStatusBadge = (type: StockType) =>
     type == "misc" ? (
@@ -86,14 +85,18 @@ const StockHistory = ({ open, close, branchId, isMobile }: BasicProps) => {
     type?: "stock-in" | "stock-out" | "misc" | null;
   }) =>
     new Promise(async (resolve) => {
-      await log
-        .getLog({ page, pageSize, type: "stock", branchId, stockType: type })
-        .then((e) => {
-          if (e?.success ?? false) {
-            setTotal(e.meta?.total ?? 0);
-            resolve(e?.data);
-          } else resolve([]);
-        });
+      await LogService.getLog({
+        page,
+        pageSize,
+        type: "stock",
+        branchId,
+        stockType: type,
+      }).then((e) => {
+        if (e?.success ?? false) {
+          setTotal(e.meta?.total ?? 0);
+          resolve(e?.data);
+        } else resolve([]);
+      });
     });
 
   const fetchHistory = async ({

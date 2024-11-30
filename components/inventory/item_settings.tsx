@@ -35,13 +35,11 @@ const ItemSettings = () => {
   const [trigger, setTrigger] = useState(0);
   const [loading, setLoading] = useState(false);
 
-  let item = new ItemService();
-
   const reload = () => setTrigger(trigger + 1);
 
   const onCreate = async (name: string) => {
     setLoading(true);
-    let res = await item.newCategory(name);
+    let res = await ItemService.newCategory(name);
 
     if (res?.success ?? false) {
       setLoading(false);
@@ -54,7 +52,7 @@ const ItemSettings = () => {
   };
 
   const handleRemove = async (id: string) => {
-    let res = await item.removeItemCategory(id);
+    let res = await ItemService.removeItemCategory(id);
 
     if (res?.success ?? false) {
       message.success(res?.message ?? "Success");
@@ -65,7 +63,7 @@ const ItemSettings = () => {
   };
 
   const handleDeleteCategory = async (id: string) => {
-    let res = await item.deleteCategory(id);
+    let res = await ItemService.deleteCategory(id);
 
     if (res?.success ?? false) {
       message.success(res?.message ?? "Success");
@@ -78,7 +76,7 @@ const ItemSettings = () => {
   const getItems = async () => {
     setLoading(true);
 
-    let res = await item.getItemsWithCategory();
+    let res = await ItemService.getItemsWithCategory();
 
     if (res?.success ?? false) {
       setLoading(false);

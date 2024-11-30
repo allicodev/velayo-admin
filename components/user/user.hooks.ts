@@ -34,8 +34,6 @@ const useLogs = ({
     overtime: 0,
   });
 
-  const logService = new LogService();
-
   const calculateTime = (data: LogData[]) => {
     // * calculate the time based in minutes
     // * clean the logs first (remove the last if last time is type==time in)
@@ -73,7 +71,7 @@ const useLogs = ({
       if (forcedSearchhWithUser && rest?.userId == null) return;
 
       setFetching(true);
-      let { success, data, meta } = await logService.getLog({
+      let { success, data, meta } = await LogService.getLog({
         page,
         pageSize,
         type: "attendance",

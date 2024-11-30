@@ -78,10 +78,6 @@ const Portal = () => {
   const [fetching, setFetching] = useState(false);
   const [search, setSearch] = useState("");
 
-  // etc and services
-  const portal = new PortalService();
-  const log = new LogService();
-
   const [width, setWidth] = useState(0);
   const isMobile = width < 600;
 
@@ -278,7 +274,7 @@ const Portal = () => {
   };
 
   const handleNewPortal = async (e: NewPortalProps) => {
-    let res = await portal.newPortal(e);
+    let res = await PortalService.newPortal(e);
 
     if (res?.success ?? false) {
       message.success(res?.message ?? "Success");
@@ -287,7 +283,7 @@ const Portal = () => {
   };
 
   const handleDeletePortal = async (_id: string) => {
-    let res = await portal.deletePortal(_id);
+    let res = await PortalService.deletePortal(_id);
 
     if (res?.success ?? false) {
       message.success(res?.message ?? "Success");
@@ -297,7 +293,7 @@ const Portal = () => {
   };
 
   const fetchPortal = async (prop?: FilterProps, width?: number) => {
-    let res = await portal.getPortal({ ...prop, project: { logs: 0 } });
+    let res = await PortalService.getPortal({ ...prop, project: { logs: 0 } });
     setOpenNewPortal({ open: false, portal: null });
     if (res?.success ?? false) {
       setPortals(res?.data ?? []);
@@ -314,7 +310,7 @@ const Portal = () => {
 
   const fetchLogs = async (_id: string) => {
     setFetching(true);
-    let res = await log.getLog({
+    let res = await LogService.getLog({
       type: "portal",
       portalId: _id,
       page: 1,
