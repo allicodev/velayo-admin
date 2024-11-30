@@ -36,8 +36,6 @@ const Admin = () => {
   const [width, setWidth] = useState(0);
   const [api, contextHolder] = notification.useNotification();
 
-  const item = new ItemService();
-
   useEffect(() => {
     function handleResize() {
       setWidth(window.innerWidth);
@@ -76,7 +74,7 @@ const Admin = () => {
           setLastDateUpdated(dayjs());
           console.log("Items are refreshed");
         }
-      })(item);
+      })(ItemService);
     }
   }, []);
 
