@@ -13,7 +13,7 @@ interface MyProps {
 }
 
 const AccountFilter = (props: MyProps) => {
-  const userCredit = useSelector((state) => state.users.credit);
+  const userCredit = useSelector((state) => state.users.data);
 
   return (
     <div style={{ marginTop: 5, marginBottom: 5 }}>
@@ -23,7 +23,7 @@ const AccountFilter = (props: MyProps) => {
         style={{ width: 300 }}
         options={[
           { label: "All", value: null },
-          ...userCredit.map((e) => ({
+          ...(userCredit?.credit ?? []).map((e: any) => ({
             label: `${e.name} ${e.lastname}`,
             value: e._id,
           })),

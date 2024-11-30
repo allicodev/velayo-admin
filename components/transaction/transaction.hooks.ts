@@ -10,7 +10,7 @@ import UserService from "@/provider/user.service";
 // redux
 import { setTransactions } from "@/provider/redux/reducer/transactions.reducer";
 import { setBranches } from "@/provider/redux/reducer/branch.reducer";
-import { setUsers } from "@/provider/redux/reducer/user.reducer";
+import { setUsers } from "@/provider/redux/reducer/user/user.reducer";
 
 import { Transaction as TTransaction } from "@/types";
 import { GetTransaction } from "./transaction.types";
@@ -36,7 +36,8 @@ const useTransaction = () => {
     props: GetTransaction
   ): Promise<TTransaction[] | any | void> =>
     new Promise(async (resolve, reject) => {
-      const { status, updateTransact } = props;
+      let { status, updateTransact } = props;
+      if (!updateTransact) updateTransact = true;
 
       setFetching(true);
 

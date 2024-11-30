@@ -3,6 +3,7 @@ export * from "./schema.interface";
 export * from "./props.interface";
 export * from "./store.interface";
 export * from "./service.interface";
+export * from "./redux.interface";
 
 export interface Response {
   code: number;

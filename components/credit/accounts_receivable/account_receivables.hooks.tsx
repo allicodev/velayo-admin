@@ -12,9 +12,11 @@ import { useEffect, useMemo, useState } from "react";
 import { setAccounts } from "@/provider/redux/credit/credit.redux";
 
 import CreditService from "@/provider/credit.service";
-import { getUser } from "@/provider/redux/user/user.redux";
 import { getAccountName } from "./account_receivables.helpers";
 import dayjs from "dayjs";
+
+// service
+import { UserService } from "@/provider/redux";
 
 export const useSelector: TypedUseSelectorHook<RootState> = useReduxSelector;
 
@@ -24,7 +26,7 @@ const useAccountReceivable = () => {
     id: null,
   });
   const [usersCredit, accounts] = useSelector((state) => [
-    state.users.credit,
+    state.users.data,
     state.credit.accounts,
   ]);
 
@@ -33,7 +35,7 @@ const useAccountReceivable = () => {
       title: "Name",
       dataIndex: "userId",
       render: (id) =>
-        getAccountName(id, usersCredit) ?? (
+        getAccountName(id, usersCredit?.credit ?? []) ?? (
           <Typography.Text type="secondary" italic>
             No Name
           </Typography.Text>
@@ -82,8 +84,8 @@ const useAccountReceivable = () => {
   }, [accounts]);
 
   useEffect(() => {
-    console.log(filter);
-    if (_.isEmpty(usersCredit)) dispatch(getUser({ type: "credit" }));
+    if (_.isEmpty(usersCredit))
+      dispatch(UserService.getUser({ type: "credit" }));
 
     // if (_.isEmpty(accounts) || _.isNil(accounts))
     fetchAccounts(filter.id);
