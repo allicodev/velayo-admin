@@ -3,13 +3,14 @@ import { Col, Row, Tabs } from "antd";
 import { TbCurrencyPeso } from "react-icons/tb";
 import { GrTransaction } from "react-icons/gr";
 
-import DashboardCard from "./components/dash_card";
-import SalesPerBranch from "./components/sales_per_branch";
-import TopSales from "./components/top_sales";
-import SalesAndServices, { FilterProp } from "./components/sales";
+// service
 import EtcService from "@/provider/etc.service";
+
+import { SalesPerBranch, SalesPerType, TopSales, Sales } from "./components";
+
+import DashboardCard from "./elements/dash_card";
 import { DashboardData } from "@/types";
-import SalesPerType from "./components/sales_per_type";
+import { FilterProp } from "./components/DashboardSales/dashboardSales.types";
 
 const Dashboard = () => {
   const [width, setWidth] = useState(0);
@@ -186,7 +187,7 @@ const Dashboard = () => {
         />
       </Col>
       <Col span={24} style={{ padding: 5 }}>
-        <SalesAndServices
+        <Sales
           data={dashboard?.salesPerMonth!}
           loading={loading}
           filter={filter}

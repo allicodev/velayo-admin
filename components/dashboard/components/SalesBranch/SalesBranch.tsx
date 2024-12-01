@@ -5,25 +5,13 @@ import { Doughnut } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Title, Legend } from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import { BranchSales } from "@/types";
+import { SalesBranchProps } from "./salesBranch.types";
+import useSaleBranch from "./salesBranch.hook";
 
 ChartJS.register(ArcElement, Tooltip, Title, Legend, ChartDataLabels);
 
-const SalesPerBranch = ({
-  isMobile,
-  data,
-  loading,
-}: {
-  isMobile?: boolean;
-  data: BranchSales[];
-  loading?: boolean;
-}) => {
-  const [branchData, setBranchData] = useState<BranchSales[]>([]);
-
-  useEffect(() => {
-    if (data && data.length > 0) {
-      setBranchData(data);
-    }
-  }, [data]);
+const SalesPerBranch = (props: SalesBranchProps) => {
+  const { isMobile, loading, branchData } = useSaleBranch(props);
 
   return (
     <Card

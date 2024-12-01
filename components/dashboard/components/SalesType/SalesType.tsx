@@ -13,22 +13,13 @@ import { Card, Spin, Typography } from "antd";
 
 import jason from "@/assets/json/constant.json";
 import { SalesTypePerMonth } from "@/types";
+import { SalesTypeProp } from "./salesType.types";
+import useSaleType from "./salesTypes.hook";
 
 ChartJS.register(Tooltip, Title, Legend, PointElement, LineElement, Filler);
 
-const SalesPerType = ({
-  isMobile,
-  data,
-  loading,
-  max,
-}: {
-  isMobile?: boolean;
-  data: SalesTypePerMonth[];
-  loading?: boolean;
-  max: number;
-}) => {
-  const [sales, setSales] = useState<SalesTypePerMonth[]>();
-  const colors = ["fe6484", "ff9e40", "ffcd56", "37a2eb"];
+const SalesPerType = (props: SalesTypeProp) => {
+  const { sales, colors, isMobile, loading } = useSaleType(props);
 
   const generateData = (): any => {
     return sales?.map((e, i) => ({
@@ -59,10 +50,6 @@ const SalesPerType = ({
       pointHoverRadius: 10,
     }));
   };
-
-  useEffect(() => {
-    setSales(data);
-  }, [data]);
 
   return (
     <Card

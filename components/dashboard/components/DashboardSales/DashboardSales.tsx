@@ -12,54 +12,14 @@ import {
 import { Card, Select, Skeleton, Space, Spin, Typography } from "antd";
 
 import jason from "@/assets/json/constant.json";
-import { SalesPerMonth } from "@/types";
+import { SalesProp } from "./dashboardSales.types";
+import useSales from "./dashboardSales.hooks";
 
 ChartJS.register(Tooltip, Title, Legend, PointElement, LineElement, Filler);
 
-export type FilterProp = {
-  type: null | "bills" | "wallet" | "eload" | "miscellaneous";
-  year: number;
-};
-
-const SalesAndServices = ({
-  isMobile,
-  data,
-  loading,
-  filter,
-  setFilter,
-  type,
-  max,
-}: {
-  isMobile?: boolean;
-  data: SalesPerMonth;
-  loading?: boolean;
-  filter: FilterProp;
-  setFilter: React.Dispatch<React.SetStateAction<FilterProp>>;
-  type?: "bills" | "wallet" | "eload" | "miscellaneous" | null;
-  max: number;
-}) => {
-  const [sales, setSales] = useState<SalesPerMonth>();
-
-  const generateData = () => {
-    return [
-      sales?.Jan ?? 0,
-      sales?.Feb ?? 0,
-      sales?.Mar ?? 0,
-      sales?.Apr ?? 0,
-      sales?.May ?? 0,
-      sales?.Jun ?? 0,
-      sales?.Jul ?? 0,
-      sales?.Aug ?? 0,
-      sales?.Sep ?? 0,
-      sales?.Oct ?? 0,
-      sales?.Nov ?? 0,
-      sales?.Dec ?? 0,
-    ];
-  };
-
-  useEffect(() => {
-    setSales(data);
-  }, [data]);
+const SalesAndServices = (props: SalesProp) => {
+  const { isMobile, loading, setFilter, filter, type, generateData, max } =
+    useSales(props);
 
   return (
     <Card
@@ -181,7 +141,7 @@ const SalesAndServices = ({
                 },
               },
               y: {
-                max: max,
+                max,
               },
             },
             plugins: {
