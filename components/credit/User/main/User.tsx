@@ -1,12 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Button,
   Card,
   Col,
-  Divider,
   Dropdown,
   message,
-  Modal,
   Popconfirm,
   Row,
   Space,
@@ -14,7 +12,6 @@ import {
   Table,
   TableProps,
   Tag,
-  Timeline,
   Tooltip,
   Typography,
 } from "antd";
@@ -25,47 +22,39 @@ import {
   MoreOutlined,
   LeftOutlined,
 } from "@ant-design/icons";
-import {
-  CreditStatus,
-  LogData,
-  Transaction,
-  UserCredit,
-  UserCreditData,
-} from "@/types";
-import NewCredit from "./new_credit";
-import CreditService from "@/provider/credit.service";
-import dayjs from "dayjs";
-import LogService from "@/provider/log.service";
-import AmountHistoryViewer from "./amount_history";
-import TransactionDetails from "../transaction/components/transaction_details";
 
-const Credit = () => {
-  const [loading, setLoading] = useState(false);
-  const [users, setUsers] = useState<UserCreditData[]>();
-  const [trigger, setTrigger] = useState(0);
-  const [selectedUser, setSelectedUser] = useState<UserCreditData | null>(null);
-  const [logs, setLogs] = useState<LogData[]>([]);
-  const [creditLog, setCreditLog] = useState<LogData[]>([]);
-  const [editUser, setEditUser] = useState<{
-    open: boolean;
-    user: UserCreditData | null;
-  }>({ open: false, user: null });
+import { CreditStatus, LogData, Transaction, UserCreditData } from "@/types";
+import { NewCredit, AmountHistory } from "../components";
+import dayjs from "dayjs";
+import TransactionDetails from "../../../transaction/components/transaction_details";
+import useUser from "./user.hooks";
+import { processWithTotal } from "./user.helpers";
+
+const CreditUser = () => {
   const [openTransactionDetails, setTransactionDetails] = useState<{
     open: boolean;
     transaction: Transaction | null;
   }>({ open: false, transaction: null });
 
-  // * mobile
-  const [width, setWidth] = useState(0);
-  const isMobile = width < 600;
+  const {
+    users,
+    selectedUser,
+    isMobile,
+    editUser,
+    openLogs,
+    setEditUser,
+    setSelectedUser,
+    getCreditLog,
+    getLogs,
+    handleNewUser,
+    handleDelete,
+  } = useUser();
 
   // * for amount history
   const [openAmountHistory, setOpenAmountHistory] = useState({
     open: false,
     logId: "",
   });
-
-  const refresh = () => setTrigger(trigger + 1);
 
   const rowClassName = (record: UserCreditData) =>
     record._id === selectedUser?._id && !isMobile ? "selected-row" : "";
@@ -79,24 +68,6 @@ const Credit = () => {
       case "pending":
         return <Tag color="orange-inverse">Pending</Tag>;
     }
-  };
-
-  const processWithTotal = (u: UserCreditData): UserCreditData => {
-    u.availableCredit =
-      u.history == null || u.history.length == 0
-        ? u.maxCredit
-        : u.history.reduce(
-            (p, n) =>
-              p -
-              (n.status == "completed"
-                ? 0
-                : n.history.reduce(
-                    (pp, nn) => pp + parseFloat(nn.amount.toString()),
-                    0
-                  )),
-            u.maxCredit
-          );
-    return u;
   };
 
   const columns: TableProps<UserCreditData>["columns"] = [
@@ -280,109 +251,9 @@ const Credit = () => {
     },
   ];
 
-  const handleNewUser = async (user: UserCredit) => {
-    if (editUser.user != null) {
-      let res = await CreditService.updateCreditUser(user);
-
-      if (res?.success ?? false) {
-        message.success(res?.message ?? "Success");
-        refresh();
-        return true;
-      } else {
-        message.error(res?.message ?? "Error");
-        return false;
-      }
-    }
-    let res = await CreditService.newCreditUser(user);
-
-    if (res?.success ?? false) {
-      message.success(res?.message ?? "Success");
-      refresh();
-      return true;
-    } else {
-      message.error(res?.message ?? "Error");
-      return false;
-    }
-  };
-
-  const getUsers = async () => {
-    setLoading(true);
-    let res = await CreditService.getUserCredit();
-
-    if (res?.success ?? false) {
-      setLoading(false);
-      setUsers(res?.data ?? []);
-
-      if (res?.data!.length > 0) {
-        if (!isMobile) setSelectedUser(processWithTotal(res!.data![0]!));
-        fetchLogs(res!.data![0]!._id);
-      }
-    } else setLoading(false);
-  };
-
-  const handleDelete = async (id: string) => {
-    let res = await CreditService.deleteCreditUser(id);
-
-    if (res?.success ?? false) {
-      message.success(res?.message ?? "Success");
-      refresh();
-    } else message.error(res?.message ?? "Error");
-  };
-
-  const fetchLogs = async (userCreditId: string) => {
-    setLogs([]);
-    setLoading(true);
-    let res = await LogService.getLog({
-      page: 1,
-      pageSize: 99999,
-      type: "credit",
-      userCreditId,
-    });
-
-    if (res?.success ?? false) {
-      // sort via date
-      let _logs =
-        res?.data?.sort((a, b) =>
-          dayjs(a.createdAt).isAfter(dayjs(b.createdAt)) ? 1 : -1
-        ) ?? [];
-
-      // sort again via status
-      _logs = _logs.sort((a, b) => {
-        if (a.status === "pending" && b.status === "completed") return -1;
-        if (a.status === "completed" && b.status === "pending") return 1;
-        return 0;
-      });
-      setLogs(_logs);
-
-      setCreditLog(
-        res?.data?.sort((a, b) =>
-          dayjs(a.createdAt).isAfter(dayjs(b.createdAt)) ? 1 : -1
-        ) ?? []
-      );
-    }
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    function handleResize() {
-      setWidth(window.innerWidth);
-    }
-
-    window.addEventListener("resize", handleResize);
-    handleResize(); // Set initial width
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
-
-  useEffect(() => {
-    getUsers();
-  }, [trigger, width]);
-
   return (
     <div style={{ padding: 10 }}>
-      <Spin spinning={loading}>
+      <Spin spinning={false}>
         {(!isMobile || (isMobile && selectedUser == null)) && (
           <Button
             size="large"
@@ -414,7 +285,7 @@ const Credit = () => {
                   return {
                     onClick: () => {
                       setSelectedUser(processWithTotal(row));
-                      fetchLogs(row._id);
+                      openLogs(row._id);
                     },
                   };
                 }}
@@ -476,13 +347,14 @@ const Credit = () => {
                       }}
                     >
                       ₱{" "}
-                      {creditLog
+                      {getCreditLog()
                         .reduce(
-                          (p, n) =>
+                          (p: any, n: any) =>
                             n.status == "pending"
                               ? p +
                                 n.history!.reduce(
-                                  (p, n) => p + parseFloat(n.amount.toString()),
+                                  (p: any, n: any) =>
+                                    p + parseFloat(n.amount.toString()),
                                   0
                                 )
                               : 0,
@@ -537,7 +409,7 @@ const Credit = () => {
               </div>
               <Table
                 columns={columns2}
-                dataSource={logs}
+                dataSource={getLogs()}
                 rowKey={(e) => e._id}
                 scroll={{
                   y: "60vh",
@@ -559,7 +431,7 @@ const Credit = () => {
                   return {
                     onClick: isMobile
                       ? () => {
-                          fetchLogs(row._id);
+                          openLogs(row._id);
                           setOpenAmountHistory({ open: true, logId: row._id });
                         }
                       : () => {
@@ -586,10 +458,10 @@ const Credit = () => {
         user={editUser.user}
         isMobile={isMobile}
       />
-      <AmountHistoryViewer
+      <AmountHistory
         {...openAmountHistory}
         close={() => setOpenAmountHistory({ open: false, logId: "" })}
-        logs={logs}
+        logs={getLogs()}
         isMobile={isMobile}
       />
       <TransactionDetails
@@ -601,4 +473,4 @@ const Credit = () => {
   );
 };
 
-export default Credit;
+export default CreditUser;

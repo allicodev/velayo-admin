@@ -3,6 +3,7 @@ import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { Status } from "@/types";
 import { SetUser, UserState } from "./user.types";
 import { getUser } from "./user.service";
+import { getUserCredit } from "../credit/credit.service";
 
 const initialState: UserState = { data: {}, status: Status.IDLE };
 
@@ -24,10 +25,21 @@ const userReducer = createSlice({
       .addCase(getUser.rejected, (state) => {
         state.status = Status.FAILED;
       })
-      .addCase(getUser.fulfilled, (state: any, action) => {
+      .addCase(getUser.fulfilled, (state, action) => {
         const { data, type } = action.payload;
-        state[type] = data;
-        state.statis = Status.SUCCESS;
+        state.data[type] = data;
+        state.status = Status.SUCCESS;
+      })
+      .addCase(getUserCredit.pending, (state) => {
+        state.status = Status.LOADING;
+      })
+      .addCase(getUserCredit.rejected, (state) => {
+        state.status = Status.FAILED;
+      })
+      .addCase(getUserCredit.fulfilled, (state, action) => {
+        const { data, type } = action.payload || { data: [], type: "" };
+        state.data[type] = data;
+        state.status = Status.SUCCESS;
       });
   },
 });

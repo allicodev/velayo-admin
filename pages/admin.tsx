@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { notification, Layout } from "antd";
 import { Content, Header, Sider } from "@/components/layout";
 
@@ -24,10 +24,10 @@ import { useItemStore } from "@/provider/context";
 import dayjs from "dayjs";
 import { ItemData } from "@/types";
 import ItemService from "@/provider/item.service";
-import Credit from "@/components/credit";
+import CreditUser from "@/components/credit/User";
 import Cookies from "js-cookie";
 import Disbursement from "@/components/disbursement/disbursement";
-import { AccountsReceivable } from "@/components/credit/accounts_receivable";
+import AccountsReceivable from "@/components/credit/AccountReceivable";
 
 const Admin = () => {
   const { setItems, lastDateUpdated, setLastDateUpdated, items } =
@@ -193,7 +193,7 @@ const Admin = () => {
             {selectedKey.includes("report") &&
               selectedKey.includes("disbursement") && <Disbursement />}
             {selectedKey.includes("credit") &&
-              selectedKey.includes("users") && <Credit />}
+              selectedKey.includes("users") && <CreditUser />}
             {selectedKey.includes("credit") &&
               selectedKey.includes("account") && <AccountsReceivable />}
             {selectedKey.includes("pos") && selectedKey.includes("item") && (

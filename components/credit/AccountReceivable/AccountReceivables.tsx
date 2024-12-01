@@ -1,7 +1,7 @@
 import React from "react";
 import { Flex, Table } from "antd";
-import useAccountReceivable from "./account_receivables.hooks";
-import AccountFilter from "../filters/accounts_filter";
+import useAccountReceivable from "./accountReceivables.hooks";
+import AccountFilter from "../elements/AccountFilter";
 
 const AccountReceivable = () => {
   const { columns, accounts, totalAmount, setFilter } = useAccountReceivable();

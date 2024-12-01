@@ -14,7 +14,6 @@ import UserService from "@/provider/user.service";
 import dayjs from "dayjs";
 import LogService from "@/provider/log.service";
 import { updateFilter } from "@/provider/redux/filterSlice/filterSlice";
-import { setLogs } from "@/provider/redux/logSlice/logSlice";
 
 export const useSelector: TypedUseSelectorHook<RootState> = useReduxSelector;
 
@@ -86,7 +85,9 @@ const useDisbursement = () => {
 
   const getDisbursementLogs = useCallback(
     () =>
-      (reduxLogs.disbursement || []).map((e: LogData) => {
+      // TODO: fix this
+      // (reduxLogs.disbursement || []).map((e: LogData) => {
+      [].map((e: LogData) => {
         const attr = JSON.parse(e.attributes ?? "{}");
         return {
           name: e?.userId?.name ?? "",
@@ -116,7 +117,8 @@ const useDisbursement = () => {
     });
 
     if (success ?? false) {
-      if (data) dispatch(setLogs({ key: "disbursement", logs: data }));
+      // TODO: fix this
+      // if (data) dispatch(setLogs({ key: "disbursement", logs: data }));
     } else message.error(apiMessage ?? "Error in the Server");
   }, [reduxFilter.disbursement]);
 

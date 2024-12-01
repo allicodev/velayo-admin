@@ -3,11 +3,11 @@ import branchItemReducer from "./itemSlice";
 import counterReducer from "./counterSlice";
 import tellerSlice from "./tellerSlice";
 import filterSlice from "./filterSlice/filterSlice";
-import logSlice from "./logSlice/logSlice";
 import creditRedux from "./credit/credit.redux";
 import transactionReducer from "./reducer/transactions.reducer";
 import branchReducer from "./reducer/branch.reducer";
 import userReducer from "./reducer/user/user.reducer";
+import logReducer from "./reducer/log/log.reducer";
 
 export const store = configureStore({
   reducer: {
@@ -15,7 +15,7 @@ export const store = configureStore({
     branchItem: branchItemReducer,
     teller: tellerSlice,
     filter: filterSlice,
-    logs: logSlice,
+    logs: logReducer,
     credit: creditRedux,
     transaction: transactionReducer,
     branch: branchReducer,

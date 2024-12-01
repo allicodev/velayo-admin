@@ -1,11 +1,6 @@
-import { PageProps, Status, User } from "@/types";
+import { BaseReduxState, PageProps, ReduxStateV2, Status, User } from "@/types";
 
-export interface UserState {
-  data: {
-    [key: string]: any;
-  };
-  status: Status;
-}
+export interface UserState extends BaseReduxState, ReduxStateV2 {}
 
 export interface SetUser {
   type: string;

@@ -6,19 +6,18 @@ import {
 } from "react-redux";
 import _ from "lodash";
 
-import { AccountFilters, AccountReceivable } from "./account_receivables.types";
+import { AccountFilters, AccountReceivable } from "./accountReceivables.types";
 import { AppDispatch, RootState } from "@/provider/redux/store";
 import { useEffect, useMemo, useState } from "react";
 import { setAccounts } from "@/provider/redux/credit/credit.redux";
 
 import CreditService from "@/provider/credit.service";
-import { getAccountName } from "./account_receivables.helpers";
+import { getAccountName } from "./accountReceivables.helpers";
 import dayjs from "dayjs";
 
 // service
 import { UserService } from "@/provider/redux";
-
-export const useSelector: TypedUseSelectorHook<RootState> = useReduxSelector;
+import { useSelector } from "@/provider/redux/hooks";
 
 const useAccountReceivable = () => {
   const dispatch = useDispatch<AppDispatch>();
