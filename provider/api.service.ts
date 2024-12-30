@@ -1,18 +1,20 @@
 import axios from "axios";
+import _ from "lodash";
 
 import { AuthStore } from "./context";
 import { ExtendedResponse, ApiGetProps, ApiPostProps } from "@/types";
+import ApiConfig from "@/config/api.config";
 
 abstract class API {
   public static async get<T>({
     endpoint,
     query,
   }: ApiGetProps): Promise<ExtendedResponse<T>> {
+    // @@ IMPORTANT refactor this store
     const { accessToken: token } = AuthStore.getState();
 
     const request = await axios.get(
-      // `https://velayo-eservice.vercel.app/api${endpoint}`,
-      `http://localhost:3000/api${endpoint}`,
+      `${ApiConfig.getBaseUrl(process.env.NEXT_IS_PROD == "true")}${endpoint}`,
       {
         params: query,
         headers: {
@@ -21,13 +23,12 @@ abstract class API {
         },
       }
     );
+
     if (request.data.success)
       return {
         success: true,
-        code: request.status,
-        message: request.data.message,
-        data: request.data.data,
-        meta: request.data.meta,
+        code: request?.status || 200,
+        ..._.pick(request.data, ["message", "data", "meta"]),
       };
     else
       return {
@@ -41,11 +42,10 @@ abstract class API {
     endpoint,
     payload,
   }: ApiPostProps): Promise<ExtendedResponse<T>> {
+    // @@ IMPORTANT refactor this store
     const { accessToken: token } = AuthStore.getState();
-
     const request = await axios.post(
-      // `https://velayo-eservice.vercel.app/api${endpoint}`,
-      `http://localhost:3000/api${endpoint}`,
+      `${ApiConfig.getBaseUrl(process.env.NEXT_IS_PROD == "true")}${endpoint}`,
       payload,
       {
         headers: {
@@ -58,8 +58,7 @@ abstract class API {
       return {
         success: true,
         code: request.status,
-        message: request.data.message,
-        data: request.data.data,
+        ..._.pick(request.data, ["message", "data"]),
       };
     else
       return {

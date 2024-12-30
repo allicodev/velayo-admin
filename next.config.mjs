@@ -11,6 +11,9 @@ const nextConfig = {
 
     return config;
   },
+  env: {
+    NEXT_IS_PROD: process.env.IS_PROD,
+  },
 };
 
 export default nextConfig;
