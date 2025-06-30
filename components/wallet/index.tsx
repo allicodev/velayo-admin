@@ -60,7 +60,7 @@ const EWalletSettings = () => {
     index: -1,
     id: null,
   });
-  const [walletType, setWalletType] = useState("");
+  const [walletType, setWalletType] = useState("fixed-percentage");
 
   // for context
   const [contextName, setContextName] = useState("");
@@ -101,13 +101,23 @@ const EWalletSettings = () => {
     close();
   };
 
-  const handleUpdateWalletType = (type: string) => {
+  console.log("la-logs walletType", walletType);
+  console.log("la-logs selectedWallet", selectedWallet?.cashoutFeeType);
+
+  const handleUpdateWalletType = (
+    type: "cash-in" | "cash-out",
+    feeType: string
+  ) => {
     (async (_) => {
       if (selectedWallet?._id) {
-        const res = await _.updateWalletType(selectedWallet._id, type);
+        const res = await _.updateWalletType(selectedWallet._id, type, feeType);
 
         if (res?.success ?? false) {
           message.success(res?.message ?? "Success");
+          setSelectedWallet({
+            ...selectedWallet,
+            [type == "cash-in" ? "cashinFeeType" : "cashoutFeeType"]: feeType,
+          });
         } else {
           message.error(res?.message ?? "Error");
         }
@@ -247,7 +257,10 @@ const EWalletSettings = () => {
         >
           <Tabs
             type="card"
-            onChange={setSelectedTabs}
+            onChange={(e) => {
+              setSelectedTabs(e);
+              setWalletType("threshold");
+            }}
             items={[
               {
                 label: "Cash-in Settings",
@@ -347,9 +360,10 @@ const EWalletSettings = () => {
                             style={{ width: "100%" }}
                             tabBarExtraContent={
                               (walletType == "threshold" &&
-                                selectedWallet?.type == "threshold") ||
-                              (walletType == "fixed-percent" &&
-                                selectedWallet?.type == "fixed-percent") ? (
+                                selectedWallet?.cashinFeeType == "threshold") ||
+                              (walletType == "fixed-percentage" &&
+                                selectedWallet?.cashinFeeType ==
+                                  "fixed-percentage") ? (
                                 <Typography.Text type="success">
                                   Selected Fee Settings
                                 </Typography.Text>
@@ -357,7 +371,10 @@ const EWalletSettings = () => {
                                 <Button
                                   type="primary"
                                   onClick={() =>
-                                    handleUpdateWalletType(walletType)
+                                    handleUpdateWalletType(
+                                      "cash-in",
+                                      walletType
+                                    )
                                   }
                                 >
                                   Use as Fee Settings
@@ -365,6 +382,7 @@ const EWalletSettings = () => {
                               )
                             }
                             onChange={setWalletType}
+                            activeKey={walletType}
                             items={[
                               {
                                 label: "Fixed/Percentage Fee Settings",
@@ -549,9 +567,11 @@ const EWalletSettings = () => {
                             type="card"
                             tabBarExtraContent={
                               (walletType == "threshold" &&
-                                selectedWallet?.type == "threshold") ||
-                              (walletType == "fixed-percent" &&
-                                selectedWallet?.type == "fixed-percent") ? (
+                                selectedWallet?.cashoutFeeType ==
+                                  "threshold") ||
+                              (walletType == "fixed-percentage" &&
+                                selectedWallet?.cashoutFeeType ==
+                                  "fixed-percentage") ? (
                                 <Typography.Text type="success">
                                   Selected Fee Settings
                                 </Typography.Text>
@@ -559,7 +579,10 @@ const EWalletSettings = () => {
                                 <Button
                                   type="primary"
                                   onClick={() =>
-                                    handleUpdateWalletType(walletType)
+                                    handleUpdateWalletType(
+                                      "cash-out",
+                                      walletType
+                                    )
                                   }
                                 >
                                   Use as Fee Settings

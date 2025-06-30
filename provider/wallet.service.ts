@@ -202,11 +202,15 @@ abstract class WalletService {
 
   public static async updateWalletType(
     id: string,
-    type: string
+    type: "cash-in" | "cash-out",
+    feeType: string
   ): Promise<Response> {
     const response = await API.post<Response>({
       endpoint: "/wallet/update-wallet-type",
-      payload: { id, type },
+      payload: {
+        id,
+        [type == "cash-in" ? "cashinFeeType" : "cashoutFeeType"]: feeType,
+      },
     });
     return response;
   }
