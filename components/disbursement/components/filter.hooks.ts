@@ -99,7 +99,7 @@ const useDisbursementFilter = () => {
       },
     ];
 
-    (reduxLogs.disbursement || []).map((e: any) => {
+    (reduxLogs?.data || []).map((e: any) => {
       const attr = JSON.parse(e.attributes ?? "{}");
       sheet.addRow({
         subType: `${e.subType}${
@@ -116,7 +116,7 @@ const useDisbursementFilter = () => {
     });
 
     // styles
-    (reduxLogs.disbursement || []).map((e: any, i: number) => {
+    (reduxLogs.data || []).map((e: any, i: number) => {
       sheet.getCell(`A${i + 3}`).alignment = {
         vertical: "middle",
       };
@@ -137,7 +137,7 @@ const useDisbursementFilter = () => {
 
     let s = (str: string) =>
       sheet.getCell(
-        `${str.toLocaleUpperCase()}${(reduxLogs.disbursement || []).length + 3}`
+        `${str.toLocaleUpperCase()}${(reduxLogs.data || []).length + 3}`
       );
     s("a").font = {
       family: 4,
@@ -145,7 +145,7 @@ const useDisbursementFilter = () => {
       bold: true,
     };
     s("a").value = "TOTAL";
-    s("b").value = `₱${(reduxLogs.disbursement || [])
+    s("b").value = `₱${(reduxLogs.data || [])
       .reduce((p: number, n: any) => p + (n.amount ?? 0), 0)
       .toLocaleString(undefined, {
         minimumFractionDigits: 2,

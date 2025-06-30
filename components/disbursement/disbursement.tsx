@@ -28,7 +28,11 @@ const Disbursement = () => {
           </Typography.Text>
         </Typography.Title>
         <DisburmentFilter />
-        <Table columns={columns} dataSource={data} style={{ marginTop: 10 }} />
+        <Table
+          columns={columns as any}
+          dataSource={data}
+          style={{ marginTop: 10 }}
+        />
       </div>
     </div>
   );

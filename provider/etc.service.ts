@@ -1,4 +1,4 @@
-import { FilterProp } from "@/components/dashboard/components/sales";
+import { FilterProps } from "@/components/transaction/transaction.types";
 import API from "./api.service";
 import {
   DashboardData,
@@ -43,7 +43,7 @@ abstract class EtcService {
     });
   }
 
-  public static async getDashboardDataSales(filter: FilterProp) {
+  public static async getDashboardDataSales(filter: FilterProps) {
     return await API.get<SalesPerMonth>({
       endpoint: "/etc/get-sales",
       query: filter,

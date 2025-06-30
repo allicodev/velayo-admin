@@ -34,7 +34,7 @@ const useDisbursement = () => {
             dataIndex: "name",
           },
         ]
-      : [{}]),
+      : []),
 
     {
       title: "Type",
@@ -86,8 +86,7 @@ const useDisbursement = () => {
   const getDisbursementLogs = useCallback(
     () =>
       // TODO: fix this
-      // (reduxLogs.disbursement || []).map((e: LogData) => {
-      [].map((e: LogData) => {
+      (reduxLogs.data || []).map((e: LogData) => {
         const attr = JSON.parse(e.attributes ?? "{}");
         return {
           name: e?.userId?.name ?? "",

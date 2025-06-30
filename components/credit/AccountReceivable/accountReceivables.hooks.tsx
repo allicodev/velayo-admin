@@ -16,7 +16,7 @@ import { getAccountName } from "./accountReceivables.helpers";
 import dayjs from "dayjs";
 
 // service
-import { UserService } from "@/provider/redux";
+import { UserThunkService } from "@/provider/redux";
 import { useSelector } from "@/provider/redux/hooks";
 
 const useAccountReceivable = () => {
@@ -84,7 +84,7 @@ const useAccountReceivable = () => {
 
   useEffect(() => {
     if (_.isEmpty(usersCredit))
-      dispatch(UserService.getUser({ type: "credit" }));
+      dispatch(UserThunkService.getUser({ type: "credit" }));
 
     // if (_.isEmpty(accounts) || _.isNil(accounts))
     fetchAccounts(filter.id);

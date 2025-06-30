@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { SalesProp } from "./dashboardSales";
+import { SalesProp } from "./dashboardSales.types";
 import { SalesPerMonth } from "@/types";
 
 const useSales = (props: SalesProp) => {
