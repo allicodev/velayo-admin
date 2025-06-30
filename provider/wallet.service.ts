@@ -199,6 +199,17 @@ abstract class WalletService {
     });
     return response;
   }
+
+  public static async updateWalletType(
+    id: string,
+    type: string
+  ): Promise<Response> {
+    const response = await API.post<Response>({
+      endpoint: "/wallet/update-wallet-type",
+      payload: { id, type },
+    });
+    return response;
+  }
 }
 
 export default WalletService;

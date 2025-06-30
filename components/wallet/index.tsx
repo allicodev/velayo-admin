@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useState } from "react";
+import React, { Children, ReactNode, useEffect, useState } from "react";
 import {
   Button,
   Col,
@@ -44,6 +44,7 @@ import {
   NotDraggingStyle,
 } from "react-beautiful-dnd";
 import PrinterException from "../printer_exception";
+import ThresholdFees from "./components/ThresholdFees";
 
 const EWalletSettings = () => {
   const [selectedWallet, setSelectedWallet] = useState<Wallet | null>();
@@ -59,6 +60,7 @@ const EWalletSettings = () => {
     index: -1,
     id: null,
   });
+  const [walletType, setWalletType] = useState("");
 
   // for context
   const [contextName, setContextName] = useState("");
@@ -97,6 +99,20 @@ const EWalletSettings = () => {
   const clearAll = () => {
     setSelectedWallet(null);
     close();
+  };
+
+  const handleUpdateWalletType = (type: string) => {
+    (async (_) => {
+      if (selectedWallet?._id) {
+        const res = await _.updateWalletType(selectedWallet._id, type);
+
+        if (res?.success ?? false) {
+          message.success(res?.message ?? "Success");
+        } else {
+          message.error(res?.message ?? "Error");
+        }
+      }
+    })(WalletService);
   };
 
   const cashinHasNoMainAMount = () =>
@@ -237,282 +253,395 @@ const EWalletSettings = () => {
                 label: "Cash-in Settings",
                 key: "cashin-settings-tabs",
                 children: selectedFormField?.length != 0 && (
-                  <Space
-                    direction="vertical"
-                    style={{
-                      display: "block",
-                    }}
-                  >
-                    <DragDropContext
-                      onDragEnd={(result) => {
-                        if (!result.destination) {
-                          return;
-                        }
-
-                        if (selectedFormField && selectedWallet) {
-                          const items = reorder(
-                            selectedFormField,
-                            result.source.index,
-                            result.destination.index
-                          );
-
-                          let _: Wallet = {
-                            ...selectedWallet,
-                            cashInFormField: items,
-                          };
-
-                          // call api and update the current option position
-                          (async (b) => {
-                            if (selectedWallet?._id != undefined) {
-                              let res = await b.updateWalletOption(
-                                selectedWallet._id,
-                                _
-                              );
-
-                              if (res.success)
-                                message.success(res?.message ?? "Success");
-                            }
-                          })(WalletService);
-
-                          setSelectedWallet(_);
-                        }
-                      }}
-                    >
-                      <Droppable droppableId="droppable">
-                        {(provided, snapshot) => (
-                          <div
-                            ref={provided.innerRef}
-                            {...provided.droppableProps}
+                  <Tabs
+                    type="card"
+                    items={[
+                      {
+                        label: "Forms",
+                        key: "forms",
+                        children: (
+                          <Space
+                            direction="vertical"
+                            style={{
+                              display: "block",
+                            }}
                           >
-                            {selectedFormField?.map((item, index) => (
-                              <Draggable
-                                key={`${item.type}-${index}`}
-                                draggableId={`${item.type}-${index}`}
-                                index={index}
-                              >
+                            <DragDropContext
+                              onDragEnd={(result) => {
+                                if (!result.destination) {
+                                  return;
+                                }
+
+                                if (selectedFormField && selectedWallet) {
+                                  const items = reorder(
+                                    selectedFormField,
+                                    result.source.index,
+                                    result.destination.index
+                                  );
+
+                                  let _: Wallet = {
+                                    ...selectedWallet,
+                                    cashInFormField: items,
+                                  };
+
+                                  // call api and update the current option position
+                                  (async (b) => {
+                                    if (selectedWallet?._id != undefined) {
+                                      let res = await b.updateWalletOption(
+                                        selectedWallet._id,
+                                        _
+                                      );
+
+                                      if (res.success)
+                                        message.success(
+                                          res?.message ?? "Success"
+                                        );
+                                    }
+                                  })(WalletService);
+
+                                  setSelectedWallet(_);
+                                }
+                              }}
+                            >
+                              <Droppable droppableId="droppable">
                                 {(provided, snapshot) => (
                                   <div
                                     ref={provided.innerRef}
-                                    {...provided.dragHandleProps}
-                                    {...provided.draggableProps}
-                                    style={getItemStyle(
-                                      provided.draggableProps.style,
-                                      snapshot.isDragging
-                                    )}
+                                    {...provided.droppableProps}
                                   >
-                                    <div>{billingButton(item)}</div>
+                                    {selectedFormField?.map((item, index) => (
+                                      <Draggable
+                                        key={`${item.type}-${index}`}
+                                        draggableId={`${item.type}-${index}`}
+                                        index={index}
+                                      >
+                                        {(provided, snapshot) => (
+                                          <div
+                                            ref={provided.innerRef}
+                                            {...provided.dragHandleProps}
+                                            {...provided.draggableProps}
+                                            style={getItemStyle(
+                                              provided.draggableProps.style,
+                                              snapshot.isDragging
+                                            )}
+                                          >
+                                            <div>{billingButton(item)}</div>
+                                          </div>
+                                        )}
+                                      </Draggable>
+                                    ))}
+                                    {provided.placeholder}
                                   </div>
                                 )}
-                              </Draggable>
-                            ))}
-                            {provided.placeholder}
-                          </div>
-                        )}
-                      </Droppable>
-                    </DragDropContext>
-                  </Space>
+                              </Droppable>
+                            </DragDropContext>
+                          </Space>
+                        ),
+                      },
+                      {
+                        label: "Fee Settings",
+                        key: "fee-settings",
+                        children: (
+                          <Tabs
+                            type="card"
+                            style={{ width: "100%" }}
+                            tabBarExtraContent={
+                              (walletType == "threshold" &&
+                                selectedWallet?.type == "threshold") ||
+                              (walletType == "fixed-percent" &&
+                                selectedWallet?.type == "fixed-percent") ? (
+                                <Typography.Text type="success">
+                                  Selected Fee Settings
+                                </Typography.Text>
+                              ) : (
+                                <Button
+                                  type="primary"
+                                  onClick={() =>
+                                    handleUpdateWalletType(walletType)
+                                  }
+                                >
+                                  Use as Fee Settings
+                                </Button>
+                              )
+                            }
+                            onChange={setWalletType}
+                            items={[
+                              {
+                                label: "Fixed/Percentage Fee Settings",
+                                key: "fixed-percentage",
+                                children: (
+                                  <div>
+                                    <Radio.Group
+                                      style={{
+                                        marginLeft: 15,
+                                      }}
+                                      onChange={(e) => {
+                                        setSelectedWallet({
+                                          ..._wallet,
+                                          cashinType: e.target.value,
+                                        });
+                                        setUpdated(true);
+                                      }}
+                                      value={_wallet.cashinType}
+                                    >
+                                      <Radio value="percent">Percent</Radio>
+                                      <Radio value="fixed">Fixed</Radio>
+                                    </Radio.Group>
+                                    <FloatLabel
+                                      label="Fee"
+                                      value={selectedWallet?.cashinFeeValue?.toString()}
+                                      style={{
+                                        marginLeft: 15,
+                                        marginTop: 5,
+                                      }}
+                                    >
+                                      <InputNumber
+                                        prefix={
+                                          _wallet.cashinType == "percent"
+                                            ? "%"
+                                            : "₱"
+                                        }
+                                        value={_wallet.cashinFeeValue}
+                                        className="customInput"
+                                        size="large"
+                                        style={{
+                                          width: 120,
+                                        }}
+                                        onChange={(e) => {
+                                          setSelectedWallet({
+                                            ..._wallet,
+                                            cashinFeeValue: e,
+                                          });
+                                          setUpdated(true);
+                                        }}
+                                        controls={false}
+                                      />
+                                    </FloatLabel>
+
+                                    <Button
+                                      size="large"
+                                      type="primary"
+                                      icon={<SaveOutlined />}
+                                      disabled={!updated}
+                                      style={{
+                                        width: 120,
+                                        marginLeft: 15,
+                                      }}
+                                      onClick={handleSave}
+                                    >
+                                      Save
+                                    </Button>
+                                  </div>
+                                ),
+                              },
+                              {
+                                label: "Threshold Fee Settings",
+                                key: "threshold",
+                                children: (
+                                  <ThresholdFees
+                                    walletId={selectedWallet?._id}
+                                    subType="cash-in"
+                                  />
+                                ),
+                              },
+                            ]}
+                          />
+                        ),
+                      },
+                    ]}
+                  />
                 ),
               },
               {
                 label: "Cash-out Settings",
                 key: "cashout-settings-tabs",
                 children: selectedFormField?.length != 0 && (
-                  <Space
-                    direction="vertical"
-                    style={{
-                      display: "block",
-                    }}
-                  >
-                    <DragDropContext
-                      onDragEnd={(result) => {
-                        if (!result.destination) {
-                          return;
-                        }
-
-                        if (selectedFormField && selectedWallet) {
-                          const items = reorder(
-                            selectedFormField,
-                            result.source.index,
-                            result.destination.index
-                          );
-
-                          let _: Wallet = {
-                            ...selectedWallet,
-                            cashOutFormField: items,
-                          };
-
-                          // call api and update the current option position
-                          (async (b) => {
-                            if (selectedWallet?._id != undefined) {
-                              let res = await b.updateWalletOption(
-                                selectedWallet._id,
-                                _
-                              );
-
-                              if (res.success)
-                                message.success(res?.message ?? "Success");
-                            }
-                          })(WalletService);
-
-                          setSelectedWallet(_);
-                        }
-                      }}
-                    >
-                      <Droppable droppableId="droppable">
-                        {(provided, snapshot) => (
-                          <div
-                            ref={provided.innerRef}
-                            {...provided.droppableProps}
+                  <Tabs
+                    type="card"
+                    items={[
+                      {
+                        label: "Forms",
+                        key: "forms",
+                        children: (
+                          <Space
+                            direction="vertical"
+                            style={{
+                              display: "block",
+                            }}
                           >
-                            {selectedFormField?.map((item, index) => (
-                              <Draggable
-                                key={`${item.type}-${index}`}
-                                draggableId={`${item.type}-${index}`}
-                                index={index}
-                              >
+                            <DragDropContext
+                              onDragEnd={(result) => {
+                                if (!result.destination) {
+                                  return;
+                                }
+
+                                if (selectedFormField && selectedWallet) {
+                                  const items = reorder(
+                                    selectedFormField,
+                                    result.source.index,
+                                    result.destination.index
+                                  );
+
+                                  let _: Wallet = {
+                                    ...selectedWallet,
+                                    cashOutFormField: items,
+                                  };
+
+                                  // call api and update the current option position
+                                  (async (b) => {
+                                    if (selectedWallet?._id != undefined) {
+                                      let res = await b.updateWalletOption(
+                                        selectedWallet._id,
+                                        _
+                                      );
+
+                                      if (res.success)
+                                        message.success(
+                                          res?.message ?? "Success"
+                                        );
+                                    }
+                                  })(WalletService);
+
+                                  setSelectedWallet(_);
+                                }
+                              }}
+                            >
+                              <Droppable droppableId="droppable">
                                 {(provided, snapshot) => (
                                   <div
                                     ref={provided.innerRef}
-                                    {...provided.dragHandleProps}
-                                    {...provided.draggableProps}
-                                    style={getItemStyle(
-                                      provided.draggableProps.style,
-                                      snapshot.isDragging
-                                    )}
+                                    {...provided.droppableProps}
                                   >
-                                    <div>{billingButton(item)}</div>
+                                    {selectedFormField?.map((item, index) => (
+                                      <Draggable
+                                        key={`${item.type}-${index}`}
+                                        draggableId={`${item.type}-${index}`}
+                                        index={index}
+                                      >
+                                        {(provided, snapshot) => (
+                                          <div
+                                            ref={provided.innerRef}
+                                            {...provided.dragHandleProps}
+                                            {...provided.draggableProps}
+                                            style={getItemStyle(
+                                              provided.draggableProps.style,
+                                              snapshot.isDragging
+                                            )}
+                                          >
+                                            <div>{billingButton(item)}</div>
+                                          </div>
+                                        )}
+                                      </Draggable>
+                                    ))}
+                                    {provided.placeholder}
                                   </div>
                                 )}
-                              </Draggable>
-                            ))}
-                            {provided.placeholder}
-                          </div>
-                        )}
-                      </Droppable>
-                    </DragDropContext>
-                  </Space>
+                              </Droppable>
+                            </DragDropContext>
+                          </Space>
+                        ),
+                      },
+                      {
+                        label: "Fee Settings",
+                        key: "fee-settings-tabs",
+                        children: (
+                          <Tabs
+                            type="card"
+                            tabBarExtraContent={
+                              (walletType == "threshold" &&
+                                selectedWallet?.type == "threshold") ||
+                              (walletType == "fixed-percent" &&
+                                selectedWallet?.type == "fixed-percent") ? (
+                                <Typography.Text type="success">
+                                  Selected Fee Settings
+                                </Typography.Text>
+                              ) : (
+                                <Button
+                                  type="primary"
+                                  onClick={() =>
+                                    handleUpdateWalletType(walletType)
+                                  }
+                                >
+                                  Use as Fee Settings
+                                </Button>
+                              )
+                            }
+                            onChange={setWalletType}
+                            items={[
+                              {
+                                label: "Fixed/Percentage Fee Settings",
+                                key: "fixed-percentage",
+                                children: (
+                                  <div>
+                                    <Radio.Group
+                                      style={{
+                                        marginLeft: 15,
+                                      }}
+                                      onChange={(e) => {
+                                        setSelectedWallet({
+                                          ..._wallet,
+                                          cashoutType: e.target.value,
+                                        });
+                                        setUpdated(true);
+                                      }}
+                                      value={_wallet.cashoutType}
+                                    >
+                                      <Radio value="percent">Percent</Radio>
+                                      <Radio value="fixed">Fixed</Radio>
+                                    </Radio.Group>
+
+                                    <FloatLabel
+                                      label="Fee"
+                                      value={selectedWallet?.cashoutFeeValue?.toString()}
+                                      style={{
+                                        marginLeft: 15,
+                                        marginTop: 5,
+                                      }}
+                                    >
+                                      <InputNumber
+                                        prefix={
+                                          _wallet.cashoutType == "percent"
+                                            ? "%"
+                                            : "₱"
+                                        }
+                                        value={_wallet.cashoutFeeValue}
+                                        className="customInput"
+                                        size="large"
+                                        style={{
+                                          width: 120,
+                                        }}
+                                        onChange={(e) => {
+                                          setSelectedWallet({
+                                            ..._wallet,
+                                            cashoutFeeValue: e,
+                                          });
+                                          setUpdated(true);
+                                        }}
+                                        controls={false}
+                                      />
+                                    </FloatLabel>
+                                  </div>
+                                ),
+                              },
+                              {
+                                label: "Threshold Fee Settings",
+                                key: "threshold",
+                                children: (
+                                  <ThresholdFees
+                                    walletId={selectedWallet?._id}
+                                    subType="cash-out"
+                                  />
+                                ),
+                              },
+                            ]}
+                          />
+                        ),
+                      },
+                    ]}
+                  />
                 ),
               },
-              {
-                label: "Fee Settings",
-                key: "fee-settings-tabs",
-                children: (
-                  <div
-                    style={{
-                      display: "flex",
-                    }}
-                  >
-                    <div>
-                      <strong
-                        style={{
-                          marginLeft: 15,
-                        }}
-                      >
-                        Cash-In Fee Settings
-                      </strong>
-                      <FloatLabel
-                        label="Fee"
-                        value={selectedWallet?.cashinFeeValue?.toString()}
-                        style={{
-                          marginLeft: 15,
-                          marginTop: 5,
-                        }}
-                      >
-                        <InputNumber
-                          prefix={_wallet.cashinType == "percent" ? "%" : "₱"}
-                          value={_wallet.cashinFeeValue}
-                          className="customInput"
-                          size="large"
-                          style={{
-                            width: 120,
-                          }}
-                          onChange={(e) => {
-                            setSelectedWallet({
-                              ..._wallet,
-                              cashinFeeValue: e,
-                            });
-                            setUpdated(true);
-                          }}
-                          controls={false}
-                        />
-                      </FloatLabel>
-                      <Radio.Group
-                        style={{
-                          marginLeft: 15,
-                        }}
-                        onChange={(e) => {
-                          setSelectedWallet({
-                            ..._wallet,
-                            cashinType: e.target.value,
-                          });
-                          setUpdated(true);
-                        }}
-                        value={_wallet.cashinType}
-                      >
-                        <Radio value="percent">Percent</Radio>
-                        <Radio value="fixed">Fixed</Radio>
-                      </Radio.Group>
-                    </div>
-                    <Divider
-                      type="vertical"
-                      style={{
-                        height: 120,
-                      }}
-                    />
-                    <div>
-                      <strong
-                        style={{
-                          marginLeft: 15,
-                        }}
-                      >
-                        Cash-Out Fee Settings
-                      </strong>
-                      <FloatLabel
-                        label="Fee"
-                        value={selectedWallet?.cashoutFeeValue?.toString()}
-                        style={{
-                          marginLeft: 15,
-                          marginTop: 5,
-                        }}
-                      >
-                        <InputNumber
-                          prefix={_wallet.cashoutType == "percent" ? "%" : "₱"}
-                          value={_wallet.cashoutFeeValue}
-                          className="customInput"
-                          size="large"
-                          style={{
-                            width: 120,
-                          }}
-                          onChange={(e) => {
-                            setSelectedWallet({
-                              ..._wallet,
-                              cashoutFeeValue: e,
-                            });
-                            setUpdated(true);
-                          }}
-                          controls={false}
-                        />
-                      </FloatLabel>
-                      <Radio.Group
-                        style={{
-                          marginLeft: 15,
-                        }}
-                        onChange={(e) => {
-                          setSelectedWallet({
-                            ..._wallet,
-                            cashoutType: e.target.value,
-                          });
-                          setUpdated(true);
-                        }}
-                        value={_wallet.cashoutType}
-                      >
-                        <Radio value="percent">Percent</Radio>
-                        <Radio value="fixed">Fixed</Radio>
-                      </Radio.Group>
-                    </div>
-                  </div>
-                ),
-              },
+
               ...(!isMobile
                 ? [
                     {
@@ -954,18 +1083,6 @@ const EWalletSettings = () => {
                       onClick={() => setOpenUpdateName(true)}
                     >
                       Update Name
-                    </Button>
-                    <Button
-                      size="large"
-                      type="primary"
-                      icon={<SaveOutlined />}
-                      disabled={!updated}
-                      style={{
-                        width: 150,
-                      }}
-                      onClick={handleSave}
-                    >
-                      Save
                     </Button>
                   </>
                 )}

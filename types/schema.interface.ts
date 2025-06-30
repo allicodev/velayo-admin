@@ -362,6 +362,7 @@ export interface Wallet {
   cashInexceptFormField?: ExceptionItemProps[];
   cashOutexceptFormField?: ExceptionItemProps[];
   isDisabled?: boolean;
+  type?: string;
 }
 
 export interface Fee {
