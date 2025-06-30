@@ -1075,7 +1075,7 @@ const EWalletSettings = () => {
           >
             {selectedWallet != null &&
               renderSettingsForm(selectedWallet, getTabsAsWalletType())}
-            {selectedWallet != null && (
+            {selectedWallet != null && walletType != "threshold" && (
               <Space
                 style={{
                   position: "absolute",

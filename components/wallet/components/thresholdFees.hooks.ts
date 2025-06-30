@@ -68,6 +68,7 @@ const useThresholdFees = (props: ThresholdFees) => {
     if (res?.success) {
       message.success(res?.message ?? "Success");
       setTrigger(trigger + 1);
+      form.resetFields();
     } else message.error(res?.message ?? "Failed");
   };
 
