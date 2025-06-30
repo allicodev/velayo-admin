@@ -21,6 +21,7 @@ const useThresholdFees = (props: ThresholdFees) => {
     useState<ThresholdFeesColumn | null>(null);
   const [feesThreshold, setFeesThreshold] = useState<ThresholdFeesColumn[]>([]);
   const [errors, setErrors] = useState<string[]>([]);
+  const [trigger, setTrigger] = useState(0);
 
   const pushNewError = (error: string) => setErrors([...errors, error]);
 
@@ -64,8 +65,10 @@ const useThresholdFees = (props: ThresholdFees) => {
 
     let res = await FeeService.newFeeThreshold(newPayload);
 
-    if (res?.success) message.success(res?.message ?? "Success");
-    else message.error(res?.message ?? "Failed");
+    if (res?.success) {
+      message.success(res?.message ?? "Success");
+      setTrigger(trigger + 1);
+    } else message.error(res?.message ?? "Failed");
   };
 
   const handleUpdateThreshold = async (
@@ -107,8 +110,10 @@ const useThresholdFees = (props: ThresholdFees) => {
 
       let res = await FeeService.newFeeThreshold(newPayload);
 
-      if (res?.success) message.success(res?.message ?? "Success");
-      else message.error(res?.message ?? "Failed");
+      if (res?.success) {
+        message.success(res?.message ?? "Success");
+        setTrigger(trigger + 1);
+      } else message.error(res?.message ?? "Failed");
     }
   };
 
@@ -123,7 +128,7 @@ const useThresholdFees = (props: ThresholdFees) => {
 
   useEffect(() => {
     getFees();
-  }, []);
+  }, [trigger]);
 
   return {
     formRef: form,
