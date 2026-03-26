@@ -8,7 +8,7 @@ import {
   Table,
   TableColumnsType,
 } from "antd";
-import { PlusOutlined, SettingOutlined } from "@ant-design/icons";
+import { PlusOutlined, SettingOutlined,DeleteOutlined } from "@ant-design/icons";
 
 import {
   ThresholdFees as ThresholdFeesProps,
@@ -47,6 +47,7 @@ const ThresholdFees = (props: ThresholdFeesProps) => {
     {
       title: "Functions",
       render: (_, data) => (
+        <>
         <Button
           type="primary"
           onClick={() => {
@@ -58,6 +59,18 @@ const ThresholdFees = (props: ThresholdFeesProps) => {
           <SettingOutlined />
           EDIT
         </Button>
+        <Button
+          type="primary"
+          onClick={() => {
+            openModal("edit");
+            setSelectedThreshold(data);
+            formRef.setFieldsValue(data);
+          }}
+        >
+          <DeleteOutlined />
+          DELETE
+        </Button>
+        </>
       ),
     },
   ];
